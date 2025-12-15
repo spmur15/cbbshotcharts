@@ -525,7 +525,7 @@ def shooting_summary(dff):
     """
 
     if dff.empty:
-        return "No shots"
+        return ("No shots",'')
 
     fga = len(dff)
     fgm = int(dff["made"].sum())
