@@ -7,7 +7,7 @@ from plotly.colors import sample_colorscale
 import warnings
 warnings.filterwarnings("ignore")
 
-logo_path = r'/Users/sammurray/Desktop/Other/Basketball/NCAAB/Teams/teamCSVs/currentSzn.csv'
+logo_path = r'currentSzn.csv'
 LOGO_DF = pd.read_csv(logo_path)[['Team', 'Logo']]
 
 #color = sample_colorscale("RdYlGn", pct)[0]
