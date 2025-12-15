@@ -1310,11 +1310,13 @@ def update_charts(team, view_mode, players, halves, opps):
 
     fig_off.update_layout(
         xaxis_fixedrange=True,
-        yaxis_fixedrange=True
+        yaxis_fixedrange=True,
+        dragmode=False
     )
     fig_def.update_layout(
         xaxis_fixedrange=True,
-        yaxis_fixedrange=True
+        yaxis_fixedrange=True,
+        dragmode=False
     )
 
         
