@@ -7,7 +7,7 @@ from plotly.colors import sample_colorscale
 import warnings
 warnings.filterwarnings("ignore")
 
-logo_path = r'currentSzn.csv'
+logo_path = r'/Users/sammurray/Desktop/Other/Basketball/NCAAB/Teams/teamCSVs/currentSzn.csv'
 LOGO_DF = pd.read_csv(logo_path)[['Team', 'Logo']]
 
 #color = sample_colorscale("RdYlGn", pct)[0]
@@ -19,7 +19,7 @@ COURT_LINE_WIDTH = 1.5
 COURT_SHADOW_COLOR = "rgba(0,0,0,0.18)"
 COURT_SHADOW_OFFSET = 0.6
 
-R_MAX = 32   # must match y-axis max in layout
+R_MAX = 25   # must match y-axis max in layout
 
 
 # ---- Zone geometry (feet, hoop-centered) ----
@@ -32,7 +32,7 @@ R_PAINT_EDGE = R_PAINT + 1
 R_PAINT = R_PAINT + 2.75
 R_3_EDGE = R_3 + 0.735
 R_3 = R_3# + 0.7
-R_MAX = 32
+R_MAX = 31
 
 ZONE_DRAW_ORDER = [
     "Paint (Non-Rim)",
@@ -349,7 +349,7 @@ def create_half_court_layout():
             showgrid=False, zeroline=False, showticklabels=False,
             scaleanchor="x", scaleratio=1
         ),
-        plot_bgcolor="white",
+        plot_bgcolor="#FFFFFF",
         margin=dict(l=4, r=4, t=8, b=4),
         legend=dict(
             orientation="v",
@@ -357,8 +357,9 @@ def create_half_court_layout():
             y=0.98,
             xanchor="left",
             x=0.02,
-            font=dict(size=16),
-            itemsizing="constant"
+            font=dict(size=14),
+            itemsizing="constant",
+            #valign='center'
         )
 
     )
@@ -524,7 +525,7 @@ def shooting_summary(dff):
     """
 
     if dff.empty:
-        return "0/0 – 0%", "0.000 pts/shot – 0% eFG"
+        return "No shots"
 
     fga = len(dff)
     fgm = int(dff["made"].sum())
@@ -542,8 +543,8 @@ def shooting_summary(dff):
     pps = points / fga if fga else 0
     efg = (fgm + 0.5 * three_made) / fga if fga else 0
 
-    fg_line = f"{fgm}/{fga} – {fg_pct:.1%}"
-    pps_line = f"{pps:.3f} pts/shot – {efg:.1%} eFG"
+    fg_line = f"{fgm}/{fga} · {fg_pct:.1%}"
+    pps_line = f"{pps:.3f} pts/shot · {efg:.1%} eFG"
 
     return fg_line, pps_line
 
@@ -993,8 +994,8 @@ def rotate_path(path_str):
 
 def add_chart_subtitle(fig, fg_line, pps_line):
     # closer to title (title is at y=0.98)
-    y1 = 0.955
-    y2 = 0.925
+    y1 = 0.99
+    y2 = 0.95
 
     common_font = dict(
         family="Funnel Display",
@@ -1007,7 +1008,7 @@ def add_chart_subtitle(fig, fg_line, pps_line):
         text=fg_line,           # no bold
         showarrow=False,
         font=dict(**common_font, size=14),
-        align="center"
+        align="right"
     )
 
     fig.add_annotation(
@@ -1015,8 +1016,8 @@ def add_chart_subtitle(fig, fg_line, pps_line):
         xref="paper", yref="paper",
         text=pps_line,
         showarrow=False,
-        font=dict(**common_font, size=13),
-        align="center"
+        font=dict(**common_font, size=14),
+        align="right"
     )
 
 
@@ -1204,7 +1205,8 @@ app.layout = dbc.Container(
                         html.Div(
                             dcc.Graph(
                                 id="offense-chart",
-                                config={"displayModeBar": False},
+                                config={"displayModeBar": False,
+                                        "scrollZoom": False},
                                 style={
                                     "height": "45vh",
                                     "minHeight": "320px"
@@ -1305,6 +1307,17 @@ def update_charts(team, view_mode, players, halves, opps):
     else:
         fig_off = make_zone_chart(off_df, chart_title(team, "Offense", team_logo))
         fig_def = make_zone_chart(def_df, chart_title(team, "Defense", team_logo))
+
+    fig_off.update_layout(
+        xaxis_fixedrange=True,
+        yaxis_fixedrange=True
+    )
+    fig_def.update_layout(
+        xaxis_fixedrange=True,
+        yaxis_fixedrange=True
+    )
+
+        
 
 
 
