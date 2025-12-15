@@ -1,0 +1,41 @@
+/* Load Funnel Display */
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300;400;500;600;700;800&display=swap');
+
+/* Global */
+html, body {
+    font-family: 'Funnel Display', -apple-system, BlinkMacSystemFont,
+                 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Dash Dropdowns */
+.Select-control,
+.Select-menu-outer,
+.Select-option,
+.Select-value,
+.Select-placeholder {
+    font-family: 'Funnel Display', sans-serif !important;
+    font-weight: 500;
+}
+
+/* Dropdown menu items */
+.VirtualizedSelectOption {
+    font-family: 'Funnel Display', sans-serif !important;
+}
+
+/* Plotly text */
+.js-plotly-plot {
+    font-family: 'Funnel Display', sans-serif !important;
+}
+
+.filters-accordion .accordion-button {
+    padding: 8px 12px;   /* was ~16px 20px */
+    font-size: 16px;
+    font-weight: 600;
+}
+
+
+.filters-accordion .accordion-body {
+    padding: 10px 12px;
+}
+
+
