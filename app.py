@@ -535,6 +535,8 @@ def load_team_data(team):
     print(team)
     print(dff["team_name"])
 
+    dff['team_name'] = dff['team_name'].str.replace('&#39;', "'")
+
     dff.loc[dff['team_name']=='St. John&#39;s (NY', 'team_name'] = "St. John's (NY)"
     dff.loc[dff['team_name']=='Miami (FL', 'team_name'] = "Miami (FL)"
 
