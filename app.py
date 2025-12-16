@@ -1187,7 +1187,7 @@ def assign_zone(row):
 
         # Wings
         if abs(a) > ANGLE_WING:
-            return "Right Mid" if a > 0 else "Left Mid"
+            return "Right Mid" if a < 0 else "Left Mid"
 
         # Top
         return "Top Mid"
@@ -1201,7 +1201,7 @@ def assign_zone(row):
 
     # Wings
     if abs(a) > ANGLE_WING:
-        return "Right Wing 3" if a > 0 else "Left Wing 3"
+        return "Right Wing 3" if a < 0 else "Left Wing 3"
 
     # Top
     return "Top 3"
