@@ -146,9 +146,9 @@ ZONE_FAMILY = {
 
 
 ZONE_PCT_RANGES = {
-    "three": (0.2, 0.50),   # 25% bad → 40% good
-    "mid":   (0.2, 0.60),   # 35% bad → 50% good
-    "paint": (0.3, 0.75),   # 50% bad → 70% good
+    "three": (0.25, 0.48),   # 25% bad → 40% good
+    "mid":   (0.25, 0.60),   # 35% bad → 50% good
+    "paint": (0.4, 0.8),   # 50% bad → 70% good
 }
 
 
@@ -1847,8 +1847,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
             fig_off,
             fig_def,
             team_title_with_logo(team, "Shot Charts", team_logo),
-            chart_header(team, "Offense" + ' - ' + '- '.join(players), team_logo),
-            chart_header(team, "Defense" + ' - ' + '- '.join(players), team_logo),
+            chart_header(team, "Offense" + ' - ' + ', '.join(players), team_logo),
+            chart_header(team, "Defense" + ' - ' + ', '.join(players), team_logo),
             show_stats_out_off,
             show_stats_out_def
         )
