@@ -7,7 +7,7 @@ from plotly.colors import sample_colorscale
 import warnings
 warnings.filterwarnings("ignore")
 
-logo_path = r'/Users/sammurray/Desktop/Other/Basketball/NCAAB/Teams/teamCSVs/currentSzn.csv'
+logo_path = r'currentSzn.csv'
 LOGO_DF = pd.read_csv(logo_path)[['Team', 'Logo']]
 LOGO_DF['Team'] = LOGO_DF['Team'].str.replace(' State$', ' St.', regex=True)
 LOGO_DF['Team'] = LOGO_DF['Team'].str.replace('St. John\'s', 'St. John\'s (NY)', regex=True)
