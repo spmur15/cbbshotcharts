@@ -146,9 +146,9 @@ ZONE_FAMILY = {
 
 
 ZONE_PCT_RANGES = {
-    "three": (0.1, 0.5),   # 25% bad → 40% good
-    "mid":   (0.1, 0.6),   # 35% bad → 50% good
-    "paint": (0.3, 0.9),   # 50% bad → 70% good
+    "three": (0.15, 0.5),   # 25% bad → 40% good
+    "mid":   (0.15, 0.6),   # 35% bad → 50% good
+    "paint": (0.4, 0.9),   # 50% bad → 70% good
 }
 
 
