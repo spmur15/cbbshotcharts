@@ -9,7 +9,8 @@ warnings.filterwarnings("ignore")
 
 logo_path = r'currentSzn.csv'
 LOGO_DF = pd.read_csv(logo_path)[['Team', 'Logo']]
-
+LOGO_DF['Team'] = LOGO_DF['Team'].str.replace(' State$', ' St.', regex=True)
+LOGO_DF['Team'] = LOGO_DF['Team'].str.replace('St. John\'s', 'St. John\'s (NY)', regex=True)
 #color = sample_colorscale("RdYlGn", pct)[0]
 #
 
@@ -21,6 +22,86 @@ COURT_SHADOW_OFFSET = 0.6
 
 R_MAX = 25   # must match y-axis max in layout
 
+team_p5 = ['Michigan',
+'Duke',
+'Arizona',
+'Iowa St.',
+'BYU',
+'Vanderbilt',
+'UConn',
+'Purdue',
+'Michigan St.',
+'Louisville',
+'Nebraska',
+'Illinois',
+'Alabama',
+'Houston',
+'Kansas',
+'Georgia',
+'Arkansas',
+'Iowa',
+'North Carolina',
+'Virginia',
+'Florida',
+"St. John\'s (NY)",
+'Texas Tech',
+'Indiana',
+'Kentucky',
+'Clemson',
+'Miami (FL)',
+'LSU',
+'Auburn',
+'Villanova',
+'Tennessee',
+'NC State',
+'Southern California',
+'Seton Hall',
+'SMU',
+'UCLA',
+'Butler',
+'UCF',
+'Colorado',
+'Wake Forest',
+'Ohio St.',
+'Oklahoma',
+'Arizona St.',
+'Virginia Tech',
+'California',
+'Washington',
+'TCU',
+'Baylor',
+'Notre Dame',
+'Kansas St.',
+'Texas',
+'Wisconsin',
+'Oklahoma St.',
+'Missouri',
+'Northwestern',
+'Texas A&M',
+'Providence',
+'Syracuse',
+'Ole Miss',
+'West Virginia',
+'Xavier',
+'Penn St.',
+'Stanford',
+'Creighton',
+'South Carolina',
+'Minnesota',
+'Georgetown',
+'Oregon',
+'Cincinnati',
+'Florida St.',
+'Mississippi St.',
+'DePaul',
+'Utah',
+'Maryland',
+'Marquette',
+'Pittsburgh',
+'Boston College',
+'Rutgers',
+'Georgia Tech']
+
 
 # ---- Zone geometry (feet, hoop-centered) ----
 R_RIM = 4
@@ -30,7 +111,7 @@ R_3 = 22
 R_RIM = 4.25
 R_PAINT_EDGE = R_PAINT + 1
 R_PAINT = R_PAINT + 2.75
-R_3_EDGE = R_3 + 0.735
+R_3_EDGE = R_3# + 0.735
 R_3 = R_3# + 0.7
 R_MAX = 31
 
@@ -450,6 +531,12 @@ def load_team_data(team):
     path = f"Shot Location Data//{team}_shot_data_2026.csv"
     dff = pd.read_csv(path)
 
+    print(team)
+    print(dff["team_name"])
+
+    dff.loc[dff['team_name']=='St. John&#39;s (NY', 'team_name'] = "St. John's (NY)"
+    dff.loc[dff['team_name']=='Miami (FL', 'team_name'] = "Miami (FL)"
+
     dff["offense_defense"] = np.where(
         dff["team_name"] == team, "Offense", "Defense"
     )
@@ -525,7 +612,7 @@ def shooting_summary(dff):
     """
 
     if dff.empty:
-        return ("No shots",'')
+        return ("", '')
 
     fga = len(dff)
     fgm = int(dff["made"].sum())
@@ -535,16 +622,23 @@ def shooting_summary(dff):
     threes = dff.get("zone", pd.Series(False, index=dff.index)).isin(
         ["Top 3", "Left Wing 3", "Right Wing 3", "Left Corner 3", "Right Corner 3"]
     )
+    #print(threes)
 
     three_made = int(dff.loc[threes, "made"].sum())
+    three_att = sum(threes)
     two_made = fgm - three_made
+    try: three_pct = three_made / three_att
+    except: three_pct = 0
+    try: two_pct = two_made / (fga-three_att)
+    except: two_pct = 0
 
     points = two_made * 2 + three_made * 3
     pps = points / fga if fga else 0
     efg = (fgm + 0.5 * three_made) / fga if fga else 0
 
-    fg_line = f"{fgm}/{fga} · {fg_pct:.1%}"
-    pps_line = f"{pps:.3f} pts/shot · {efg:.1%} eFG"
+    fg_line = f"{fg_pct:.1%} FG · {fgm}/{fga}"
+    pps_line = f"{efg:.1%} eFG · {pps:.3f} pts/shot"
+    three_two_line = ''#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
 
     return fg_line, pps_line
 
@@ -612,6 +706,192 @@ def chart_header(team, side, logo):
             html.Span(f"{side}")
         ]
     )
+
+
+def stat_card(label, value):
+    return html.Div(
+        [
+            html.Div(label, style={
+                "fontSize": "12px",
+                "color": "#777",
+                "textTransform": "uppercase",
+                "letterSpacing": "0.04em"
+            }),
+            html.Div(value, style={
+                "fontSize": "18px",
+                "fontWeight": 600,
+                "color": "#222"
+            })
+        ],
+        style={
+            "background": "#ffffff",
+            "borderRadius": "10px",
+            "padding": "10px 12px",
+            "boxShadow": "0 6px 16px rgba(0,0,0,0.12)",
+            "textAlign": "center"
+        }
+    )
+
+def stat_row(cards):
+    return dbc.Row(
+        [dbc.Col(card, xs=4) for card in cards],
+        className="g-2 mb-2"
+    )
+
+
+def shot_breakdown_stats(dff):
+    total = len(dff)
+
+    def pct(mask):
+        att = mask.sum()
+        made = dff.loc[mask, "made"].sum()
+        return f"{made/att:.1%}" if att else "—"
+
+    dff = dff.copy()
+    dff["dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
+    dff["angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
+    dff["zone"] = dff.apply(assign_zone, axis=1).astype(str)
+
+    # print(dff["zone"])
+
+    # Rim / Close = rim + non-rim paint
+    rim_close = dff["zone"].isin(["Rim", "Paint (Non-Rim)"])
+
+    # Midrange ring
+    mid = dff["zone"].str.contains("Mid")
+
+    # Threes
+    three = dff["zone"].str.contains("3")
+
+
+    left = dff["angle"] < -22
+    middle = dff["angle"].between(-22, 22)
+    right = dff["angle"] > 22
+
+    rim_f = rim_close.mean() * 100 if total else 0
+    mid_f = mid.mean() * 100 if total else 0
+    three_f = three.mean() * 100 if total else 0
+
+
+    left_f = left.mean() * 100 if total else 0
+    midline_f = middle.mean() * 100 if total else 0
+    right_f = right.mean() * 100 if total else 0
+
+    return {
+        "fg": [
+            ("Close FG%", pct(rim_close)),
+            ("Mid FG%", pct(mid)),
+            ("3P FG%", pct(three)),
+        ],
+        "side_fg": [
+            ("Left FG%", pct(left)),
+            ("Middle FG%", pct(middle)),
+            ("Right FG%", pct(right)),
+        ],
+        "freq_vals": (rim_f, mid_f, three_f),
+        "side_freq_vals": (left_f, midline_f, right_f),
+    }
+
+
+
+
+
+def freq_bar(labels, values, colors=None):
+    if colors is None:
+        colors = ["#4CAF50", "#FFC107", "#2196F3"]
+
+    return html.Div(
+        [
+            # --- stacked bar ---
+            html.Div(
+                [
+                    html.Div(
+                        style={
+                            "width": f"{v:.1f}%",
+                            "backgroundColor": c,
+                            "height": "100%",
+                        }
+                    )
+                    for v, c in zip(values, colors)
+                ],
+                style={
+                    "display": "flex",
+                    "height": "12px",
+                    "borderRadius": "6px",
+                    "overflow": "hidden",
+                    "background": "#eee"
+                }
+            ),
+
+            # --- legend with colored dots ---
+            html.Div(
+                [
+                    html.Span(
+                        "% of shots:",
+                        style={"fontWeight": 600, "marginRight": "2px"}
+                    ),
+
+                    *[
+                        html.Span(
+                            [
+                                # colored dot
+                                html.Span(
+                                    "●",
+                                    style={
+                                        "color": c,
+                                        "fontSize": "14px",
+                                        "marginRight": "4px",
+                                        "lineHeight": "1"
+                                    }
+                                ),
+                                f"{l}: {v:.1f}%"
+                            ],
+                            style={
+                                "margin": "0 6px",
+                                "whiteSpace": "nowrap"
+                            }
+                        )
+                        for l, v, c in zip(labels, values, colors)
+                    ]
+                ],
+                style={
+                    "fontSize": "12px",
+                    "color": "#666",
+                    "marginTop": "6px",
+                    "display": "flex",
+                    "justifyContent": "center",
+                    "flexWrap": "wrap",
+                    "alignItems": "center"
+                }
+            )
+        ],
+        style={
+            "background": "#fff",
+            "borderRadius": "10px",
+            "padding": "10px 12px",
+            "boxShadow": "0 6px 16px rgba(0,0,0,0.12)",
+        }
+    )
+
+
+def empty_shot_figure(message="No shots match the selected filters"):
+    fig = go.Figure(layout=create_half_court_layout())
+
+    fig.add_annotation(
+        text=message,
+        x=0.5, y=0.8,
+        xref="paper", yref="paper",
+        showarrow=False,
+        font=dict(size=16, color="#666", family="Funnel Display"),
+        align="center"
+    )
+
+    fig.update_layout(
+        plot_bgcolor="#fafafa",
+        paper_bgcolor="#fafafa"
+    )
+
+    return fig
 
 
 
@@ -726,6 +1006,8 @@ def make_shot_chart(dff, title):
     dff2.loc[:, "angle"] = np.degrees(np.arctan2(dff2["y_plot"], -dff2["x_plot"]))
     dff2.loc[:, "zone"]  = dff2.apply(assign_zone, axis=1)
 
+    #print(shooting_summary(dff2))
+
     fg_line, pps_line = shooting_summary(dff2)
     add_chart_subtitle(fig, fg_line, pps_line)
 
@@ -816,7 +1098,7 @@ def make_zone_chart(dff, title):
             y=[y_txt],
             text=[f"{r.made}/{r.att}<br>{r.pct:.0%}"],
             mode="text",
-            textfont=dict(size=14, family="Funnel Display"),
+            textfont=dict(size=14, family="Funnel Display",color='black'),
             showlegend=False,
             #fillcolor='#777'
         ))
@@ -996,6 +1278,7 @@ def add_chart_subtitle(fig, fg_line, pps_line):
     # closer to title (title is at y=0.98)
     y1 = 0.99
     y2 = 0.95
+    y3 = 0.91
 
     common_font = dict(
         family="Funnel Display",
@@ -1003,7 +1286,7 @@ def add_chart_subtitle(fig, fg_line, pps_line):
     )
 
     fig.add_annotation(
-        x=0.5, y=y1,
+        x=0.99, y=y1,
         xref="paper", yref="paper",
         text=fg_line,           # no bold
         showarrow=False,
@@ -1012,7 +1295,7 @@ def add_chart_subtitle(fig, fg_line, pps_line):
     )
 
     fig.add_annotation(
-        x=0.5, y=y2,
+        x=0.99, y=y2,
         xref="paper", yref="paper",
         text=pps_line,
         showarrow=False,
@@ -1036,7 +1319,7 @@ server = app.server  # for Render
 # opp_options = [{"label": o, "value": o} for o in sorted(df[OPP_COL].dropna().unique())]
 team_options = [
     {"label": t, "value": t}
-    for t in ["Illinois", "Iowa", "Wisconsin", "Kansas", "Marquette", "Michigan"]
+    for t in sorted(team_p5)
 ]
 
 
@@ -1130,6 +1413,7 @@ app.layout = dbc.Container(
                                             ),
                                             xs=6, md=2
                                         ),
+                                        
                                         dbc.Col(
                                             dcc.Dropdown(
                                                 id="quad-dd",
@@ -1144,6 +1428,15 @@ app.layout = dbc.Container(
                                                 id="opp-dd",
                                                 multi=True,
                                                 placeholder="Opponent"
+                                            ),
+                                            xs=12, md=4
+                                        ),
+                                        dbc.Col(
+                                            dcc.Dropdown(
+                                                id="loc-dd",
+                                                options=['Home', 'Away', 'Neutral'],
+                                                multi=True,
+                                                placeholder="Location"
                                             ),
                                             xs=12, md=4
                                         ),
@@ -1195,6 +1488,26 @@ app.layout = dbc.Container(
             labelCheckedClassName="btn btn-dark shadow"
         ),
 
+        html.Div(
+            dbc.Checkbox(
+                id="show-shot-stats",
+                label="Show shot breakdown",
+                value=False,
+                inputStyle={"marginRight": "8px"},
+            ),
+            style={
+                "display": "flex",
+                "alignItems": "center",
+                "justifyContent": "center",
+                "gap": "6px",
+                "fontSize": "14px",
+                "color": "#444",
+                "marginBottom": "8px"
+            }
+        ),
+
+
+
         html.Hr(),
 
 
@@ -1218,7 +1531,9 @@ app.layout = dbc.Container(
                                 "boxShadow": "0 10px 28px rgba(0,0,0,0.18)",
                                 "padding": "6px"
                             }
-                        )],
+                        ),
+                        html.Div(id="offense-shot-stats", className="mt-2"),
+                        ],
                         xs=12, md=6,
                     ),
 
@@ -1240,7 +1555,9 @@ app.layout = dbc.Container(
                                 "boxShadow": "0 10px 28px rgba(0,0,0,0.18)",
                                 "padding": "6px"
                             }
-                        )],
+                        ),
+                        html.Div(id="defense-shot-stats", className="mt-2"),
+                        ],
                         xs=12, md=6,
                     ),
                 ],
@@ -1261,21 +1578,38 @@ app.layout = dbc.Container(
     Output("title-text", "children"),
     Output("offense-title", "children"),
     Output("defense-title", "children"),
+    Output("offense-shot-stats", "children"),
+    Output("defense-shot-stats", "children"),
+
+
 
     Input("team-dd", "value"),
     Input("view-mode", "value"),
     Input("player-dd", "value"),
     Input("half-dd", "value"),
     Input("opp-dd", "value"),
+    Input("loc-dd", "value"),
+    Input("quad-dd", "value"),
+    Input("show-shot-stats", "value")
 )
 
-def update_charts(team, view_mode, players, halves, opps):
+def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats):
 
     # Load correct team file
     dff = load_team_data(team)
 
 
-    team_logo = LOGO_DF.loc[LOGO_DF["Team"] == team, "Logo"].iloc[0]
+    team_logo = LOGO_DF.loc[LOGO_DF["Team"] == team, "Logo"]
+
+    
+    try: team_logo = team_logo.iloc[0]
+    except: team_logo = "logos/west-virginia-mountaineers.png"
+
+    if team == 'Miami (FL)':
+        team_logo = "logos/Miami-FL-Hurricanes.png"
+
+    if team == 'NC State':
+        team_logo = "logos/NC-State-Wolfpack.png"
 
     if pd.isna(team_logo) or team_logo == "":
         team_logo = "/assets/logos/west-virginia-mountaineers.png"
@@ -1284,16 +1618,31 @@ def update_charts(team, view_mode, players, halves, opps):
 
 
 
+    #print(loc)
+
+    if players: dff = dff[dff[PLAYER_COL].isin(players)]
+    if halves: dff = dff[dff[HALF_COL].isin(halves)]
+    if opps: dff = dff[dff[OPP_COL].isin(opps)]
+    if loc: dff = dff[dff['loc'].isin(loc)]
+    if quad: dff = dff[dff['Quad'].isin(quad)]
+
+    # --------------------------------------------------
+    # 🚨 SAFEGUARD: no shots after filtering
+    # --------------------------------------------------
+    if dff.empty:
+        empty_fig = empty_shot_figure()
+
+        return (
+            empty_fig,
+            empty_fig,
+            team_title_with_logo(team, "Shot Charts", team_logo),
+            chart_header(team, "Offense", team_logo),
+            chart_header(team, "Defense", team_logo),
+            [],   # no offense stats
+            []    # no defense stats
+        )
 
 
-    if players:
-        dff = dff[dff[PLAYER_COL].isin(players)]
-
-    if halves:
-        dff = dff[dff[HALF_COL].isin(halves)]
-
-    if opps:
-        dff = dff[dff[OPP_COL].isin(opps)]
 
     dff = standardize_to_right_basket(dff, x_col="x", y_col="y")
     dff = to_feet_hoop_centered(dff)
@@ -1319,9 +1668,137 @@ def update_charts(team, view_mode, players, halves, opps):
         dragmode=False
     )
 
+    if not show_stats:
+        return (
+            fig_off,
+            fig_def,
+            team_title_with_logo(team, "Shot Charts", team_logo),
+            chart_header(team, "Offense", team_logo),
+            chart_header(team, "Defense", team_logo),
+            [],
+            []
+        )
+
+
+    stats = shot_breakdown_stats(off_df)
+
+    show_stats_out_off = [
+
+        html.Div(
+            "Shot Range",
+            style={
+                "textAlign": "center",
+                "fontSize": "13px",
+                "fontWeight": 600,
+                "color": "#666",
+                "marginBottom": "6px",
+                "letterSpacing": "0.04em",
+                "textTransform": "uppercase"
+            }
+        ),
+
+        stat_row([stat_card(*s) for s in stats["fg"]]),
+
+        html.Div(style={"height": "6px"}),
+
         
 
+        freq_bar(
+            ["Rim", "Mid", "3P"],
+            stats["freq_vals"]
+        ),
 
+        html.Hr(style={
+            "margin": "12px 0",
+            "opacity": 0.4
+        }),
+        html.Div(
+            "Court Thirds",
+            style={
+                "textAlign": "center",
+                "fontSize": "13px",
+                "fontWeight": 600,
+                "color": "#666",
+                "marginBottom": "6px",
+                "letterSpacing": "0.04em",
+                "textTransform": "uppercase"
+            }
+        ),
+
+
+        stat_row([stat_card(*s) for s in stats["side_fg"]]),
+
+        html.Div(style={"height": "6px"}),
+
+        freq_bar(
+            ["Left", "Middle", "Right"],
+            stats["side_freq_vals"]
+        ),
+    ]
+
+    
+    # show_stats_out_off =[
+    #         stat_row([stat_card(*s) for s in stats["fg"]]),
+    #         stat_row([stat_card(*s) for s in stats["freq"]]),
+    #         stat_row([stat_card(*s) for s in stats["side_fg"]]),
+    #         stat_row([stat_card(*s) for s in stats["side_freq"]]),
+    #         ]
+
+    stats = shot_breakdown_stats(def_df)
+
+    show_stats_out_def = [
+
+        html.Div(
+            "Shot Range",
+            style={
+                "textAlign": "center",
+                "fontSize": "13px",
+                "fontWeight": 600,
+                "color": "#666",
+                "marginBottom": "6px",
+                "letterSpacing": "0.04em",
+                "textTransform": "uppercase"
+            }
+        ),
+
+        stat_row([stat_card(*s) for s in stats["fg"]]),
+
+        html.Div(style={"height": "6px"}),
+
+        freq_bar(
+            ["Rim", "Mid", "3P"],
+            stats["freq_vals"]
+        ),
+
+        html.Div(style={"height": "10px"}),
+
+
+        html.Hr(style={
+            "margin": "12px 0",
+            "opacity": 0.4
+        }),
+        html.Div(
+            "Court Thirds",
+            style={
+                "textAlign": "center",
+                "fontSize": "13px",
+                "fontWeight": 600,
+                "color": "#666",
+                "marginBottom": "6px",
+                "letterSpacing": "0.04em",
+                "textTransform": "uppercase"
+            }
+        ),
+
+        stat_row([stat_card(*s) for s in stats["side_fg"]]),
+
+        html.Div(style={"height": "6px"}),
+
+        freq_bar(
+            ["Left", "Middle", "Right"],
+            stats["side_freq_vals"]
+        ),
+    ]
 
     return (
         fig_off,
@@ -1329,6 +1806,8 @@ def update_charts(team, view_mode, players, halves, opps):
         team_title_with_logo(team, "Shot Charts", team_logo),
         chart_header(team, "Offense", team_logo),
         chart_header(team, "Defense", team_logo),
+        show_stats_out_off,
+        show_stats_out_def
     )
 
 
