@@ -1344,7 +1344,7 @@ team_options = [
 app.layout = dbc.Container(
     fluid=True,
     style={
-        "backgroundColor": "#f2f3f5",
+        "backgroundColor": "#f0f0f0",
         "minHeight": "100vh",
         "paddingBottom": "40px",
        # "fontFamily": "'Funnel Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
@@ -1402,7 +1402,7 @@ app.layout = dbc.Container(
             className="mb-4"
         ),
 
-        html.Br(),
+        #html.Br(),
 
         dbc.Row(
             dbc.Col(
@@ -1503,23 +1503,36 @@ app.layout = dbc.Container(
             labelCheckedClassName="btn btn-dark shadow"
         ),
 
+        #html.Br(),
+
         html.Div(
             dbc.Checkbox(
                 id="show-shot-stats",
-                label="Show shot breakdown",
+                label="Show shot stats",
                 value=False,
-                inputStyle={"marginRight": "8px"},
+                inputStyle={
+                    "marginRight": "10px",
+                    "transform": "scale(1.5)",   # 🔹 increase checkbox size
+                    "cursor": "pointer",
+                    "color":'black'
+                },
+                labelStyle={
+                    "cursor": "pointer"
+                }
             ),
             style={
                 "display": "flex",
                 "alignItems": "center",
                 "justifyContent": "center",
                 "gap": "6px",
-                "fontSize": "14px",
-                "color": "#444",
-                "marginBottom": "8px"
+                "fontSize": "16px",
+                "color": "#666",
+                "marginBottom": "2px",
+                "marginTop": "18px",
+
             }
         ),
+
 
 
 
