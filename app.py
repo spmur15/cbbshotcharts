@@ -100,7 +100,9 @@ team_p5 = ['Michigan',
 'Pittsburgh',
 'Boston College',
 'Rutgers',
-'Georgia Tech']
+'Georgia Tech',
+'Gonzaga'
+          ]
 
 
 # ---- Zone geometry (feet, hoop-centered) ----
