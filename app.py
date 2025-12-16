@@ -7,7 +7,7 @@ from plotly.colors import sample_colorscale
 import warnings
 warnings.filterwarnings("ignore")
 
-logo_path = r'currentSzn.csv'
+logo_path = r'/Users/sammurray/Desktop/Other/Basketball/NCAAB/Teams/teamCSVs/currentSzn.csv'
 LOGO_DF = pd.read_csv(logo_path)[['Team', 'Logo']]
 LOGO_DF['Team'] = LOGO_DF['Team'].str.replace(' State$', ' St.', regex=True)
 LOGO_DF['Team'] = LOGO_DF['Team'].str.replace('St. John\'s', 'St. John\'s (NY)', regex=True)
@@ -100,9 +100,7 @@ team_p5 = ['Michigan',
 'Pittsburgh',
 'Boston College',
 'Rutgers',
-'Georgia Tech',
-'Gonzaga'
-          ]
+'Georgia Tech']
 
 
 # ---- Zone geometry (feet, hoop-centered) ----
@@ -749,10 +747,25 @@ def shot_breakdown_stats(dff):
         made = dff.loc[mask, "made"].sum()
         return f"{made/att:.1%}" if att else "—"
 
+
+    # def efg(mask):
+    #     three = dff.loc[mask, "3P_made"].sum()
+    #     two = dff.loc[mask, "2P_made"].sum()
+    #     att = sum(mask)
+    #     return ((three * 1.5 + two) / att)
+    
+
+
     dff = dff.copy()
     dff["dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
     dff["angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
     dff["zone"] = dff.apply(assign_zone, axis=1).astype(str)
+
+    # dff['3P'] = np.where(dff['zone'].str.contains('3'), True, False)
+    # dff.loc[dff['3P'] & dff['result']=='made', '3P_made']=True
+    # dff.loc[~dff['3P'] & dff['result']=='made', '2P_made']=True
+
+    
 
     # print(dff["zone"])
 
@@ -1671,7 +1684,19 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     )
 
     if not show_stats:
-        return (
+        if players:
+
+            return (
+                fig_off,
+                fig_def,
+                team_title_with_logo(team, "Shot Charts", team_logo),
+                chart_header(team, "Offense" + ' - ' + ', '.join(players), team_logo),
+                chart_header(team, "Defense" + ' - ' + ', '.join(players), team_logo),
+                [],
+                []
+            )
+        else:
+            return (
             fig_off,
             fig_def,
             team_title_with_logo(team, "Shot Charts", team_logo),
@@ -1679,7 +1704,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
             chart_header(team, "Defense", team_logo),
             [],
             []
-        )
+            )
 
 
     stats = shot_breakdown_stats(off_df)
@@ -1802,7 +1827,20 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         ),
     ]
 
-    return (
+
+    if players:
+
+        return (
+            fig_off,
+            fig_def,
+            team_title_with_logo(team, "Shot Charts", team_logo),
+            chart_header(team, "Offense" + ' - ' + '- '.join(players), team_logo),
+            chart_header(team, "Defense" + ' - ' + '- '.join(players), team_logo),
+            show_stats_out_off,
+            show_stats_out_def
+        )
+    else:
+        return (
         fig_off,
         fig_def,
         team_title_with_logo(team, "Shot Charts", team_logo),
@@ -1810,7 +1848,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         chart_header(team, "Defense", team_logo),
         show_stats_out_off,
         show_stats_out_def
-    )
+        )
 
 
 @app.callback(
