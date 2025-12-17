@@ -370,7 +370,7 @@ def create_half_court_layout():
     shapes.append(dict(
         type="rect",
         x0=-15.0, y0=-6.0, x1=5.25, y1=6.0,
-        line=dict(color=, width=COURT_LINE_WIDTH)
+        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH)
 
     ))
 
