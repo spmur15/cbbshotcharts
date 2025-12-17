@@ -108,8 +108,8 @@ R_3 = 22
 R_RIM = 4.75
 R_PAINT_EDGE = R_PAINT + 1
 R_PAINT = R_PAINT + 2.6
-R_3_EDGE = R_3# + 0.735
-R_3 = R_3# + 0.7
+R_3_EDGE = R_3 + 0.5
+R_3 = R_3 + 0.5
 R_MAX = 31
 
 ZONE_DRAW_ORDER = [
