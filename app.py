@@ -1778,6 +1778,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     if team == 'CSUN': team_logo = "logos/Cal-State-Northridge-Matadors.png"
     if team == 'Nicholls': team_logo = "logos/Nicholls-State-Colonels.png"
     if team == 'IU Indy': team_logo = "logos/IU-indy-jaguars.png"
+    if team == 'Michigan': team_logo = "logos/michigan-wolverines.png"
     if team == 'McNeese': team_logo = "logos/mcneese-state.png"
     if team == 'St. John\'s (NY)': team_logo = "logos/st.-john's-red-storm.png"
     if team == 'SIUE': team_logo = "logos/SIUE.png"
