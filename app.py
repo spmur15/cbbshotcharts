@@ -286,8 +286,8 @@ ZONE_LABEL_POS = {
     "Right Mid Low": (-12, 10),
 
     "Top 3": (0, 30),
-    "Left Wing 3": (16, 26),
-    "Right Wing 3": (-16, 26),
+    "Left Wing 3": (16, ),
+    "Right Wing 3": (-16, ),
     "Corner 3": (22, 8),
 }
 # ZONE_LABEL_POS.update({
@@ -314,7 +314,7 @@ ARC_Y = R_3PT * (np.sin(thetas)*1.025)
 # --------------------------------------------------
 # LOAD DATA (loaded once at startup)
 # --------------------------------------------------
-# DATA_PATH = "Shot Location Data//Wisconsin_shot_data_2026.csv"
+# DATA_PATH = "Shot Location Data//Wisconsin_shot_data_20.csv"
 # df = pd.read_csv(DATA_PATH)
 # df['offense_defense'] = np.where(df['team_name']=='Wisconsin', 'Offense', 'Defense')
 # df['made'] = np.where(df['result']=='made', 1, 0)
@@ -523,9 +523,9 @@ def load_team_data(team):
     """
     Load shot data for selected team.
     Expected filename format:
-    Shot Location Data/{Team}_shot_data_2026.csv
+    Shot Location Data/{Team}_shot_data_20.csv
     """
-    path = f"Shot Location Data//{team}_shot_data_2026.csv"
+    path = f"Shot Location Data//{team}_shot_data_20.csv"
     dff = pd.read_csv(path)
 
     #print(team)
@@ -591,15 +591,15 @@ def zone_label_xy(zone):
         return (-12, 11)
 
     if zone == "Top 3":
-        return (0, 25.65)
+        return (0, 25.85)
     if zone == "Left Wing 3":
         return (19, 18)
     if zone == "Right Wing 3":
         return (-19, 18)
     if zone == "Right Corner 3":
-        return (26, 2)
+        return (26.25, 2)
     if zone == "Left Corner 3":
-        return (-26, 2)
+        return (-26.25, 2)
 
     # ✅ NEW BASELINE ZONES
     if zone == "Left Mid Low":
