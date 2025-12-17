@@ -99,6 +99,7 @@ team_p5 = [
 ]
 
 
+
 # ---- Zone geometry (feet, hoop-centered) ----
 R_RIM = 4
 R_PAINT = 8
@@ -142,9 +143,9 @@ ZONE_FAMILY = {
 
 
 ZONE_PCT_RANGES = {
-    "three": (0.15, 0.6),   # 25% bad → 40% good
-    "mid":   (0.15, 0.7),   # 35% bad → 50% good
-    "paint": (0.3, 0.9),   # 50% bad → 70% good
+    "three": (0.2, 0.50),   # 25% bad → 40% good
+    "mid":   (0.2, 0.60),   # 35% bad → 50% good
+    "paint": (0.3, 0.75),   # 50% bad → 70% good
 }
 
 
@@ -527,13 +528,18 @@ def load_team_data(team):
     path = f"Shot Location Data//{team}_shot_data_2026.csv"
     dff = pd.read_csv(path)
 
-    print(team)
-    print(dff["team_name"])
+    #print(team)
+    #print(dff["team_name"])
+
+    #dff.loc[dff['team_name']=='St. John&#39;s (NY', 'team_name'] = "St. John's (NY)"
+    #dff.loc[dff['team_name']=='Miami (FL', 'team_name'] = "Miami (FL)"
+
+    #print(dff.loc[dff['team_name'].str.contains('\&'), 'team_name'].value_counts())
 
     dff['team_name'] = dff['team_name'].str.replace('&#39;', "'")
+    dff['team_name'] = dff['team_name'].str.replace('&amp;', "&")
 
-    dff.loc[dff['team_name']=='St. John&#39;s (NY', 'team_name'] = "St. John's (NY)"
-    dff.loc[dff['team_name']=='Miami (FL', 'team_name'] = "Miami (FL)"
+    dff.loc[dff['team_name'].str.contains('\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('\('), 'team_name'] + ')'
 
     dff["offense_defense"] = np.where(
         dff["team_name"] == team, "Offense", "Defense"
@@ -907,6 +913,90 @@ def empty_shot_figure(message="No shots match the selected filters"):
     return fig
 
 
+def formatNames(ncaa, col='team_name'):
+
+    ncaa[col] = ncaa[col].str.replace(' St.$', ' State', regex=True)
+    ncaa[col] = ncaa[col].str.replace(r'Mississippi Val.', 'Mississippi Valley State')
+    ncaa[col] = ncaa[col].str.replace("Miami (FL)", "Miami FL")
+    ncaa[col] = ncaa[col].str.replace("LIU", "Long Island")
+    ncaa[col] = ncaa[col].str.replace("UNI", "Northern Iowa")
+    ncaa[col] = ncaa[col].str.replace("Ark.-Pine Bluff", "Arkansas Pine Bluff")
+    ncaa[col] = ncaa[col].str.replace("Ky.", "Kentucky", regex=True)
+    ncaa[col] = ncaa[col].str.replace("VMI", "Virginia Military", regex=True)
+    ncaa[col] = ncaa[col].str.replace("Saint Mary's (CA)", "Saint Mary's", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UIW", "Incarnate Word", regex=True)
+    ncaa[col] = ncaa[col].str.replace("Ga.", "Georgia", regex=True)
+    ncaa[col] = ncaa[col].str.replace("Fla.", "Florida", regex=True)
+    ncaa[col] = ncaa[col].str.replace("St. John's (NY)", "St. John's", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UTRGV", "UT Rio Grande Valley", regex=True)
+    ncaa[col] = ncaa[col].str.replace("Purdue Fort Wayne", "Purdue FW", regex=True)
+    ncaa[col] = ncaa[col].str.replace("Ind.", "Indiana", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Mo.", "Missouri", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Ala.", "Alabama", regex=False)
+    ncaa[col] = ncaa[col].str.replace("FGCU", "Florida Gulf Coast", regex=False)
+    ncaa[col] = ncaa[col].str.replace("FDU", "Fairleigh Dickinson", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Mich.", "Michigan", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Miss.", "Mississippi", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Ill.", "Illinois", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Caro.", "Carolina", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Tenn.", "Tennessee", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Ark.", "Arkansas", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Colo.", "Colorado", regex=False)
+    ncaa[col] = ncaa[col].str.replace("So.", "Southern", regex=False)
+    ncaa[col] = ncaa[col].str.replace("La.", "Louisiana", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Ariz.", "Arizona", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Wash.", "Washington", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Conn.", "Connecticut", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Southern California", "USC", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Bethune-Cookman", "Bethune Cookman", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Alcorn", "Alcorn State", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Gardner-Webb", "Gardner Webb", regex=False)
+    ncaa[col] = ncaa[col].str.replace("A&M-Corpus Christi", "Texas A&M CC", regex=False)
+    ncaa[col] = ncaa[col].str.replace("SFA", "Stephen F Austin", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UT Martin", "Tennessee Martin", regex=False)
+    ncaa[col] = ncaa[col].str.replace("SFA", "Stephen F Austin", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UT Martin", "Tennessee Martin", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Middle Tennessee", "Middle Tennessee State", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UNCW", "UNC Wilmington", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Grambling", "Grambling State", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Lamar University", "Lamar", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Miami (OH)", "Miami OH", regex=False)
+    ncaa[col] = ncaa[col].str.replace("California Baptist", "Cal Baptist", regex=False)
+    ncaa[col] = ncaa[col].str.replace("LMU (CA)", "Loyola Marymount", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Sam Houston", "Sam Houston State", regex=False)
+    ncaa[col] = ncaa[col].str.replace("FIU", "Florida International", regex=False)
+    ncaa[col] = ncaa[col].str.replace("NIU", "Northern Illinois", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Mount St. Mary's", "Mount Saint Mary's", regex=False)
+    ncaa[col] = ncaa[col].str.replace("CSU Bakersfield", "Cal State Bakersfield", regex=False)
+    ncaa[col] = ncaa[col].str.replace("N.C. A&T", "North Carolina A&T", regex=False)
+    ncaa[col] = ncaa[col].str.replace("St. Thomas (MN)", "St. Thomas", regex=False)
+    ncaa[col] = ncaa[col].str.replace("East Texas A&M", "Texas A&M Commerce", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Boston U.", "Boston U", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Prairie View", "Prairie View A&M", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Loyola Maryland", "Loyola MD", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Cal St. Fullerton", "Cal State Fullerton", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Army West Point", "Army", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UTSA", "UT San Antonio", regex=False)
+    ncaa[col] = ncaa[col].str.replace("App State", "Appalachian State", regex=False)
+    ncaa[col] = ncaa[col].str.replace("ETSU", "East Tennessee State", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Southern Mississippi", "Southern Miss", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UIC", "Illinois Chicago", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Massachusetts", "UMass", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Seattle U", "Seattle", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Southern U.", "Southern", regex=False)
+    ncaa[col] = ncaa[col].str.replace("N.C. Central", "North Carolina Central", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Southeast Missouri State", "Southeast Missouri", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UMES", "Maryland Eastern Shore", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Purdue FW", "Purdue Fort Wayne", regex=False)
+    ncaa[col] = ncaa[col].str.replace("ULM", "Louisiana Monroe", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Queens (NC)", "Queens", regex=False)
+    ncaa[col] = ncaa[col].str.replace("UAlbany", "Albany", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Col. of Charleston", "Charleston", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Georgiadner-Webb", "Gardner Webb", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Western Georgia", "West Georgia", regex=False)
+
+    return ncaa
+
 
 # --------------------------------------------------
 # SHOT CHART FUNCTION
@@ -1185,7 +1275,7 @@ def assign_zone(row):
 
         # Wings
         if abs(a) > ANGLE_WING:
-            return "Right Mid" if a < 0 else "Left Mid"
+            return "Right Mid" if a > 0 else "Left Mid"
 
         # Top
         return "Top Mid"
@@ -1199,7 +1289,7 @@ def assign_zone(row):
 
     # Wings
     if abs(a) > ANGLE_WING:
-        return "Right Wing 3" if a < 0 else "Left Wing 3"
+        return "Right Wing 3" if a > 0 else "Left Wing 3"
 
     # Top
     return "Top 3"
@@ -1624,27 +1714,37 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     # Load correct team file
     dff = load_team_data(team)
 
+    LOGO_DF['Team'] = LOGO_DF['Team'].str.strip()
+    temp = pd.DataFrame([team], columns=['tm'])
+    temp2 = formatNames(ncaa=temp, col='tm')
 
-    team_logo = LOGO_DF.loc[LOGO_DF["Team"] == team, "Logo"]
+    team_logo_str = temp2['tm'].iloc[0]
+    #print(team_logo_str)
+
+    team_logo_str = re.sub(' State$', ' St.', team_logo_str)
+    #team_logo_str = re.sub('West Georgia', ' St.', team_logo_str)
+
+
+    team_logo = LOGO_DF.loc[LOGO_DF["Team"] == team_logo_str, "Logo"]
 
     
     try: team_logo = team_logo.iloc[0]
-    except: team_logo = "logos/west-virginia-mountaineers.png"
+    except: team_logo = "logos/unknown.png"
 
-    if team == 'Miami (FL)':
-        team_logo = "logos/Miami-FL-Hurricanes.png"
+    if team == 'Miami (FL)': team_logo = "logos/Miami-FL-Hurricanes.png"
+    if team_logo_str == 'West Georgia': team_logo = "logos/west-georgia-wolves.png"
+    if team == 'NC State': team_logo = "logos/NC-State-Wolfpack.png"
+    if team == 'CSUN': team_logo = "logos/Cal-State-Northridge-Matadors.png"
+    if team == 'Nicholls': team_logo = "logos/Nicholls-State-Colonels.png"
+    if team == 'IU Indy': team_logo = "logos/iu-indy-jaguars.png"
+    if team == 'McNeese': team_logo = "logos/mcneese-state.png"
+    if team == 'St. John\'s (NY)': team_logo = "logos/st.-john's-red-storm.png"
+    if team == 'SIUE': team_logo = "logos/SIUE.png"
+    if pd.isna(team_logo) or team_logo == "": team_logo = "/assets/logos/unknown.png"
+    else: team_logo = f"/assets/{team_logo}"
 
-    if team == 'NC State':
-        team_logo = "logos/NC-State-Wolfpack.png"
-
-    if pd.isna(team_logo) or team_logo == "":
-        team_logo = "/assets/logos/west-virginia-mountaineers.png"
-    else:
-        team_logo = f"/assets/{team_logo}"
-
-
-
-    #print(loc)
+    #print(team_logo)
+    #print('\n---\n')
 
     if players: dff = dff[dff[PLAYER_COL].isin(players)]
     if halves: dff = dff[dff[HALF_COL].isin(halves)]
@@ -1845,8 +1945,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
             fig_off,
             fig_def,
             team_title_with_logo(team, "Shot Charts", team_logo),
-            chart_header(team, "Offense" + ' - ' + ', '.join(players), team_logo),
-            chart_header(team, "Defense" + ' - ' + ', '.join(players), team_logo),
+            chart_header(team, "Offense" + ' - ' + '- '.join(players), team_logo),
+            chart_header(team, "Defense" + ' - ' + '- '.join(players), team_logo),
             show_stats_out_off,
             show_stats_out_def
         )
