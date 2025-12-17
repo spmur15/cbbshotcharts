@@ -581,7 +581,7 @@ def zone_label_xy(zone):
         return (0, 0)
 
     if zone == "Paint (Non-Rim)":
-        return (0, 6.65)
+        return (0, 6.75)
 
     if zone == "Top Mid":
         return (0, 17.5)
