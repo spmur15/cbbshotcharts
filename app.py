@@ -15,7 +15,7 @@ LOGO_DF['Team'] = LOGO_DF['Team'].str.replace('St. John\'s', 'St. John\'s (NY)',
 #
 
 COURT_LINE_COLOR = "#333"
-COURT_LINE_WIDTH = 1.5
+COURT_LINE_WIDTH = 1.25
 
 COURT_SHADOW_COLOR = "rgba(0,0,0,0.18)"
 COURT_SHADOW_OFFSET = 0.6
@@ -103,7 +103,7 @@ team_p5 = [
 # ---- Zone geometry (feet, hoop-centered) ----
 R_RIM = 4
 R_PAINT = 8
-R_3 = 21
+R_3 = 22
 
 R_RIM = 4.75
 R_PAINT_EDGE = R_PAINT + 1
@@ -581,25 +581,25 @@ def zone_label_xy(zone):
         return (0, 0)
 
     if zone == "Paint (Non-Rim)":
-        return (0, 6.5)
+        return (0, 6.65)
 
     if zone == "Top Mid":
         return (0, 17.5)
     if zone == "Left Mid":
-        return (12, 12)
+        return (12, 11)
     if zone == "Right Mid":
-        return (-12, 12)
+        return (-12, 11)
 
     if zone == "Top 3":
-        return (0, 26.5)
+        return (0, 25.5)
     if zone == "Left Wing 3":
-        return (19, 19)
+        return (19, 18)
     if zone == "Right Wing 3":
-        return (-19, 19)
+        return (-19, 18)
     if zone == "Right Corner 3":
-        return (27, 2)
+        return (25.5, 2)
     if zone == "Left Corner 3":
-        return (-27, 2)
+        return (-25.5, 2)
 
     # ✅ NEW BASELINE ZONES
     if zone == "Left Mid Low":
