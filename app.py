@@ -1133,7 +1133,7 @@ def make_zone_chart(dff, title):
         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
         hoverinfo="skip",
         showlegend=False
-    ))s
+    )),
 
 
     # Bottom corner (left/right)
