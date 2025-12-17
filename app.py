@@ -1683,6 +1683,9 @@ app.layout = dbc.Container(
                 className="gy-4"   # 👈 adds vertical spacing on mobile
             ),
 
+            html.Br(),
+            html.Hr(),
+
             html.Div(
                 [
                     html.Span(
@@ -1714,7 +1717,9 @@ app.layout = dbc.Container(
                     "color": "#777",
                     "paddingBottom": "12px"
                 }
-            )
+            ),
+
+            html.Br(),
 
 
 
