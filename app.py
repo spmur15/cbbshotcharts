@@ -591,15 +591,15 @@ def zone_label_xy(zone):
         return (-12, 11)
 
     if zone == "Top 3":
-        return (0, 25.5)
+        return (0, 25.65)
     if zone == "Left Wing 3":
         return (19, 18)
     if zone == "Right Wing 3":
         return (-19, 18)
     if zone == "Right Corner 3":
-        return (25.5, 2)
+        return (26, 2)
     if zone == "Left Corner 3":
-        return (-25.5, 2)
+        return (-26, 2)
 
     # ✅ NEW BASELINE ZONES
     if zone == "Left Mid Low":
