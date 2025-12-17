@@ -539,6 +539,9 @@ def load_team_data(team):
     dff['team_name'] = dff['team_name'].str.replace('&#39;', "'")
     dff['team_name'] = dff['team_name'].str.replace('&amp;', "&")
 
+    dff['shooter'] = dff['shooter'].str.replace('&#39;', "'")
+    dff['shooter'] = dff['shooter'].str.replace('&amp;', "&")
+
     dff.loc[dff['team_name'].str.contains('\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('\('), 'team_name'] + ')'
 
     dff["offense_defense"] = np.where(
