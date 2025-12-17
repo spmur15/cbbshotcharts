@@ -14,8 +14,8 @@ LOGO_DF['Team'] = LOGO_DF['Team'].str.replace('St. John\'s', 'St. John\'s (NY)',
 #color = sample_colorscale("RdYlGn", pct)[0]
 #
 
-COURT_LINE_COLOR = "#333"
-COURT_LINE_WIDTH = 1.25
+COURT_LINE_COLOR = "#777"
+COURT_LINE_WIDTH = 1
 
 COURT_SHADOW_COLOR = "rgba(0,0,0,0.18)"
 COURT_SHADOW_OFFSET = 0.6
