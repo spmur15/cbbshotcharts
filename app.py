@@ -1681,6 +1681,39 @@ app.layout = dbc.Container(
                     ),
                 ],
                 className="gy-4"   # 👈 adds vertical spacing on mobile
+            ),
+
+            html.Div(
+                [
+                    html.Span(
+                        "Data source: ",
+                        style={"marginRight": "4px"}
+                    ),
+                    html.A(
+                        "NCAA Stats",
+                        href="https://stats.ncaa.org/",
+                        target="_blank",
+                        style={"marginRight": "12px"}
+                    ),
+
+                    html.Span("•", style={"margin": "0 8px"}),
+
+                    html.Span(
+                        "Built by Smur",
+                        style={"marginRight": "4px"}
+                    ),
+                    html.A(
+                        "(@cbb_players)",
+                        href="https://twitter.com/cbb_players",
+                        target="_blank"
+                    )
+                ],
+                style={
+                    "textAlign": "center",
+                    "fontSize": "12px",
+                    "color": "#777",
+                    "paddingBottom": "12px"
+                }
             )
 
 
