@@ -523,9 +523,9 @@ def load_team_data(team):
     """
     Load shot data for selected team.
     Expected filename format:
-    Shot Location Data/{Team}_shot_data_20.csv
+    Shot Location Data/{Team}_shot_data_2025.csv
     """
-    path = f"Shot Location Data//{team}_shot_data_20.csv"
+    path = f"Shot Location Data//{team}_shot_data_2025.csv"
     dff = pd.read_csv(path)
 
     #print(team)
