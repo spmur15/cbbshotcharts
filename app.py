@@ -1693,10 +1693,10 @@ app.layout = dbc.Container(
                         style={"marginRight": "4px"}
                     ),
                     html.A(
-                        "NCAA Stats",
+                        "stats.ncaa.org",
                         href="https://stats.ncaa.org/",
                         target="_blank",
-                        style={"marginRight": "12px"}
+                        style={"marginRight": "4px"}
                     ),
 
                     html.Span("•", style={"margin": "0 8px"}),
@@ -1706,7 +1706,7 @@ app.layout = dbc.Container(
                         style={"marginRight": "4px"}
                     ),
                     html.A(
-                        "(@cbb_players)",
+                        "@cbb_players",
                         href="https://twitter.com/cbb_players",
                         target="_blank"
                     )
@@ -1883,7 +1883,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         
 
         freq_bar(
-            ["Rim", "Mid", "3P"],
+            ["Close", "Mid", "3P"],
             stats["freq_vals"]
         ),
 
@@ -1945,7 +1945,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         html.Div(style={"height": "6px"}),
 
         freq_bar(
-            ["Rim", "Mid", "3P"],
+            ["Close", "Mid", "3P"],
             stats["freq_vals"]
         ),
 
