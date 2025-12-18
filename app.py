@@ -680,8 +680,8 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
             html.Img(
                 src=logo_src,
                 style={
-                    "height": "36px",
-                    "width": "36px",
+                    "height": "48px",
+                    "width": "40px",
                     "objectFit": "contain"
                 }
             ),
@@ -1082,7 +1082,7 @@ def make_shot_chart(dff, title):
         x=gx,
         y=gy,
         mode="markers",
-        marker=dict(size=7, color="rgba(40,160,60,0.4)"),
+        marker=dict(size=7, color="rgba(40,160,60,0.33)"),
         name="Make",
         hoverinfo="skip",
         #zorder=2
@@ -1092,7 +1092,7 @@ def make_shot_chart(dff, title):
         x=mx,
         y=my,
         mode="markers",
-        marker=dict(size=7, color="rgba(220,50,50,0.5)"),
+        marker=dict(size=7, color="rgba(220,50,50,0.67)"),
         name="Miss",
         hoverinfo="skip",
         #zorder=1
