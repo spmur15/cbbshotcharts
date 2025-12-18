@@ -636,8 +636,8 @@ def shooting_summary(dff):
     if dff.empty:
         return ("", '')
 
-    if "shot_range" in dff.columns:
-        dff = reconcile_zone_with_shot_range(dff)
+    #if "shot_range" in dff.columns:
+    #    dff = reconcile_zone_with_shot_range(dff)
 
     fga = len(dff)
     fgm = int(dff["made"].sum())
