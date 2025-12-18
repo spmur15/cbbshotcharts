@@ -1833,6 +1833,10 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     if "shot_range" in dff.columns:
         dff = dff[~dff["shot_range"].str.lower().isin(["freethrow"])]
 
+    dff.loc[dff['Quad'].isna(), 'Quad'] = 'Q4'
+    dff.loc[dff['Quad'].str.strip()=='', 'Quad'] = 'Q4'
+
+    dff['opponent'] = dff['opponent'].fillna('Non-D1)
 
     LOGO_DF['Team'] = LOGO_DF['Team'].str.strip()
     temp = pd.DataFrame([team], columns=['tm'])
