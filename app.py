@@ -1147,42 +1147,42 @@ def make_zone_chart(dff, title):
 
     ax, ay = rotate_for_display(ARC_X, ARC_Y)
 
-    fig.add_trace(go.Scatter(
-        x=ax,
-        y=ay,
-        mode="lines",
-        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-        hoverinfo="skip",
-        showlegend=False
-    )),
+    # fig.add_trace(go.Scatter(
+    #     x=ax,
+    #     y=ay,
+    #     mode="lines",
+    #     line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+    #     hoverinfo="skip",
+    #     showlegend=False
+    # )),
 
 
-    # Bottom corner (left/right)
-    cx1, cy1 = rotate_for_display(
-        np.array([-BASELINE_X, BASELINE_X]),
-        np.array([-ARC_Y.max(), -ARC_Y.max()])
-    )
+    # # Bottom corner (left/right)
+    # cx1, cy1 = rotate_for_display(
+    #     np.array([-BASELINE_X, BASELINE_X]),
+    #     np.array([-ARC_Y.max(), -ARC_Y.max()])
+    # )
 
-    cx2, cy2 = rotate_for_display(
-        np.array([-BASELINE_X, BASELINE_X]),
-        np.array([ARC_Y.max(), ARC_Y.max()])
-    )
+    # cx2, cy2 = rotate_for_display(
+    #     np.array([-BASELINE_X, BASELINE_X]),
+    #     np.array([ARC_Y.max(), ARC_Y.max()])
+    # )
 
-    fig.add_trace(go.Scatter(
-        x=cx1, y=cy1,
-        mode="lines",
-        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-        hoverinfo="skip",
-        showlegend=False
-    ))
+    # fig.add_trace(go.Scatter(
+    #     x=cx1, y=cy1,
+    #     mode="lines",
+    #     line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+    #     hoverinfo="skip",
+    #     showlegend=False
+    # ))
 
-    fig.add_trace(go.Scatter(
-        x=cx2, y=cy2,
-        mode="lines",
-        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-        hoverinfo="skip",
-        showlegend=False
-    ))
+    # fig.add_trace(go.Scatter(
+    #     x=cx2, y=cy2,
+    #     mode="lines",
+    #     line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+    #     hoverinfo="skip",
+    #     showlegend=False
+    # ))
 
     #dff["dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
     #dff["angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
