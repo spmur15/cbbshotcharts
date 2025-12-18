@@ -1826,6 +1826,9 @@ app.layout = dbc.Container(
 
 def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats):
 
+    off_title = "Offense"
+    def_title = "Defense"
+
     # Load correct team file
     dff = load_team_data(team)
 
@@ -1871,11 +1874,36 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     #print(team_logo)
     #print('\n---\n')
 
-    if players: dff = dff[dff[PLAYER_COL].isin(players)]
-    if halves: dff = dff[dff[HALF_COL].isin(halves)]
-    if opps: dff = dff[dff[OPP_COL].isin(opps)]
-    if loc: dff = dff[dff['loc'].isin(loc)]
-    if quad: dff = dff[dff['Quad'].isin(quad)]
+    if players: 
+        dff = dff[dff[PLAYER_COL].isin(players)]
+        off_title =  + ' - ' + ', '.join(players)
+        def_title =  + ' - ' + ', '.join(players)
+
+    
+    if halves: 
+        dff = dff[dff[HALF_COL].isin(halves)]
+        off_title =  + ' - ' + ', '.join(halves)
+        def_title =  + ' - ' + ', '.join(halves)
+
+    
+    if opps: 
+        dff = dff[dff[OPP_COL].isin(opps)]
+        off_title =  + ' - Against: ' + ', '.join(opps)
+        def_title =  + ' - Against: ' + ', '.join(opps)
+
+    
+    if loc: 
+        dff = dff[dff['loc'].isin(loc)]
+        off_title =  + ' - ' + ', '.join(loc) + 'games'
+        def_title =  + ' - ' + ', '.join(loc) + 'games'
+
+    
+    if quad: 
+        dff = dff[dff['Quad'].isin(quad)]
+        off_title =  + ' - ' + ', '.join(quad) + 'games'
+        def_title =  + ' - ' + ', '.join(quad) + 'games'
+
+    
 
     # --------------------------------------------------
     # 🚨 SAFEGUARD: no shots after filtering
@@ -1920,24 +1948,33 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     )
 
     if not show_stats:
-        if players:
+        # if players:
 
-            return (
-                fig_off,
-                fig_def,
-                team_title_with_logo(team, "Shot Charts", team_logo),
-                chart_header(team, "Offense" + ' - ' + ', '.join(players), team_logo),
-                chart_header(team, "Defense" + ' - ' + ', '.join(players), team_logo),
-                [],
-                []
-            )
-        else:
-            return (
+        #     return (
+        #         fig_off,
+        #         fig_def,
+        #         team_title_with_logo(team, "Shot Charts", team_logo),
+        #         chart_header(team, "Offense" + ' - ' + ', '.join(players), team_logo),
+        #         chart_header(team, "Defense" + ' - ' + ', '.join(players), team_logo),
+        #         [],
+        #         []
+        #     )
+        # else:
+        #     return (
+        #     fig_off,
+        #     fig_def,
+        #     team_title_with_logo(team, "Shot Charts", team_logo),
+        #     chart_header(team, "Offense", team_logo),
+        #     chart_header(team, "Defense", team_logo),
+        #     [],
+        #     []
+        #     )
+        return (
             fig_off,
             fig_def,
             team_title_with_logo(team, "Shot Charts", team_logo),
-            chart_header(team, "Offense", team_logo),
-            chart_header(team, "Defense", team_logo),
+            chart_header(team, off_title, team_logo),
+            chart_header(team, def_title, team_logo),
             [],
             []
             )
@@ -2064,27 +2101,38 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     ]
 
 
-    if players:
+    # if players:
 
-        return (
-            fig_off,
-            fig_def,
-            team_title_with_logo(team, "Shot Charts", team_logo),
-            chart_header(team, "Offense" + ' - ' + '- '.join(players), team_logo),
-            chart_header(team, "Defense" + ' - ' + '- '.join(players), team_logo),
-            show_stats_out_off,
-            show_stats_out_def
-        )
-    else:
-        return (
+    #     return (
+    #         fig_off,
+    #         fig_def,
+    #         team_title_with_logo(team, "Shot Charts", team_logo),
+    #         chart_header(team, "Offense" + ' - ' + '- '.join(players), team_logo),
+    #         chart_header(team, "Defense" + ' - ' + '- '.join(players), team_logo),
+    #         show_stats_out_off,
+    #         show_stats_out_def
+    #     )
+    # else:
+    #     return (
+    #     fig_off,
+    #     fig_def,
+    #     team_title_with_logo(team, "Shot Charts", team_logo),
+    #     chart_header(team, "Offense", team_logo),
+    #     chart_header(team, "Defense", team_logo),
+    #     show_stats_out_off,
+    #     show_stats_out_def
+    #     )
+
+    return (
         fig_off,
         fig_def,
         team_title_with_logo(team, "Shot Charts", team_logo),
-        chart_header(team, "Offense", team_logo),
-        chart_header(team, "Defense", team_logo),
+        chart_header(team, off_title, team_logo),
+        chart_header(team, def_title, team_logo),
         show_stats_out_off,
         show_stats_out_def
         )
+
 
 
 @app.callback(
