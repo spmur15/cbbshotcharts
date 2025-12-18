@@ -1130,8 +1130,8 @@ def make_shot_chart(dff, title):
     dff2.loc[:, "zone"]  = dff2.apply(assign_zone, axis=1)
 
     # reconcile ONCE
-    if "shot_range" in dff.columns:
-        dff = reconcile_zone_with_shot_range(dff)
+    if "shot_range" in dff2.columns:
+        dff2 = reconcile_zone_with_shot_range(dff2)
 
     #print(shooting_summary(dff2))
 
