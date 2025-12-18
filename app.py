@@ -710,7 +710,7 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
 def chart_title(team, side, logo):
     return (
         f"<span style='display:flex;align-items:center;gap:8px;'>"
-        f"<img src='{logo}' style='height:22px;'>"
+        f"<img src='{logo}' style='height:28px;'>"
         f"<span>{team} <u>{side}</u></span>"
         f"</span>"
     )
@@ -2040,27 +2040,27 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
             "margin": "12px 0",
             "opacity": 0.4
         }),
-        html.Div(
-            "Court Thirds",
-            style={
-                "textAlign": "center",
-                "fontSize": "13px",
-                "fontWeight": 600,
-                "color": "#666",
-                "marginBottom": "6px",
-                "letterSpacing": "0.04em",
-                "textTransform": "uppercase"
-            }
-        ),
+        # html.Div(
+        #     "Court Thirds",
+        #     style={
+        #         "textAlign": "center",
+        #         "fontSize": "13px",
+        #         "fontWeight": 600,
+        #         "color": "#666",
+        #         "marginBottom": "6px",
+        #         "letterSpacing": "0.04em",
+        #         "textTransform": "uppercase"
+        #     }
+        # ),
 
-        stat_row([stat_card(*s) for s in stats["side_fg"]]),
+        # stat_row([stat_card(*s) for s in stats["side_fg"]]),
 
-        html.Div(style={"height": "6px"}),
+        # html.Div(style={"height": "6px"}),
 
-        freq_bar(
-            ["Left", "Middle", "Right"],
-            stats["side_freq_vals"]
-        ),
+        # freq_bar(
+        #     ["Left", "Middle", "Right"],
+        #     stats["side_freq_vals"]
+        # ),
     ]
 
 
