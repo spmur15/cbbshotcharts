@@ -710,7 +710,7 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
 def chart_title(team, side, logo):
     return (
         f"<span style='display:flex;align-items:center;gap:8px;'>"
-        f"<img src='{logo}' style='height:36px;'>"
+        f"<img src='{logo}' style='height:30px;'>"
         f"<span>{team} <u>{side}</u></span>"
         f"</span>"
     )
@@ -727,7 +727,7 @@ def chart_header(team, side, logo):
             "fontSize": "18px"
         },
         children=[
-            html.Img(src=logo, style={"height": "36px"}),
+            html.Img(src=logo, style={"height": "30px"}),
             html.Span(f"{side}")
         ]
     )
@@ -1509,7 +1509,7 @@ team_options = [
 app.layout = dbc.Container(
     fluid=True,
     style={
-        "backgroundColor": "#e5e5e5",
+        "backgroundColor": "#ededed",
         "minHeight": "100vh",
         "paddingBottom": "40px",
        # "fontFamily": "'Funnel Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
@@ -1719,7 +1719,7 @@ app.layout = dbc.Container(
                                 }
                             ),
                             style={
-                                "background": "#fafafa",
+                                "background": "#f5f5f5",
                                 "borderRadius": "14px",
                                 "boxShadow": "0 10px 28px rgba(0,0,0,0.25)",
                                 "padding": "3px"
