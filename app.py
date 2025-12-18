@@ -930,8 +930,8 @@ def empty_shot_figure(message="No shots match the selected filters"):
     )
 
     fig.update_layout(
-        plot_bgcolor="#fafafa",
-        paper_bgcolor="#fafafa"
+        plot_bgcolor="#f8f8f8",
+        paper_bgcolor="#f8f8f8"
     )
 
     return fig
@@ -1101,8 +1101,8 @@ def make_shot_chart(dff, title):
 
     fig.update_layout(
         #title=dict(text=title, x=0.5, y=0.98),
-        plot_bgcolor='#fafafa',
-        paper_bgcolor="#fafafa"
+        plot_bgcolor='#f8f8f8',
+        paper_bgcolor="#f8f8f8"
     )
 
     # fig.update_layout(
@@ -1125,8 +1125,8 @@ def make_shot_chart(dff, title):
     #     font=dict(
     #         family="Funnel Display"
     #     ),
-    #     plot_bgcolor="#fafafa",
-    #     paper_bgcolor="#fafafa"
+    #     plot_bgcolor="#f8f8f8",
+    #     paper_bgcolor="#f8f8f8"
     # )
 
     # ---- add summary stats on shots view too ----
@@ -1211,7 +1211,7 @@ def make_zone_chart(dff, title):
     for _, r in zs.iterrows():
         zone_shape = ZONE_SHAPES[r["zone"]].copy()
         #print(zone_shape)
-        zone_shape['line'] = {'width':3,'color':'#fafafa'}
+        zone_shape['line'] = {'width':3,'color':'#f8f8f8'}
 
         # # Rotate PATH shapes
         # if zone_shape["type"] == "path":
@@ -1242,8 +1242,8 @@ def make_zone_chart(dff, title):
 
     fig.update_layout(
         #title=dict(text=title, x=0.5),
-        plot_bgcolor="#fafafa",
-        paper_bgcolor="#fafafa"
+        plot_bgcolor="#f8f8f8",
+        paper_bgcolor="#f8f8f8"
     )
 
     fig.update_layout(showlegend=False)
@@ -1268,8 +1268,8 @@ def make_zone_chart(dff, title):
     #     font=dict(
     #         family="Funnel Display"
     #     ),
-    #     plot_bgcolor="#fafafa",
-    #     paper_bgcolor="#fafafa"
+    #     plot_bgcolor="#f8f8f8",
+    #     paper_bgcolor="#f8f8f8"
     # )
 
     #add_zone_dividers(fig)
@@ -1715,14 +1715,16 @@ app.layout = dbc.Container(
                                         "scrollZoom": False},
                                 style={
                                     "height": "40vh",
-                                    "minHeight": "270px"
+                                    "minHeight": "270px",
+                                    "paper_bgcolor":"#f8f8f8",
+                                    "plot":"#f8f8f8",
                                 }
                             ),
                             style={
                                 "background": "#f5f5f5",
                                 "borderRadius": "14px",
                                 "boxShadow": "0 10px 28px rgba(0,0,0,0.25)",
-                                "padding": "3px"
+                                "padding": "5px"
                             }
                         ),
                         html.Div(id="offense-shot-stats", className="mt-2"),
@@ -1738,15 +1740,17 @@ app.layout = dbc.Container(
                                 config={"displayModeBar": False},
                                 style={
                                     "height": "40vh",
-                                    "minHeight": "270px"
+                                    "minHeight": "270px",
+                                    "paper_bgcolor":"#f8f8f8",
+                                    "plot":"#f8f8f8",
                                 }
 
                             ),
                             style={
-                                "background": "#fafafa",
+                                "background": "#f8f8f8",
                                 "borderRadius": "14px",
                                 "boxShadow": "0 10px 28px rgba(0,0,0,0.25)",
-                                "padding": "3px"
+                                "padding": "5px"
                             }
                         ),
                         html.Div(id="defense-shot-stats", className="mt-2"),
