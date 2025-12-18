@@ -14,6 +14,20 @@ LOGO_DF['Team'] = LOGO_DF['Team'].str.replace('St. John\'s', 'St. John\'s (NY)',
 #color = sample_colorscale("RdYlGn", pct)[0]
 #
 
+# --------------------------------------------------
+# Zone reconciliation maps (mid <-> three)
+# --------------------------------------------------
+THREE_TO_MID = {
+    "Top 3": "Top Mid",
+    "Left Wing 3": "Left Mid",
+    "Right Wing 3": "Right Mid",
+    "Left Corner 3": "Left Mid Low",
+    "Right Corner 3": "Right Mid Low",
+}
+
+MID_TO_THREE = {v: k for k, v in THREE_TO_MID.items()}
+
+
 COURT_LINE_COLOR = "#777"
 COURT_LINE_WIDTH = 1
 
@@ -767,6 +781,9 @@ def shot_breakdown_stats(dff):
     dff["dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
     dff["angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
     dff["zone"] = dff.apply(assign_zone, axis=1).astype(str)
+    # reconcile ONCE
+    if "shot_range" in dff.columns:
+        dff = reconcile_zone_with_shot_range(dff)
 
     # dff['3P'] = np.where(dff['zone'].str.contains('3'), True, False)
     # dff.loc[dff['3P'] & dff['result']=='made', '3P_made']=True
@@ -1112,6 +1129,10 @@ def make_shot_chart(dff, title):
     dff2.loc[:, "angle"] = np.degrees(np.arctan2(dff2["y_plot"], -dff2["x_plot"]))
     dff2.loc[:, "zone"]  = dff2.apply(assign_zone, axis=1)
 
+    # reconcile ONCE
+    if "shot_range" in dff.columns:
+        dff = reconcile_zone_with_shot_range(dff)
+
     #print(shooting_summary(dff2))
 
     fg_line, pps_line = shooting_summary(dff2)
@@ -1169,6 +1190,10 @@ def make_zone_chart(dff, title):
     dff.loc[:,"dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
     dff.loc[:,"angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
     dff.loc[:,"zone"] = dff.apply(assign_zone, axis=1)
+
+    # reconcile ONCE
+    if "shot_range" in dff.columns:
+        dff = reconcile_zone_with_shot_range(dff)
 
     zs = (
         dff.groupby("zone")
@@ -1297,6 +1322,49 @@ def assign_zone(row):
     # Top
     return "Top 3"
 
+
+def reconcile_zone_with_shot_range(df):
+    """
+    Ensures mid-range vs 3PT consistency using shot_range.
+    Paint/Rim shots are never modified.
+    """
+
+    df = df.copy()
+
+    # Normalize shot_range just in case
+    df["shot_range"] = (
+        df["shot_range"]
+        .str.lower()
+        .str.replace(" ", "-", regex=False)
+    )
+
+    # ----------------------------
+    # Case 1: Zone says 3P, range says mid
+    # ----------------------------
+    mask_false_three = (
+        df["zone"].isin(THREE_TO_MID.keys()) &
+        (df["shot_range"] == "mid-range")
+    )
+
+    df.loc[mask_false_three, "zone"] = (
+        df.loc[mask_false_three, "zone"]
+        .map(THREE_TO_MID)
+    )
+
+    # ----------------------------
+    # Case 2: Zone says mid, range says 3P
+    # ----------------------------
+    mask_false_mid = (
+        df["zone"].isin(MID_TO_THREE.keys()) &
+        (df["shot_range"] == "3pt")
+    )
+
+    df.loc[mask_false_mid, "zone"] = (
+        df.loc[mask_false_mid, "zone"]
+        .map(MID_TO_THREE)
+    )
+
+    return df
 
 
 
@@ -1754,6 +1822,11 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
 
     # Load correct team file
     dff = load_team_data(team)
+
+    # REMOVE FREE THROWS
+    if "shot_range" in dff.columns:
+        dff = dff[~dff["shot_range"].str.lower().isin(["freethrow"])]
+
 
     LOGO_DF['Team'] = LOGO_DF['Team'].str.strip()
     temp = pd.DataFrame([team], columns=['tm'])
