@@ -1842,6 +1842,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         dff = dff[~dff["shot_range"].str.lower().isin(["freethrow"])]
         dff = dff.drop_duplicates(subset=['shot_id'])
         dff = dff.drop_duplicates(subset=['shooter', 'clock', 'game_id'])
+        print("Dup shot id", dff['shot_id'].duplicated().sum())
 
     dff.loc[dff['Quad'].isna(), 'Quad'] = 'Q4'
     dff.loc[dff['Quad'].str.strip()=='', 'Quad'] = 'Q4'
