@@ -1082,9 +1082,10 @@ def make_shot_chart(dff, title):
         x=gx,
         y=gy,
         mode="markers",
-        marker=dict(size=7, color="rgba(40,160,60,0.4)"),
+        marker=dict(size=7, color="rgba(40,160,60,0.525)"),
         name="Make",
-        hoverinfo="skip"
+        hoverinfo="skip",
+        name="Above", zorder=2
     ))
 
     fig.add_trace(go.Scattergl(
@@ -1093,7 +1094,8 @@ def make_shot_chart(dff, title):
         mode="markers",
         marker=dict(size=7, color="rgba(220,50,50,0.4)"),
         name="Miss",
-        hoverinfo="skip"
+        hoverinfo="skip",
+        name="Below", zorder=1
     ))
 
 
