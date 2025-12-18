@@ -680,8 +680,8 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
             html.Img(
                 src=logo_src,
                 style={
-                    "height": "48px",
-                    "width": "40px",
+                    "height": "60px",
+                    "width": "48px",
                     "objectFit": "contain"
                 }
             ),
@@ -710,7 +710,7 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
 def chart_title(team, side, logo):
     return (
         f"<span style='display:flex;align-items:center;gap:8px;'>"
-        f"<img src='{logo}' style='height:28px;'>"
+        f"<img src='{logo}' style='height:36px;'>"
         f"<span>{team} <u>{side}</u></span>"
         f"</span>"
     )
@@ -727,7 +727,7 @@ def chart_header(team, side, logo):
             "fontSize": "18px"
         },
         children=[
-            html.Img(src=logo, style={"height": "28px"}),
+            html.Img(src=logo, style={"height": "36px"}),
             html.Span(f"{side}")
         ]
     )
@@ -1902,8 +1902,16 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         dff = dff[dff['Quad'].isin(quad)]
         off_title = off_title + ' - ' + ', '.join(quad) + ' games'
         def_title = def_title + ' - ' + ', '.join(quad) + ' games'
+            
         off_title = re.sub('Q1A, Q1B', 'Q1', off_title)
         def_title = re.sub('Q1A, Q1B', 'Q1', def_title)
+        off_title = re.sub('Q1A, Q2, Q1B', 'Q1, Q2', off_title)
+        def_title = re.sub('Q1A, Q2, Q1B', 'Q1, Q2', def_title)
+
+        off_title = re.sub('Q1B, Q1A', 'Q1', off_title)
+        def_title = re.sub('Q1B, Q1A', 'Q1', def_title)
+        off_title = re.sub('Q1B, Q2, Q1A', 'Q1, Q2', off_title)
+        def_title = re.sub('Q1B, Q2, Q1A', 'Q1, Q2', def_title)
 
     
 
