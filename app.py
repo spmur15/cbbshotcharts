@@ -1082,7 +1082,7 @@ def make_shot_chart(dff, title):
         x=gx,
         y=gy,
         mode="markers",
-        marker=dict(size=7, color="rgba(40,160,60,0.67)"),
+        marker=dict(size=7, color="rgba(40,160,60,0.5)"),
         name="Make",
         hoverinfo="skip",
         #zorder=2
@@ -1674,7 +1674,7 @@ app.layout = dbc.Container(
             dbc.Checkbox(
                 id="show-shot-stats",
                 label="Show shot stats",
-                value=False,
+                value=True,
                 inputStyle={
                     "marginRight": "10px",
                     "transform": "scale(1.5)",   # 🔹 increase checkbox size
@@ -1714,15 +1714,15 @@ app.layout = dbc.Container(
                                 config={"displayModeBar": False,
                                         "scrollZoom": False},
                                 style={
-                                    "height": "45vh",
-                                    "minHeight": "320px"
+                                    "height": "40vh",
+                                    "minHeight": "270px"
                                 }
                             ),
                             style={
                                 "background": "#fafafa",
                                 "borderRadius": "14px",
-                                "boxShadow": "0 10px 28px rgba(0,0,0,0.18)",
-                                "padding": "6px"
+                                "boxShadow": "0 10px 28px rgba(0,0,0,0.25)",
+                                "padding": "3px"
                             }
                         ),
                         html.Div(id="offense-shot-stats", className="mt-2"),
@@ -1737,16 +1737,16 @@ app.layout = dbc.Container(
                                 id="defense-chart",
                                 config={"displayModeBar": False},
                                 style={
-                                    "height": "45vh",
-                                    "minHeight": "320px"
+                                    "height": "40vh",
+                                    "minHeight": "270px"
                                 }
 
                             ),
                             style={
                                 "background": "#fafafa",
                                 "borderRadius": "14px",
-                                "boxShadow": "0 10px 28px rgba(0,0,0,0.18)",
-                                "padding": "6px"
+                                "boxShadow": "0 10px 28px rgba(0,0,0,0.25)",
+                                "padding": "3px"
                             }
                         ),
                         html.Div(id="defense-shot-stats", className="mt-2"),
