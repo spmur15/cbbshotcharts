@@ -1082,7 +1082,7 @@ def make_shot_chart(dff, title):
         x=gx,
         y=gy,
         mode="markers",
-        marker=dict(size=7, color="rgba(40,160,60,0.525)"),
+        marker=dict(size=7, color="rgba(40,160,60,0.4)"),
         name="Make",
         hoverinfo="skip",
         #zorder=2
@@ -1092,7 +1092,7 @@ def make_shot_chart(dff, title):
         x=mx,
         y=my,
         mode="markers",
-        marker=dict(size=7, color="rgba(220,50,50,0.4)"),
+        marker=dict(size=7, color="rgba(220,50,50,0.5)"),
         name="Miss",
         hoverinfo="skip",
         #zorder=1
