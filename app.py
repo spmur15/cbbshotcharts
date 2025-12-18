@@ -28,8 +28,8 @@ THREE_TO_MID = {
 MID_TO_THREE = {v: k for k, v in THREE_TO_MID.items()}
 
 
-COURT_LINE_COLOR = "#777"
-COURT_LINE_WIDTH = 1
+COURT_LINE_COLOR = "#999"
+COURT_LINE_WIDTH = 0.67
 
 COURT_SHADOW_COLOR = "rgba(0,0,0,0.18)"
 COURT_SHADOW_OFFSET = 0.6
@@ -634,6 +634,9 @@ def shooting_summary(dff):
 
     if dff.empty:
         return ("", '')
+
+    if "shot_range" in dff.columns:
+        dff = reconcile_zone_with_shot_range(dff)
 
     fga = len(dff)
     fgm = int(dff["made"].sum())
