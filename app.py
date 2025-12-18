@@ -1509,7 +1509,7 @@ team_options = [
 app.layout = dbc.Container(
     fluid=True,
     style={
-        "backgroundColor": "#f0f0f0",
+        "backgroundColor": "#e5e5e5",
         "minHeight": "100vh",
         "paddingBottom": "40px",
        # "fontFamily": "'Funnel Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
@@ -1656,10 +1656,10 @@ app.layout = dbc.Container(
         dbc.RadioItems(
             id="view-mode",
             options=[
-                {"label": "Shots", "value": "shots"},
                 {"label": "Zones", "value": "zones"},
+                {"label": "Shots", "value": "shots"},
             ],
-            value="shots",
+            value="zones",
             inline=True,
             #button=True,
             className="d-flex justify-content-center mb-2",
