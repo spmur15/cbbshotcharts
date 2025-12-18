@@ -1876,32 +1876,32 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
 
     if players: 
         dff = dff[dff[PLAYER_COL].isin(players)]
-        off_title =  + ' - ' + ', '.join(players)
-        def_title =  + ' - ' + ', '.join(players)
+        off_title = off_title + ' - ' + ', '.join(players)
+        def_title = def_title + ' - ' + ', '.join(players)
 
     
     if halves: 
         dff = dff[dff[HALF_COL].isin(halves)]
-        off_title =  + ' - ' + ', '.join(halves)
-        def_title =  + ' - ' + ', '.join(halves)
+        off_title = off_title + ' - ' + ', '.join(halves)
+        def_title = def_title + ' - ' + ', '.join(halves)
 
     
     if opps: 
         dff = dff[dff[OPP_COL].isin(opps)]
-        off_title =  + ' - Against: ' + ', '.join(opps)
-        def_title =  + ' - Against: ' + ', '.join(opps)
+        off_title = off_title + ' - Against: ' + ', '.join(opps)
+        def_title = def_title + ' - Against: ' + ', '.join(opps)
 
     
     if loc: 
         dff = dff[dff['loc'].isin(loc)]
-        off_title =  + ' - ' + ', '.join(loc) + 'games'
-        def_title =  + ' - ' + ', '.join(loc) + 'games'
+        off_title = off_title + ' - ' + ', '.join(loc) + 'games'
+        def_title = def_title + ' - ' + ', '.join(loc) + 'games'
 
     
     if quad: 
         dff = dff[dff['Quad'].isin(quad)]
-        off_title =  + ' - ' + ', '.join(quad) + 'games'
-        def_title =  + ' - ' + ', '.join(quad) + 'games'
+        off_title = off_title + ' - ' + ', '.join(quad) + 'games'
+        def_title = def_title + ' - ' + ', '.join(quad) + 'games'
 
     
 
