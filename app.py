@@ -727,7 +727,7 @@ def chart_header(team, side, logo):
             "fontSize": "18px"
         },
         children=[
-            html.Img(src=logo, style={"height": "22px"}),
+            html.Img(src=logo, style={"height": "28px"}),
             html.Span(f"{side}")
         ]
     )
@@ -1894,14 +1894,16 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     
     if loc: 
         dff = dff[dff['loc'].isin(loc)]
-        off_title = off_title + ' - ' + ', '.join(loc) + 'games'
-        def_title = def_title + ' - ' + ', '.join(loc) + 'games'
+        off_title = off_title + ' - ' + ', '.join(loc) + ' games'
+        def_title = def_title + ' - ' + ', '.join(loc) + ' games'
 
     
     if quad: 
         dff = dff[dff['Quad'].isin(quad)]
-        off_title = off_title + ' - ' + ', '.join(quad) + 'games'
-        def_title = def_title + ' - ' + ', '.join(quad) + 'games'
+        off_title = off_title + ' - ' + ', '.join(quad) + ' games'
+        def_title = def_title + ' - ' + ', '.join(quad) + ' games'
+        off_title = re.sub('Q1A, Q1B', 'Q1', off_title)
+        def_title = re.sub('Q1A, Q1B', 'Q1', def_title)
 
     
 
