@@ -1838,8 +1838,9 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
 
     # REMOVE FREE THROWS
     if "shot_range" in dff.columns:
-        print(dff['shot_id'].duplicated().sum())
+        print("Dup shot id", dff['shot_id'].duplicated().sum())
         dff = dff[~dff["shot_range"].str.lower().isin(["freethrow"])]
+        dff = dff.drop_duplicates(subset=['shot_id'])
         dff = dff.drop_duplicates(subset=['shooter', 'clock', 'game_id'])
 
     dff.loc[dff['Quad'].isna(), 'Quad'] = 'Q4'
