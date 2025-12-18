@@ -444,6 +444,7 @@ def create_half_court_layout():
         plot_bgcolor="#FFFFFF",
         margin=dict(l=4, r=4, t=8, b=4),
         legend=dict(
+            bgcolor="rgba(0,0,0,0)",  
             orientation="v",
             yanchor="top",
             y=0.98,
@@ -1078,20 +1079,20 @@ def make_shot_chart(dff, title):
     gx, gy = rotate_for_display(made["x_plot"], made["y_plot"])
 
     fig.add_trace(go.Scattergl(
-        x=mx,
-        y=my,
-        mode="markers",
-        marker=dict(size=7, color="rgba(220,50,50,0.55)"),
-        name="Miss",
-        hoverinfo="skip"
-    ))
-
-    fig.add_trace(go.Scattergl(
         x=gx,
         y=gy,
         mode="markers",
         marker=dict(size=7, color="rgba(40,160,60,0.65)"),
         name="Make",
+        hoverinfo="skip"
+    ))
+
+    fig.add_trace(go.Scattergl(
+        x=mx,
+        y=my,
+        mode="markers",
+        marker=dict(size=7, color="rgba(220,50,50,0.55)"),
+        name="Miss",
         hoverinfo="skip"
     ))
 
