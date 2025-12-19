@@ -644,9 +644,11 @@ def shooting_summary(dff):
     fg_pct = fgm / fga if fga else 0
 
     # identify 3s using your existing zone logic (works in zone mode)
-    threes = dff.get("zone", pd.Series(False, index=dff.index)).isin(
-        ["Top 3", "Left Wing 3", "Right Wing 3", "Left Corner 3", "Right Corner 3"]
-    )
+    # threes = dff.get("zone", pd.Series(False, index=dff.index)).isin(
+    #     ["Top 3", "Left Wing 3", "Right Wing 3", "Left Corner 3", "Right Corner 3"]
+    # )
+    threes = dff["is_three"]
+
     #print(threes)
 
     three_made = int(dff.loc[threes, "made"].sum())
@@ -804,7 +806,9 @@ def shot_breakdown_stats(dff):
     mid = dff["zone"].str.contains("Mid")
 
     # Threes
-    three = dff["zone"].str.contains("3")
+    #three = dff["zone"].str.contains("3")
+    three = dff["is_three"]
+
 
 
     left = dff["angle"] < -22
@@ -1516,6 +1520,7 @@ app.layout = dbc.Container(
     },
 
     children=[
+        
         # html.Link(
         #     rel="stylesheet",
         #     href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@300..800&family=Saira+Condensed:wght@100;200;300;400;500;600;700;800;900&display=swap"
@@ -1841,8 +1846,13 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         print("Dup shot id", dff['shot_id'].duplicated().sum())
         dff = dff[~dff["shot_range"].str.lower().isin(["freethrow"])]
         dff = dff.drop_duplicates(subset=['shot_id'])
+        # after FT removal & dedupe
+        dff["is_three"] = dff["shot_range"].str.lower().eq("3pt")
         #dff = dff.drop_duplicates(subset=['shooter', 'clock', 'game_id'])
         print("Dup shot id", dff[['shooter', 'clock', 'game_id']].duplicated().sum())
+
+    
+
 
     print("Missing quad 1:", dff['Quad'].isna().sum())
 
@@ -1865,6 +1875,18 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
 
 
     team_logo = LOGO_DF.loc[LOGO_DF["Team"] == team_logo_str, "Logo"]
+
+    debug = dff.assign(
+        zone_three = dff["zone"].str.contains("3"),
+        range_three = dff["is_three"]
+    )
+    
+    print(
+        debug.loc[debug.zone_three != debug.range_three,
+                  ["zone", "shot_range", "x_plot", "y_plot"]]
+        .head(10)
+    )
+
 
     
     try: team_logo = team_logo.iloc[0]
