@@ -1612,7 +1612,7 @@ app.layout = dbc.Container(
                                                 },
                                                 labelStyle={
                                                     "cursor": "pointer"
-                                                }
+                                                },
                                                 value=True,   # ✅ default checked
                                                 #inputStyle={"marginRight": "8px"},
                                             ),
