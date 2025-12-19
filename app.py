@@ -176,15 +176,20 @@ ANGLE_WING = 22
 def polar_wedge(r0, r1, a0, a1, n=50):
     a_outer = np.linspace(np.radians(a0), np.radians(a1), n)
 
-    x_outer = r1 * np.sin(a_outer)
-    y_outer = r1 * np.cos(a_outer)
+    x_outer = -r1 * np.cos(a_outer)
+    y_outer =  r1 * np.sin(a_outer)
+
 
     # clip everything below baseline
     y_outer = np.maximum(y_outer, -5.25)
 
     a_inner = np.linspace(np.radians(a1), np.radians(a0), n)
-    x_inner = r0 * np.sin(a_inner)
-    y_inner = r0 * np.cos(a_inner)
+    
+    x_inner = -r0 * np.cos(a_inner)
+    y_inner =  r0 * np.sin(a_inner)
+
+
+    
     y_inner = np.maximum(y_inner, -5.25)
 
     x = np.concatenate([x_outer, x_inner])
