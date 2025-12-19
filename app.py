@@ -1844,8 +1844,12 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         #dff = dff.drop_duplicates(subset=['shooter', 'clock', 'game_id'])
         print("Dup shot id", dff[['shooter', 'clock', 'game_id']].duplicated().sum())
 
+    print("Missing quad 1:", dff['Quad'].isna().sum())
+
     dff.loc[dff['Quad'].isna(), 'Quad'] = 'Q4'
     dff.loc[dff['Quad'].str.strip()=='', 'Quad'] = 'Q4'
+
+    print("Missing quad 2:", dff['Quad'].isna().sum())
 
     dff['opponent'] = dff['opponent'].fillna('Non-D1')
 
