@@ -564,6 +564,9 @@ def load_team_data(team):
     )
     dff["made"] = np.where(dff["result"] == "made", 1, 0)
 
+    dff['nond1'] = np.where(dff['Quad']=='Non-D1', True, False)
+    dff['Quad'] = np.where(dff['Quad']=='Quad', 'Q4', dff['Quad'])
+
     return dff
 
 def polar_wedge(r0, r1, a0, a1, n=40):
@@ -1598,6 +1601,24 @@ app.layout = dbc.Container(
                                 dbc.Row(
                                     [
                                         dbc.Col(
+                                            dbc.Checkbox(
+                                                id="exclude-non-d1",
+                                                label="Exclude games vs Non-D1",
+                                                inputStyle={
+                                                    "marginRight": "8px",
+                                                    "transform": "scale(1.5)",   # 🔹 increase checkbox size
+                                                    "cursor": "pointer",
+                                                    "color":'black'
+                                                },
+                                                labelStyle={
+                                                    "cursor": "pointer"
+                                                }
+                                                value=True,   # ✅ default checked
+                                                #inputStyle={"marginRight": "8px"},
+                                            ),
+                                            xs=12
+                                        ),
+                                        dbc.Col(
                                             dcc.Dropdown(
                                                 id="player-dd",
                                                 multi=True,
@@ -1845,16 +1866,24 @@ app.layout = dbc.Container(
     Input("opp-dd", "value"),
     Input("loc-dd", "value"),
     Input("quad-dd", "value"),
-    Input("show-shot-stats", "value")
+    Input("show-shot-stats", "value"),
+    Input("exclude-non-d1", "value")
+
 )
 
-def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats):
+def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats, exclude_non_d1):
 
     off_title = "Offense"
     def_title = "Defense"
 
     # Load correct team file
     dff = load_team_data(team)
+
+    
+    # exclude non-D1 opponents if checked
+    if exclude_non_d1:
+        dff = dff[dff["nond1"] == False]
+
 
     # REMOVE FREE THROWS
     if "shot_range" in dff.columns:
@@ -1865,6 +1894,9 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
         dff["is_three"] = dff["shot_range"].str.lower().eq("3pt")
         #dff = dff.drop_duplicates(subset=['shooter', 'clock', 'game_id'])
         print("Dup shot id", dff[['shooter', 'clock', 'game_id']].duplicated().sum())
+
+
+    
 
     
 
