@@ -791,6 +791,18 @@ def shot_breakdown_stats(dff):
     if "shot_range" in dff.columns:
         dff = reconcile_zone_with_shot_range(dff)
 
+
+    debug = dff.assign(
+        zone_three = dff["zone"].str.contains("3"),
+        range_three = dff["is_three"]
+    )
+    
+    print(
+        debug.loc[debug.zone_three != debug.range_three,
+                  ["zone", "shot_range", "x_plot", "y_plot"]]
+        .head(10)
+    )
+
     # dff['3P'] = np.where(dff['zone'].str.contains('3'), True, False)
     # dff.loc[dff['3P'] & dff['result']=='made', '3P_made']=True
     # dff.loc[~dff['3P'] & dff['result']=='made', '2P_made']=True
@@ -1876,16 +1888,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
 
     team_logo = LOGO_DF.loc[LOGO_DF["Team"] == team_logo_str, "Logo"]
 
-    debug = dff.assign(
-        zone_three = dff["zone"].str.contains("3"),
-        range_three = dff["is_three"]
-    )
     
-    print(
-        debug.loc[debug.zone_three != debug.range_three,
-                  ["zone", "shot_range", "x_plot", "y_plot"]]
-        .head(10)
-    )
 
 
     
