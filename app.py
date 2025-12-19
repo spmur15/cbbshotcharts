@@ -1549,21 +1549,25 @@ app.layout = dbc.Container(
                 [
                     html.H3(
                         "CBB Shot Charts",
-                        className="my-3 text-center",
-                        style={"margin": "0", "padding": "0"}
+                        className="text-center",
+                        style={
+                            "marginBottom": "2px",   # 👈 very tight spacing
+                            "marginTop": "6px"
+                        }
                     ),
                     html.Div(
                         "Games thru Dec. 18",
+                        className="text-center",
                         style={
-                            "margin": "0",
-                            "padding": "0",
                             "fontSize": "14px",
-                            "color": "#666"
+                            "color": "#666",
+                            "marginTop": "0",
                         }
                     ),
                 ],
                 #style={
                 #    "margin": "0",
+                #    "padding": "0",
                 #}
             )
         ),
