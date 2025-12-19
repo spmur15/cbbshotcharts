@@ -1545,7 +1545,7 @@ app.layout = dbc.Container(
         # ),
 
         dbc.Row(
-            dbc.Col(
+            dbc.Col([
                 html.H3(
                     "CBB Shot Charts",
                     className="my-3 text-center",
@@ -1559,7 +1559,7 @@ app.layout = dbc.Container(
                            "fontSize": "14px",
                            "color": "#666"
                         }
-                ),
+                    ]),
                 
                 style={
                         #"maxWidth": "360px",
