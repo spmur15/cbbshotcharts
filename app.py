@@ -173,29 +173,29 @@ ANGLE_WING = 22
 #     """
 #     return x,y
 
-# def polar_wedge(r0, r1, a0, a1, n=50):
-#     a_outer = np.linspace(np.radians(a0), np.radians(a1), n)
+def polar_wedge(r0, r1, a0, a1, n=50):
+    a_outer = np.linspace(np.radians(a0), np.radians(a1), n)
 
-#     x_outer = r1 * np.sin(a_outer)
-#     y_outer = r1 * np.cos(a_outer)
+    x_outer = r1 * np.sin(a_outer)
+    y_outer = r1 * np.cos(a_outer)
 
-#     # clip everything below baseline
-#     y_outer = np.maximum(y_outer, -5.25)
+    # clip everything below baseline
+    y_outer = np.maximum(y_outer, -5.25)
 
-#     a_inner = np.linspace(np.radians(a1), np.radians(a0), n)
-#     x_inner = r0 * np.sin(a_inner)
-#     y_inner = r0 * np.cos(a_inner)
-#     y_inner = np.maximum(y_inner, -5.25)
+    a_inner = np.linspace(np.radians(a1), np.radians(a0), n)
+    x_inner = r0 * np.sin(a_inner)
+    y_inner = r0 * np.cos(a_inner)
+    y_inner = np.maximum(y_inner, -5.25)
 
-#     x = np.concatenate([x_outer, x_inner])
-#     y = np.concatenate([y_outer, y_inner])
+    x = np.concatenate([x_outer, x_inner])
+    y = np.concatenate([y_outer, y_inner])
 
-#     path = f"M {x[0]:.3f},{y[0]:.3f} "
-#     for xi, yi in zip(x[1:], y[1:]):
-#         path += f"L {xi:.3f},{yi:.3f} "
-#     path += "Z"
+    path = f"M {x[0]:.3f},{y[0]:.3f} "
+    for xi, yi in zip(x[1:], y[1:]):
+        path += f"L {xi:.3f},{yi:.3f} "
+    path += "Z"
 
-#     return path
+    return path
 
 def baseline_rect(x0, x1, y0=0, y1=R_PAINT_EDGE):
     return dict(
@@ -566,28 +566,28 @@ def load_team_data(team):
 
     return dff
 
-def polar_wedge(r0, r1, a0, a1, n=40):
-    """
-    Build a closed polygon (SVG path) for a radial wedge.
-    Angles in degrees.
-    """
-    a_outer = np.linspace(np.radians(a0), np.radians(a1), n)
-    a_inner = np.linspace(np.radians(a1), np.radians(a0), n)
+# def polar_wedge(r0, r1, a0, a1, n=40):
+#     """
+#     Build a closed polygon (SVG path) for a radial wedge.
+#     Angles in degrees.
+#     """
+#     a_outer = np.linspace(np.radians(a0), np.radians(a1), n)
+#     a_inner = np.linspace(np.radians(a1), np.radians(a0), n)
 
-    x = np.concatenate([
-        r1 * np.cos(a_outer),
-        r0 * np.cos(a_inner)
-    ])
-    y = np.concatenate([
-        r1 * np.sin(a_outer),
-        r0 * np.sin(a_inner)
-    ])
+#     x = np.concatenate([
+#         r1 * np.cos(a_outer),
+#         r0 * np.cos(a_inner)
+#     ])
+#     y = np.concatenate([
+#         r1 * np.sin(a_outer),
+#         r0 * np.sin(a_inner)
+#     ])
 
-    path = f"M {x[0]:.3f},{y[0]:.3f} "
-    for xi, yi in zip(x[1:], y[1:]):
-        path += f"L {xi:.3f},{yi:.3f} "
-    path += "Z"
-    return path
+#     path = f"M {x[0]:.3f},{y[0]:.3f} "
+#     for xi, yi in zip(x[1:], y[1:]):
+#         path += f"L {xi:.3f},{yi:.3f} "
+#     path += "Z"
+#     return path
 
 
 
