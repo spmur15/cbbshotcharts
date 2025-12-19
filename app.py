@@ -1601,20 +1601,33 @@ app.layout = dbc.Container(
                                 dbc.Row(
                                     [
                                         dbc.Col(
-                                            dbc.Checkbox(
-                                                id="exclude-non-d1",
-                                                label="Exclude games vs Non-D1",
-                                                inputStyle={
-                                                    "marginRight": "8px",
-                                                    "transform": "scale(1.5)",   # 🔹 increase checkbox size
-                                                    "cursor": "pointer",
-                                                    "color":'black'
-                                                },
-                                                labelStyle={
-                                                    "cursor": "pointer"
-                                                },
-                                                value=True,   # ✅ default checked
-                                                #inputStyle={"marginRight": "8px"},
+                                            html.div(
+                                                dbc.Checkbox(
+                                                    id="exclude-non-d1",
+                                                    label="Exclude games vs Non-D1",
+                                                    inputStyle={
+                                                        "marginRight": "8px",
+                                                        "transform": "scale(1.5)",   # 🔹 increase checkbox size
+                                                        "cursor": "pointer",
+                                                        "color":'black'
+                                                    },
+                                                    labelStyle={
+                                                        "cursor": "pointer"
+                                                    },
+                                                    value=True,   # ✅ default checked
+                                                    #inputStyle={"marginRight": "8px"},
+                                                ),
+                                                style={
+                                                    "display": "flex",
+                                                    "alignItems": "center",
+                                                    "justifyContent": "center",
+                                                    "gap": "6px",
+                                                    "fontSize": "16px",
+                                                    "color": "#666",
+                                                    "marginBottom": "2px",
+                                                    "marginTop": "18px",
+                                    
+                                                }
                                             ),
                                             xs=12
                                         ),
