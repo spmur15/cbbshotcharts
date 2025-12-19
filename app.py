@@ -167,35 +167,35 @@ ZONE_PCT_RANGES = {
 ANGLE_CORNER = 67     # degrees
 ANGLE_WING = 22
 
-def rotate_for_display(x, y):
-    """
-    Rotate coordinates so baseline is at the bottom.
-    """
-    return x,y
+# def rotate_for_display(x, y):
+#     """
+#     Rotate coordinates so baseline is at the bottom.
+#     """
+#     return x,y
 
-def polar_wedge(r0, r1, a0, a1, n=50):
-    a_outer = np.linspace(np.radians(a0), np.radians(a1), n)
+# def polar_wedge(r0, r1, a0, a1, n=50):
+#     a_outer = np.linspace(np.radians(a0), np.radians(a1), n)
 
-    x_outer = r1 * np.sin(a_outer)
-    y_outer = r1 * np.cos(a_outer)
+#     x_outer = r1 * np.sin(a_outer)
+#     y_outer = r1 * np.cos(a_outer)
 
-    # clip everything below baseline
-    y_outer = np.maximum(y_outer, -5.25)
+#     # clip everything below baseline
+#     y_outer = np.maximum(y_outer, -5.25)
 
-    a_inner = np.linspace(np.radians(a1), np.radians(a0), n)
-    x_inner = r0 * np.sin(a_inner)
-    y_inner = r0 * np.cos(a_inner)
-    y_inner = np.maximum(y_inner, -5.25)
+#     a_inner = np.linspace(np.radians(a1), np.radians(a0), n)
+#     x_inner = r0 * np.sin(a_inner)
+#     y_inner = r0 * np.cos(a_inner)
+#     y_inner = np.maximum(y_inner, -5.25)
 
-    x = np.concatenate([x_outer, x_inner])
-    y = np.concatenate([y_outer, y_inner])
+#     x = np.concatenate([x_outer, x_inner])
+#     y = np.concatenate([y_outer, y_inner])
 
-    path = f"M {x[0]:.3f},{y[0]:.3f} "
-    for xi, yi in zip(x[1:], y[1:]):
-        path += f"L {xi:.3f},{yi:.3f} "
-    path += "Z"
+#     path = f"M {x[0]:.3f},{y[0]:.3f} "
+#     for xi, yi in zip(x[1:], y[1:]):
+#         path += f"L {xi:.3f},{yi:.3f} "
+#     path += "Z"
 
-    return path
+#     return path
 
 def baseline_rect(x0, x1, y0=0, y1=R_PAINT_EDGE):
     return dict(
@@ -289,21 +289,21 @@ ZONE_SHAPES = {
 
 
 
-ZONE_LABEL_POS = {
-    "Rim": (0, 0),
-    "Paint (Non-Rim)": (0,6),
+# ZONE_LABEL_POS = {
+#     "Rim": (0, 0),
+#     "Paint (Non-Rim)": (0,6),
 
-    "Top Mid": (18,0),
-    "Left Mid": (10, 12),
-    "Right Mid": (10, -12),
-    "Left Mid Low": (-22, -8),
-    "Right Mid Low": (-12, 10),
+#     "Top Mid": (18,0),
+#     "Left Mid": (10, 12),
+#     "Right Mid": (10, -12),
+#     "Left Mid Low": (-22, -8),
+#     "Right Mid Low": (-12, 10),
 
-    "Top 3": (0, 30),
-    "Left Wing 3": (16, ),
-    "Right Wing 3": (-16, ),
-    "Corner 3": (22, 8),
-}
+#     "Top 3": (0, 30),
+#     "Left Wing 3": (16, ),
+#     "Right Wing 3": (-16, ),
+#     "Corner 3": (22, 8),
+# }
 # ZONE_LABEL_POS.update({
 #     "Left Baseline 2": (-18, 6),
 #     "Right Baseline 2": (18, 6),
@@ -627,45 +627,33 @@ def zone_label_xy(zone):
 
 
 def shooting_summary(dff):
-    """
-    Returns:
-    - FG line: "284/642 – 44.2%"
-    - PPS/eFG line: "1.033 pts/shot – 51.6% eFG"
-    """
-
     if dff.empty:
-        return ("", '')
+        return ("", "")
 
-    if "shot_range" in dff.columns:
+    # IMPORTANT: only reconcile if zone already exists
+    if "shot_range" in dff.columns and "zone" in dff.columns:
         dff = reconcile_zone_with_shot_range(dff)
+
+    if "is_three" not in dff.columns:
+        dff = add_shot_flags(dff)
 
     fga = len(dff)
     fgm = int(dff["made"].sum())
     fg_pct = fgm / fga if fga else 0
 
-    # identify 3s using your existing zone logic (works in zone mode)
-    threes = dff.get("zone", pd.Series(False, index=dff.index)).isin(
-        ["Top 3", "Left Wing 3", "Right Wing 3", "Left Corner 3", "Right Corner 3"]
-    )
-    #print(threes)
+    three_att  = int(dff["is_three"].sum())
+    three_made = int(dff.loc[dff["is_three"], "made"].sum())
 
-    three_made = int(dff.loc[threes, "made"].sum())
-    three_att = sum(threes)
     two_made = fgm - three_made
-    try: three_pct = three_made / three_att
-    except: three_pct = 0
-    try: two_pct = two_made / (fga-three_att)
-    except: two_pct = 0
 
     points = two_made * 2 + three_made * 3
     pps = points / fga if fga else 0
     efg = (fgm + 0.5 * three_made) / fga if fga else 0
 
-    fg_line = f"{fg_pct:.1%} FG · {fgm}/{fga}"
+    fg_line  = f"{fg_pct:.1%} FG · {fgm}/{fga}"
     pps_line = f"{efg:.1%} eFG · {pps:.3f} pts/shot"
-    three_two_line = ''#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
-
     return fg_line, pps_line
+
 
 
 def team_title_with_logo(team, subtitle=None, logo_src=None):
@@ -789,6 +777,8 @@ def shot_breakdown_stats(dff):
     if "shot_range" in dff.columns:
         dff = reconcile_zone_with_shot_range(dff)
 
+    dff = add_shot_flags(dff)
+
     # dff['3P'] = np.where(dff['zone'].str.contains('3'), True, False)
     # dff.loc[dff['3P'] & dff['result']=='made', '3P_made']=True
     # dff.loc[~dff['3P'] & dff['result']=='made', '2P_made']=True
@@ -804,7 +794,10 @@ def shot_breakdown_stats(dff):
     mid = dff["zone"].str.contains("Mid")
 
     # Threes
-    three = dff["zone"].str.contains("3")
+    #three = dff["zone"].str.contains("3")
+    three = dff["is_three"]          # boolean mask
+    #three_att  = dff["is_three"].sum()
+
 
 
     left = dff["angle"] < -22
@@ -1139,6 +1132,8 @@ def make_shot_chart(dff, title):
     if "shot_range" in dff2.columns:
         dff2 = reconcile_zone_with_shot_range(dff2)
 
+    dff2 = add_shot_flags(dff2)
+
     #print(shooting_summary(dff2))
 
     fg_line, pps_line = shooting_summary(dff2)
@@ -1201,6 +1196,8 @@ def make_zone_chart(dff, title):
     if "shot_range" in dff.columns:
         dff = reconcile_zone_with_shot_range(dff)
 
+    dff = add_shot_flags(dff)
+
     zs = (
         dff.groupby("zone")
         .agg(att=("made", "count"), made=("made", "sum"))
@@ -1209,17 +1206,9 @@ def make_zone_chart(dff, title):
     zs["pct"] = zs["made"] / zs["att"]
 
     for _, r in zs.iterrows():
-        zone_shape = ZONE_SHAPES[r["zone"]].copy()
+        zone_shape = rotate_zone_shape(ZONE_SHAPES[r["zone"]])
         #print(zone_shape)
         zone_shape['line'] = {'width':3,'color':'#f8f8f8'}
-
-        # # Rotate PATH shapes
-        # if zone_shape["type"] == "path":
-        #     zone_shape["path"] = rotate_path(zone_shape["path"])
-
-        # # Rotate rect / circle using existing helper
-        # elif zone_shape["type"] in ("rect", "circle"):
-        #     zone_shape = rotate_shape(zone_shape)
 
         fig.add_shape(
             **zone_shape,
@@ -1482,6 +1471,35 @@ def add_chart_subtitle(fig, fg_line, pps_line):
         font=dict(**common_font, size=14),
         align="right"
     )
+
+
+def add_shot_flags(df):
+    df = df.copy()
+
+    if "zone" not in df.columns:
+        df["is_three"] = False
+        return df
+
+    df["is_three"] = df["zone"].isin([
+        "Top 3", "Left Wing 3", "Right Wing 3",
+        "Left Corner 3", "Right Corner 3"
+    ])
+
+    return df
+
+def rotate_zone_shape(shape):
+    """
+    Rotates a zone shape into display space.
+    Works for path, rect, and circle.
+    """
+    s = shape.copy()
+
+    if s["type"] == "path":
+        s["path"] = rotate_path(s["path"])
+    else:
+        s = rotate_shape(s)
+
+    return s
 
 
 
@@ -1840,7 +1858,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
     if "shot_range" in dff.columns:
         print("Dup shot id", dff['shot_id'].duplicated().sum())
         dff = dff[~dff["shot_range"].str.lower().isin(["freethrow"])]
-        dff = dff.drop_duplicates(subset=['shot_id'])
+        dff = dff.drop_duplicates(subset=['shot_id', 'game_id'])
         #dff = dff.drop_duplicates(subset=['shooter', 'clock', 'game_id'])
         print("Dup shot id", dff[['shooter', 'clock', 'game_id']].duplicated().sum())
 
@@ -1947,6 +1965,17 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats)
 
     dff = standardize_to_right_basket(dff, x_col="x", y_col="y")
     dff = to_feet_hoop_centered(dff)
+
+    dff = dff.copy()
+    dff["dist"]  = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
+    dff["angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
+    dff["zone"]  = dff.apply(assign_zone, axis=1)
+    
+    if "shot_range" in dff.columns:
+        dff = reconcile_zone_with_shot_range(dff)
+    
+    dff = add_shot_flags(dff)
+
 
     off_df = dff[dff[OFF_DEF_COL] == "Offense"]
     def_df = dff[dff[OFF_DEF_COL] == "Defense"]
