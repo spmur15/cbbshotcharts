@@ -1545,31 +1545,29 @@ app.layout = dbc.Container(
         # ),
 
         dbc.Row(
-            dbc.Col([
-                html.H3(
-                    "CBB Shot Charts",
-                    className="my-3 text-center",
-                    style={"margin": "0",'padding':'0'}
-                ),
-                html.Div(
-                    "Games thru Dec. 18",
-                    #className="my-3 text-center",
-                    style={"margin": "0",
-                           'padding':'0',
-                           "fontSize": "14px",
-                           "color": "#666"
+            dbc.Col(
+                [
+                    html.H3(
+                        "CBB Shot Charts",
+                        className="my-3 text-center",
+                        style={"margin": "0", "padding": "0"}
+                    ),
+                    html.Div(
+                        "Games thru Dec. 18",
+                        style={
+                            "margin": "0",
+                            "padding": "0",
+                            "fontSize": "14px",
+                            "color": "#666"
                         }
                     ),
-                
-                style={
-                        #"maxWidth": "360px",
-                        "margin": "0",
-                        #"boxShadow": "0 6px 18px rgba(0,0,0,0.22)",
-                        #"borderRadius": "10px",
-                        #"fontWeight": "600",
-                                            }
-            ])
+                ],
+                #style={
+                #    "margin": "0",
+                #}
+            )
         ),
+
         html.Hr(style={"margin": "0",'padding':'0'}),
 
 
