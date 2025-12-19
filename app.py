@@ -1551,6 +1551,16 @@ app.layout = dbc.Container(
                     className="my-3 text-center",
                     style={"margin": "0",'padding':'0'}
                 ),
+                html.Div(
+                    "Games thru Dec. 18",
+                    className="my-3 text-center",
+                    style={"margin": "0",
+                           'padding':'0',
+                           "fontSize": "14px",
+                           "color": "#666"
+                        }
+                ),
+                
                 style={
                         #"maxWidth": "360px",
                         "margin": "0",
@@ -1601,36 +1611,6 @@ app.layout = dbc.Container(
                                 dbc.Row(
                                     [
                                         dbc.Col(
-                                            html.Div(
-                                                dbc.Checkbox(
-                                                    id="exclude-non-d1",
-                                                    label="Exclude games vs Non-D1",
-                                                    inputStyle={
-                                                        "marginRight": "8px",
-                                                        "transform": "scale(1.5)",   # 🔹 increase checkbox size
-                                                        "cursor": "pointer",
-                                                        "color":'black'
-                                                    },
-                                                    labelStyle={
-                                                        "cursor": "pointer"
-                                                    },
-                                                    value=True,   # ✅ default checked
-                                                    #inputStyle={"marginRight": "8px"},
-                                                ),
-                                                style={
-                                                    "display": "flex",
-                                                    "alignItems": "center",
-                                                    "justifyContent": "center",
-                                                    "gap": "6px",
-                                                    "fontSize": "16px",
-                                                    "color": "#666",
-                                                    "marginBottom": "2px",
-                                                    "marginTop": "18px",
-                                                }
-                                            ),
-                                            xs=12
-                                        ),
-                                        dbc.Col(
                                             dcc.Dropdown(
                                                 id="player-dd",
                                                 multi=True,
@@ -1672,6 +1652,36 @@ app.layout = dbc.Container(
                                                 placeholder="Location"
                                             ),
                                             xs=12, md=4
+                                        ),
+                                        dbc.Col(
+                                            html.Div(
+                                                dbc.Checkbox(
+                                                    id="exclude-non-d1",
+                                                    label="Exclude games vs Non-D1",
+                                                    inputStyle={
+                                                        "marginRight": "8px",
+                                                        "transform": "scale(1.25)",   # 🔹 increase checkbox size
+                                                        "cursor": "pointer",
+                                                        "color":'black'
+                                                    },
+                                                    labelStyle={
+                                                        "cursor": "pointer"
+                                                    },
+                                                    value=True,   # ✅ default checked
+                                                    #inputStyle={"marginRight": "8px"},
+                                                ),
+                                                style={
+                                                    "display": "flex",
+                                                    "alignItems": "center",
+                                                    "justifyContent": "center",
+                                                    "gap": "6px",
+                                                    "fontSize": "16px",
+                                                    "color": "#666",
+                                                    "marginBottom": "5px",
+                                                    "marginTop": "5px",
+                                                }
+                                            ),
+                                            xs=12
                                         ),
                                         html.Br(),
                                     ],
