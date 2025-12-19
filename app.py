@@ -518,7 +518,7 @@ def rotate_for_display(x, y):
     """
     Rotate coordinates so baseline is at the bottom.
     """
-    return y, -x
+    return -y, x
 
 def rotate_shape(shape):
     """
