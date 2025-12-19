@@ -1553,13 +1553,13 @@ app.layout = dbc.Container(
                 ),
                 html.Div(
                     "Games thru Dec. 18",
-                    className="my-3 text-center",
+                    #className="my-3 text-center",
                     style={"margin": "0",
                            'padding':'0',
                            "fontSize": "14px",
                            "color": "#666"
                         }
-                    ]),
+                    ),
                 
                 style={
                         #"maxWidth": "360px",
@@ -1568,7 +1568,7 @@ app.layout = dbc.Container(
                         #"borderRadius": "10px",
                         #"fontWeight": "600",
                                             }
-            )
+            ])
         ),
         html.Hr(style={"margin": "0",'padding':'0'}),
 
