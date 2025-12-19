@@ -1601,7 +1601,7 @@ app.layout = dbc.Container(
                                 dbc.Row(
                                     [
                                         dbc.Col(
-                                            html.div(
+                                            html.Div(
                                                 dbc.Checkbox(
                                                     id="exclude-non-d1",
                                                     label="Exclude games vs Non-D1",
@@ -1626,7 +1626,6 @@ app.layout = dbc.Container(
                                                     "color": "#666",
                                                     "marginBottom": "2px",
                                                     "marginTop": "18px",
-                                    
                                                 }
                                             ),
                                             xs=12
