@@ -639,7 +639,7 @@ def shooting_summary(dff):
     if "shot_range" in dff.columns:
         dff = reconcile_zone_with_shot_range(dff)
 
-    fga = len(dff)
+    fga = len(dff['shot_id'].unique())
     fgm = int(dff["made"].sum())
     fg_pct = fgm / fga if fga else 0
 
@@ -661,6 +661,9 @@ def shooting_summary(dff):
 
     points = two_made * 2 + three_made * 3
     pps = points / fga if fga else 0
+    print('fgm:', fgm)
+    print('three_made:', three_made)
+    print('three_att:', three_att)
     efg = (fgm + 0.5 * three_made) / fga if fga else 0
 
     fg_line = f"{fg_pct:.1%} FG · {fgm}/{fga}"
