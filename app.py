@@ -1551,15 +1551,15 @@ app.layout = dbc.Container(
                         "CBB Shot Charts",
                         className="text-center",
                         style={
-                            "marginBottom": "2px",   # 👈 very tight spacing
-                            "marginTop": "6px"
+                            "marginBottom": "1px",   # 👈 very tight spacing
+                            "marginTop": "4px"
                         }
                     ),
                     html.Div(
                         "Games thru Dec. 18",
                         className="text-center",
                         style={
-                            "fontSize": "14px",
+                            "fontSize": "12.5px",
                             "color": "#666",
                             "marginTop": "0",
                         }
@@ -1659,7 +1659,7 @@ app.layout = dbc.Container(
                                             html.Div(
                                                 dbc.Checkbox(
                                                     id="exclude-non-d1",
-                                                    label="Exclude games vs Non-D1",
+                                                    label="Exclude games vs non-D1",
                                                     inputStyle={
                                                         "marginRight": "8px",
                                                         "transform": "scale(1.25)",   # 🔹 increase checkbox size
@@ -1677,7 +1677,7 @@ app.layout = dbc.Container(
                                                     "alignItems": "center",
                                                     "justifyContent": "center",
                                                     "gap": "6px",
-                                                    "fontSize": "16px",
+                                                    "fontSize": "14px",
                                                     "color": "#666",
                                                     "marginBottom": "5px",
                                                     "marginTop": "5px",
