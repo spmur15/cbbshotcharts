@@ -543,8 +543,18 @@ def load_team_data(team):
     path = f"Shot Location Data//{team}_shot_data_2026.csv"
     dff = pd.read_csv(path)
 
+    #lineup_col = [col for col in dff if 'lineup' in col][0]
+    #dff['lineup'] = dff[lineup_col]
+
+    import ast
     lineup_col = [col for col in dff if 'lineup' in col][0]
-    dff['lineup'] = dff[lineup_col]
+    
+    dff["lineup"] = (
+        dff[lineup_col]
+        .dropna()
+        .apply(lambda x: tuple(ast.literal_eval(x)) if isinstance(x, str) else tuple(x))
+    )
+
 
     #print(team)
     #print(dff["team_name"])
@@ -1964,7 +1974,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
         dff = dff[dff["nond1"] == False]
 
     if lineup:
-        dff = dff[dff["lineup"].apply(tuple) == tuple(lineup)]
+        dff = dff[dff["lineup"] == tuple(lineup)]
+
 
 
 
@@ -2345,12 +2356,8 @@ def update_filter_options(team, exclude_non_d1):
     ]
 
     # ---- lineup options ----
-    lineups = (
-        dff["lineup"]
-        .dropna()
-        .apply(tuple)
-        .unique()
-    )
+    lineups = dff["lineup"].dropna().unique()
+
     
     lineup_opts = [
         {
