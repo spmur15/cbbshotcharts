@@ -543,6 +543,9 @@ def load_team_data(team):
     path = f"Shot Location Data//{team}_shot_data_2026.csv"
     dff = pd.read_csv(path)
 
+    lineup_col = [col for col in dff if 'lineup' in col][0]
+    dff['lineup'] = dff[lineup_col]
+
     #print(team)
     #print(dff["team_name"])
 
@@ -1525,6 +1528,14 @@ def add_chart_subtitle(fig, fg_line, pps_line, astd_line):
         )
 
 
+def format_lineup_label(lineup):
+    """
+    lineup: tuple/list of player names
+    Returns compact display label
+    """
+    last_names = [p.split()[-1] for p in lineup]
+    return " · ".join(last_names)
+
 
 # --------------------------------------------------
 # DASH APP
@@ -1704,6 +1715,28 @@ app.layout = dbc.Container(
                                             ),
                                             xs=12
                                         ),
+                                        dbc.Accordion(
+                                                    [
+                                                        dbc.AccordionItem(
+                                                            dcc.Dropdown(
+                                                                id="lineup-dd",
+                                                                multi=False,
+                                                                placeholder="Select 5-man lineup",
+                                                                style={
+                                                                    "fontSize": "13px",
+                                                                }
+                                                            ),
+                                                            title="Lineup on court",
+                                                        )
+                                                    ],
+                                                    start_collapsed=True,
+                                                    flush=True,
+                                                    style={
+                                                        "marginTop": "6px",
+                                                        "backgroundColor": "#f7f8fa",
+                                                    }
+                                                ),
+
                                         html.Br(),
                                     ],
                                     className="g-2"
@@ -1731,7 +1764,9 @@ app.layout = dbc.Container(
                     }
                 ),
                 xs=9, md=9
-            ), justify='center'
+            ), 
+            
+            justify='center'
         ),
 
 
@@ -1899,6 +1934,7 @@ app.layout = dbc.Container(
     Output("defense-title", "children"),
     Output("offense-shot-stats", "children"),
     Output("defense-shot-stats", "children"),
+    
 
     Input("team-dd", "value"),
     Input("view-mode", "value"),
@@ -1908,11 +1944,13 @@ app.layout = dbc.Container(
     Input("loc-dd", "value"),
     Input("quad-dd", "value"),
     Input("show-shot-stats", "value"),
-    Input("exclude-non-d1", "value")
+    Input("exclude-non-d1", "value"),
+    Input("lineup-dd", "value"),
+
 
 )
 
-def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats, exclude_non_d1):
+def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats, exclude_non_d1, lineup):
 
     off_title = "Offense"
     def_title = "Defense"
@@ -1924,6 +1962,10 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
     # exclude non-D1 opponents if checked
     if exclude_non_d1:
         dff = dff[dff["nond1"] == False]
+
+    if lineup:
+        dff = dff[dff["lineup"].apply(tuple) == tuple(lineup)]
+
 
 
     # REMOVE FREE THROWS
@@ -2264,6 +2306,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
     Output("player-dd", "options"),
     Output("half-dd", "options"),
     Output("opp-dd", "options"),
+    Output("lineup-dd", "options"),
     Input("team-dd", "value"),
     Input("exclude-non-d1", "value"),
 )
@@ -2301,7 +2344,24 @@ def update_filter_options(team, exclude_non_d1):
         for o in sorted(dff[OPP_COL].dropna().unique())
     ]
 
-    return player_opts, half_opts, opp_opts
+    # ---- lineup options ----
+    lineups = (
+        dff["lineup"]
+        .dropna()
+        .apply(tuple)
+        .unique()
+    )
+    
+    lineup_opts = [
+        {
+            "label": format_lineup_label(lu),
+            "value": lu
+        }
+        for lu in sorted(lineups)
+    ]
+
+
+    return player_opts, half_opts, opp_opts, lineup_opts
 
 
 # --------------------------------------------------
