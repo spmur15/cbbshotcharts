@@ -662,8 +662,15 @@ def shooting_summary(dff):
     try: two_pct = two_made / (fga-three_att)
     except: two_pct = 0
 
-    try: astd = dff['assisted'].sum() / len(dff)
-    except: ast=0
+    # ---- Assisted FG% ----
+    made_shots = dff[dff["made"] == 1]
+    
+    if len(made_shots):
+        assisted_made = made_shots["assisted"].fillna(0).sum()
+        astd = assisted_made / len(made_shots)
+    else:
+        astd = 0
+
 
     points = two_made * 2 + three_made * 3
     pps = points / fga if fga else 0
@@ -674,7 +681,7 @@ def shooting_summary(dff):
 
     fg_line = f"{fg_pct:.1%} FG · {fgm}/{fga}"
     pps_line = f"{efg:.1%} eFG · {pps:.3f} pts/shot"
-    astd_line = f"{astd:.1%} % Ast'd"#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
+    astd_line = f"{astd:.1%} Ast'd"#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
 
     return fg_line, pps_line, astd_line
 
