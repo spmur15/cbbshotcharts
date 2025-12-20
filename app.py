@@ -662,6 +662,9 @@ def shooting_summary(dff):
     try: two_pct = two_made / (fga-three_att)
     except: two_pct = 0
 
+    try: astd = dff['assisted'].sum() / len(dff)
+    except: ast=0
+
     points = two_made * 2 + three_made * 3
     pps = points / fga if fga else 0
     print('fgm:', fgm)
@@ -671,9 +674,9 @@ def shooting_summary(dff):
 
     fg_line = f"{fg_pct:.1%} FG · {fgm}/{fga}"
     pps_line = f"{efg:.1%} eFG · {pps:.3f} pts/shot"
-    three_two_line = ''#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
+    astd_line = 'f"{astd:.1%} % Ast\'d'#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
 
-    return fg_line, pps_line
+    return fg_line, pps_line, astd_line
 
 
 def team_title_with_logo(team, subtitle=None, logo_src=None):
@@ -1163,8 +1166,8 @@ def make_shot_chart(dff, title):
 
     #print(shooting_summary(dff2))
 
-    fg_line, pps_line = shooting_summary(dff2)
-    add_chart_subtitle(fig, fg_line, pps_line)
+    fg_line, pps_line, astd_line = shooting_summary(dff2)
+    add_chart_subtitle(fig, fg_line, pps_line, astd_line)
 
     return fig
 
@@ -1296,8 +1299,8 @@ def make_zone_chart(dff, title):
 
     #add_zone_dividers(fig)
     # 🔹 ADD SUMMARY STATS
-    fg_line, pts_line = shooting_summary(dff)
-    add_chart_subtitle(fig, fg_line, pts_line)
+    fg_line, pts_line, astd_line = shooting_summary(dff)
+    add_chart_subtitle(fig, fg_line, pts_line, astd_line)
 
 
     return fig
@@ -1476,7 +1479,7 @@ def rotate_path(path_str):
 
     return " ".join(out)
 
-def add_chart_subtitle(fig, fg_line, pps_line):
+def add_chart_subtitle(fig, fg_line, pps_line, astd_line):
     # closer to title (title is at y=0.98)
     y1 = 0.99
     y2 = 0.95
@@ -1492,7 +1495,7 @@ def add_chart_subtitle(fig, fg_line, pps_line):
         xref="paper", yref="paper",
         text=fg_line,           # no bold
         showarrow=False,
-        font=dict(**common_font, size=14),
+        font=dict(**common_font, size=13),
         align="right"
     )
 
@@ -1501,9 +1504,18 @@ def add_chart_subtitle(fig, fg_line, pps_line):
         xref="paper", yref="paper",
         text=pps_line,
         showarrow=False,
-        font=dict(**common_font, size=14),
+        font=dict(**common_font, size=13),
         align="right"
     )
+
+    fig.add_annotation(
+            x=0.99, y=y3,
+            xref="paper", yref="paper",
+            text=astd_line,
+            showarrow=False,
+            font=dict(**common_font, size=13),
+            align="right"
+        )
 
 
 
@@ -1881,8 +1893,6 @@ app.layout = dbc.Container(
     Output("offense-shot-stats", "children"),
     Output("defense-shot-stats", "children"),
 
-
-
     Input("team-dd", "value"),
     Input("view-mode", "value"),
     Input("player-dd", "value"),
@@ -2245,9 +2255,10 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
     Output("player-dd", "options"),
     Output("half-dd", "options"),
     Output("opp-dd", "options"),
-    Input("team-dd", "value")
+    Input("team-dd", "value"),
+    Input("exclude-non-d1", "value"),
 )
-def update_filter_options(team):
+def update_filter_options(team, exclude_non_d1):
 
     dff = load_team_data(team)
 
@@ -2258,6 +2269,11 @@ def update_filter_options(team):
     dff = dff.drop('size', axis=1)
 
     name_team = dff.loc[dff['team_name']==team, 'shooter'].unique()
+
+    dff = load_team_data(team)
+
+    if exclude_non_d1:
+        dff = dff[dff["nond1"] == False]
     names_opp = dff.loc[dff['team_name']!=team,  'shooter'].unique()
 
     player_opts = [
