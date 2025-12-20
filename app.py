@@ -674,7 +674,7 @@ def shooting_summary(dff):
 
     fg_line = f"{fg_pct:.1%} FG · {fgm}/{fga}"
     pps_line = f"{efg:.1%} eFG · {pps:.3f} pts/shot"
-    astd_line = 'f"{astd:.1%} % Ast\'d'#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
+    astd_line = f"{astd:.1%} % Ast'd"#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
 
     return fg_line, pps_line, astd_line
 
