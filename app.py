@@ -1917,7 +1917,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
         # after FT removal & dedupe
         dff["is_three"] = dff["shot_range"].str.lower().eq("3pt")
         #dff = dff.drop_duplicates(subset=['shooter', 'clock', 'game_id'])
-        print("Dup shot id", dff[['shooter', 'clock', 'game_id']].duplicated().sum())
+        #print("Dup shot id", dff[['shooter', 'clock', 'game_id']].duplicated().sum())
 
 
     
