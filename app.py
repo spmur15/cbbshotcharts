@@ -1546,6 +1546,13 @@ def format_lineup_label(lineup):
     last_names = [p.split()[-1] for p in lineup]
     return " · ".join(last_names)
 
+def lineup_key(lineup):
+    """Stable string key for Dash dropdown"""
+    return "|".join(lineup)
+
+def parse_lineup_key(key):
+    return tuple(key.split("|"))
+
 
 # --------------------------------------------------
 # DASH APP
@@ -1974,7 +1981,9 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
         dff = dff[dff["nond1"] == False]
 
     if lineup:
-        dff = dff[dff["lineup"] == tuple(lineup)]
+        lineup_tuple = parse_lineup_key(lineup)
+        dff = dff[dff["lineup"] == lineup_tuple]
+
 
 
 
@@ -2359,13 +2368,48 @@ def update_filter_options(team, exclude_non_d1):
     lineups = dff["lineup"].dropna().unique()
 
     
+    # ---- lineup options ----
+    # Count shots per lineup
+    lu_counts = (
+        dff.dropna(subset=["lineup"])
+           .assign(lu_size=lambda x: x["lineup"].apply(len))
+           .query("lu_size == 5")              # ✅ remove bad lineups
+           .groupby("lineup")
+           .size()
+           .reset_index(name="shots")
+    )
+    
+    # Shot counts per player (team only)
+    player_shots = (
+        dff[dff["team_name"] == team]
+        .groupby("shooter")
+        .size()
+        .to_dict()
+    )
+    
+    def order_lineup_players(lineup):
+        return tuple(
+            sorted(
+                lineup,
+                key=lambda p: player_shots.get(p, 0),
+                reverse=True
+            )
+        )
+    
+    # Apply ordering
+    lu_counts["lineup_ord"] = lu_counts["lineup"].apply(order_lineup_players)
+    
+    # Sort lineups by shots
+    lu_counts = lu_counts.sort_values("shots", ascending=False)
+    
     lineup_opts = [
         {
-            "label": format_lineup_label(lu),
-            "value": lu
+            "label": f"{format_lineup_label(lu)}  ({shots})",
+            "value": lineup_key(lu)
         }
-        for lu in sorted(lineups)
+        for lu, shots in zip(lu_counts["lineup_ord"], lu_counts["shots"])
     ]
+
 
 
     return player_opts, half_opts, opp_opts, lineup_opts
