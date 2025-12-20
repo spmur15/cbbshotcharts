@@ -1537,14 +1537,18 @@ def add_chart_subtitle(fig, fg_line, pps_line, astd_line):
             align="right"
         )
 
+SUFFIXES = {"jr", "jr.", "sr", "sr.", "ii", "iii", "iv"}
+
+def last_name_clean(name):
+    parts = name.replace(",", "").split()
+    if parts[-1].lower() in SUFFIXES:
+        return parts[-2]
+    return parts[-1]
 
 def format_lineup_label(lineup):
-    """
-    lineup: tuple/list of player names
-    Returns compact display label
-    """
-    last_names = [p.split()[-1] for p in lineup]
+    last_names = [last_name_clean(p) for p in lineup]
     return " · ".join(last_names)
+
 
 def lineup_key(lineup):
     """Stable string key for Dash dropdown"""
@@ -1981,8 +1985,11 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
         dff = dff[dff["nond1"] == False]
 
     if lineup:
-        lineup_tuple = parse_lineup_key(lineup)
-        dff = dff[dff["lineup"] == lineup_tuple]
+        lineup_tuple = set(parse_lineup_key(lineup))
+        dff = dff[
+            dff["lineup"].apply(lambda x: isinstance(x, tuple) and set(x) == lineup_tuple)
+        ]
+
 
 
 
