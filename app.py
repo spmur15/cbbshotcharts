@@ -769,9 +769,9 @@ def stat_card(label, value, subvalue=None):
             subvalue and html.Div(
                 subvalue,
                 style={
-                    "fontSize": "11px",
+                    "fontSize": "10px",
                     "color": "#888",
-                    "marginTop": "2px",
+                    "marginTop": "10px",
                 }
             ),
         ],
@@ -1203,7 +1203,7 @@ def make_shot_chart(dff, title):
         fig,
         fg_line,
         pps_line,
-        f"{summary['astd_pct']:.1%} Ast'd"
+        f"{summary['astd_pct']:.0%} Ast'd"
     )
 
 
