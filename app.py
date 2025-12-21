@@ -1759,6 +1759,66 @@ app.layout = dbc.Container(
                                                     }
                                                 ),
 
+                                                dbc.Accordion(
+                                                    [
+                                                        dbc.AccordionItem(
+                                                            dbc.Row(
+                                                                [
+                                                                    dbc.Col(
+                                                                        [
+                                                                            html.Div(
+                                                                                "Player(s) ON court",
+                                                                                style={
+                                                                                    "fontSize": "12px",
+                                                                                    "fontWeight": 600,
+                                                                                    "color": "#555",
+                                                                                    "marginBottom": "4px",
+                                                                                }
+                                                                            ),
+                                                                            dcc.Dropdown(
+                                                                                id="on-court-dd",
+                                                                                multi=True,
+                                                                                placeholder="Shots with player(s) ON court",
+                                                                            ),
+                                                                        ],
+                                                                        xs=12,
+                                                                        md=6,
+                                                                    ),
+                                                                    dbc.Col(
+                                                                        [
+                                                                            html.Div(
+                                                                                "Player(s) OFF court",
+                                                                                style={
+                                                                                    "fontSize": "12px",
+                                                                                    "fontWeight": 600,
+                                                                                    "color": "#555",
+                                                                                    "marginBottom": "4px",
+                                                                                }
+                                                                            ),
+                                                                            dcc.Dropdown(
+                                                                                id="off-court-dd",
+                                                                                multi=True,
+                                                                                placeholder="Shots with player(s) OFF court",
+                                                                            ),
+                                                                        ],
+                                                                        xs=12,
+                                                                        md=6,
+                                                                    ),
+                                                                ],
+                                                                className="g-2",
+                                                            ),
+                                                            title="On / Off Query",
+                                                        )
+                                                    ],
+                                                    start_collapsed=True,
+                                                    flush=True,
+                                                    style={
+                                                        "marginTop": "6px",
+                                                        "backgroundColor": "#f7f8fa",
+                                                    },
+                                                ),
+
+
                                         html.Br(),
                                     ],
                                     className="g-2"
@@ -1968,11 +2028,16 @@ app.layout = dbc.Container(
     Input("show-shot-stats", "value"),
     Input("exclude-non-d1", "value"),
     Input("lineup-dd", "value"),
+    Input("on-court-dd", "value"),
+    Input("off-court-dd", "value"),
+
 
 
 )
 
-def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats, exclude_non_d1, lineup):
+def update_charts(team, view_mode, players, halves, opps, loc, quad,
+                  show_stats, exclude_non_d1, lineup,
+                  on_players, off_players):
 
     off_title = "Offense"
     def_title = "Defense"
@@ -1990,6 +2055,26 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
         dff = dff[
             dff["lineup"].apply(lambda x: isinstance(x, tuple) and set(x) == lineup_tuple)
         ]
+
+    # --------------------------------------------------
+    # ON / OFF COURT FILTER
+    # --------------------------------------------------
+    if on_players:
+        on_set = set(on_players)
+        dff = dff[
+            dff["lineup"].apply(
+                lambda lu: isinstance(lu, tuple) and on_set.issubset(set(lu))
+            )
+        ]
+    
+    if off_players:
+        off_set = set(off_players)
+        dff = dff[
+            dff["lineup"].apply(
+                lambda lu: isinstance(lu, tuple) and off_set.isdisjoint(set(lu))
+            )
+        ]
+
 
 
 
@@ -2097,6 +2182,26 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
         def_title = re.sub('Q1B, Q1A', 'Q1', def_title)
         off_title = re.sub('Q1B, Q2, Q1A', 'Q1, Q2', off_title)
         def_title = re.sub('Q1B, Q2, Q1A', 'Q1, Q2', def_title)
+
+
+    if on_players:
+        off_title += f" | ON: {', '.join(on_players)}"
+        def_title += f" | ON: {', '.join(on_players)}"
+
+    if off_players:
+        off_title += f" | OFF: {', '.join(off_players)}"
+        def_title += f" | OFF: {', '.join(off_players)}"
+
+    # --------------------------------------------------
+    # LINEUP TITLE ANNOTATION
+    # --------------------------------------------------
+    if lineup:
+        lineup_tuple = parse_lineup_key(lineup)
+        lineup_label = format_lineup_label(lineup_tuple)
+    
+        off_title += f" | Lineup: {lineup_label}"
+        def_title += f" | Lineup: {lineup_label}"
+
 
     
 
@@ -2335,6 +2440,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad, show_stats,
     Output("half-dd", "options"),
     Output("opp-dd", "options"),
     Output("lineup-dd", "options"),
+    Output("on-court-dd", "options"),
+    Output("off-court-dd", "options"),
     Input("team-dd", "value"),
     Input("exclude-non-d1", "value"),
 )
@@ -2418,9 +2525,27 @@ def update_filter_options(team, exclude_non_d1):
         for lu, shots in zip(lu_counts["lineup_ord"], lu_counts["shots"])
     ]
 
+    team_players = (
+        dff.loc[dff["team_name"] == team, "shooter"]
+        .dropna()
+        .sort_values()
+        .unique()
+    )
+    
+    on_off_opts = [{"label": p, "value": p} for p in team_players]
 
 
-    return player_opts, half_opts, opp_opts, lineup_opts
+
+
+    return (
+    player_opts,
+    half_opts,
+    opp_opts,
+    lineup_opts,
+    on_off_opts,
+    on_off_opts,
+)
+
 
 
 # --------------------------------------------------
