@@ -1669,7 +1669,7 @@ app.layout = dbc.Container(
                                                 multi=True,
                                                 placeholder="Shooter(s)",
                                                 style={
-                                                    "fontSize": "16px",
+                                                    "fontSize": "14px",
                                                 },
                                             ),
                                             xs=12, md=4
@@ -1680,7 +1680,7 @@ app.layout = dbc.Container(
                                                 multi=True,
                                                 placeholder="Half",
                                                 style={
-                                                    "fontSize": "16px",
+                                                    "fontSize": "14px",
                                                 },
                                             ),
                                             xs=6, md=2
@@ -1693,7 +1693,7 @@ app.layout = dbc.Container(
                                                 multi=True,
                                                 placeholder="Quad",
                                                 style={
-                                                    "fontSize": "16px",
+                                                    "fontSize": "14px",
                                                 },
                                             ),
                                             xs=6, md=2
@@ -1704,7 +1704,7 @@ app.layout = dbc.Container(
                                                 multi=True,
                                                 placeholder="Opponent",
                                                 style={
-                                                    "fontSize": "16px",
+                                                    "fontSize": "14px",
                                                 },
                                             ),
                                             xs=6, md=2
@@ -1716,7 +1716,7 @@ app.layout = dbc.Container(
                                                 multi=True,
                                                 placeholder="Location",
                                                 style={
-                                                    "fontSize": "16px",
+                                                    "fontSize": "14px",
                                                 },
                                             ),
                                             xs=6, md=2
@@ -2069,6 +2069,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
     # Load correct team file
     dff = load_team_data(team)
+    print("players input:", players)
+
 
     
     # exclude non-D1 opponents if checked
@@ -2169,10 +2171,10 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     #print(team_logo)
     #print('\n---\n')
 
-    if players: 
-        dff = dff[dff[PLAYER_COL].isin(players)]
-        off_title = off_title + ' - ' + ', '.join(players)
-        def_title = def_title + ' - ' + ', '.join(players)
+    # if players: 
+    #     dff = dff[dff[PLAYER_COL].isin(players)]
+    #     off_title = off_title + ' - ' + ', '.join(players)
+    #     def_title = def_title + ' - ' + ', '.join(players)
 
     
     if halves: 
@@ -2253,6 +2255,51 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
     off_df = dff[dff[OFF_DEF_COL] == "Offense"]
     def_df = dff[dff[OFF_DEF_COL] == "Defense"]
+
+    # --------------------------------------------------
+    # SHOOTER FILTER (apply per-side)
+    # --------------------------------------------------
+    if players:
+        # normalize just in case
+        players = [p.strip() for p in players if isinstance(p, str)]
+    
+        off_players = [p for p in players if p in set(off_df[PLAYER_COL].dropna().unique())]
+        def_players = [p for p in players if p in set(def_df[PLAYER_COL].dropna().unique())]
+    
+        if off_players:
+            off_df = off_df[off_df[PLAYER_COL].isin(off_players)]
+            off_title += " - " + ", ".join(off_players)
+    
+        if def_players:
+            def_df = def_df[def_df[PLAYER_COL].isin(def_players)]
+            def_title += " - " + ", ".join(def_players)
+
+
+        if off_df.empty and def_df.empty:
+            empty_fig = empty_shot_figure()
+            return (
+                empty_fig,
+                empty_fig,
+                team_title_with_logo(team, "Shot Charts", team_logo),
+                chart_header(team, "Offense", team_logo),
+                chart_header(team, "Defense", team_logo),
+                [],
+                []
+            )
+        
+        if off_df.empty:
+            fig_off = empty_shot_figure("No OFFENSE shots match filters")
+        else:
+            fig_off = make_shot_chart(off_df, chart_title(team, "Offense", team_logo)) if view_mode=="shots" else make_zone_chart(off_df, chart_title(team, "Offense", team_logo))
+        
+        if def_df.empty:
+            fig_def = empty_shot_figure("No DEFENSE shots match filters")
+        else:
+            fig_def = make_shot_chart(def_df, chart_title(team, "Defense", team_logo)) if view_mode=="shots" else make_zone_chart(def_df, chart_title(team, "Defense", team_logo))
+
+        # If they picked only team shooters, don't change defense title at all
+        # If they picked only opponent shooters, offense title stays unchanged
+
 
     if view_mode == "shots":
         fig_off = make_shot_chart(off_df, chart_title(team, "Offense", team_logo))
@@ -2488,11 +2535,12 @@ def update_filter_options(team, exclude_non_d1):
         dff = dff[dff["nond1"] == False]
     names_opp = dff.loc[dff['team_name']!=team,  'shooter'].unique()
 
-    player_opts = [
-        {"label": p, "value": p}
-        #for p in (dff[PLAYER_COL].dropna().unique())
-        for p in list(name_team) + [' ------ Opponents↓ ----- '] + list(names_opp)
-    ]
+    player_opts = (
+        [{"label": p, "value": p} for p in list(name_team)]
+        + [{"label": "------ Opponents ↓ ------", "value": "__sep__", "disabled": True}]
+        + [{"label": p, "value": p} for p in list(names_opp)]
+    )
+
 
     half_opts = [
         {"label": h, "value": h}
@@ -2562,7 +2610,7 @@ def update_filter_options(team, exclude_non_d1):
     on_off_opts = [
         {"label": p, "value": p}
         #for p in (dff[PLAYER_COL].dropna().unique())
-        for p in list(name_team) + [' ------ Opponents↓ ----- '] + list(names_opp)
+        for p in list(name_team)
     ]
 
 
