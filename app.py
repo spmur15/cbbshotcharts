@@ -1745,7 +1745,8 @@ app.layout = dbc.Container(
                                                                 placeholder="Select 5-man lineup",
                                                                 style={
                                                                     "fontSize": "13px",
-                                                                }
+                                                                },
+                                                                optionHeight=52,
                                                             ),
                                                             title="Lineup on court",
                                                         )
