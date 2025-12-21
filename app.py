@@ -643,60 +643,39 @@ def zone_label_xy(zone):
 
 
 def shooting_summary(dff):
-    """
-    Returns:
-    - FG line: "284/642 – 44.2%"
-    - PPS/eFG line: "1.033 pts/shot – 51.6% eFG"
-    """
-
     if dff.empty:
-        return ("", '')
+        return {
+            "fgm": 0,
+            "fga": 0,
+            "fg_pct": 0,
+            "efg": 0,
+            "pps": 0,
+            "astd_pct": 0,
+        }
 
-    if "shot_range" in dff.columns:
-        dff = reconcile_zone_with_shot_range(dff)
+    fga = dff["shot_id"].nunique()
+    fgm = dff["made"].sum()
 
-    fga = len(dff['shot_id'].unique())
-    fgm = int(dff["made"].sum())
-    fg_pct = fgm / fga if fga else 0
-
-    # identify 3s using your existing zone logic (works in zone mode)
-    # threes = dff.get("zone", pd.Series(False, index=dff.index)).isin(
-    #     ["Top 3", "Left Wing 3", "Right Wing 3", "Left Corner 3", "Right Corner 3"]
-    # )
     threes = dff["is_three"]
+    three_made = dff.loc[threes, "made"].sum()
 
-    #print(threes)
-
-    three_made = int(dff.loc[threes, "made"].sum())
-    three_att = sum(threes)
-    two_made = fgm - three_made
-    try: three_pct = three_made / three_att
-    except: three_pct = 0
-    try: two_pct = two_made / (fga-three_att)
-    except: two_pct = 0
-
-    # ---- Assisted FG% ----
-    made_shots = dff[dff["made"] == 1]
-    
-    if len(made_shots):
-        assisted_made = made_shots["assisted"].fillna(0).sum()
-        astd = assisted_made / len(made_shots)
-    else:
-        astd = 0
-
-
-    points = two_made * 2 + three_made * 3
-    pps = points / fga if fga else 0
-    print('fgm:', fgm)
-    print('three_made:', three_made)
-    print('three_att:', three_att)
+    fg_pct = fgm / fga if fga else 0
     efg = (fgm + 0.5 * three_made) / fga if fga else 0
+    pps = (fgm * 2 + three_made) / fga if fga else 0
 
-    fg_line = f"{fg_pct:.1%} FG · {fgm}/{fga}"
-    pps_line = f"{efg:.1%} eFG · {pps:.3f} pts/shot"
-    astd_line = f"{astd:.1%} Ast'd"#f"{two_made}/{fga-three_att} · {two_pct:.1%} 2P<br>{three_made}/{three_att} · {three_pct:.1%} 3P"
+    made = dff[dff["made"] == 1]
+    astd_pct = made["assisted"].fillna(0).sum() / len(made) if len(made) else 0
 
-    return fg_line, pps_line, astd_line
+    return {
+        "fgm": fgm,
+        "fga": fga,
+        "fg_pct": fg_pct,
+        "efg": efg,
+        "pps": pps,
+        "astd_pct": astd_pct,
+    }
+
+
 
 
 def team_title_with_logo(team, subtitle=None, logo_src=None):
@@ -865,20 +844,28 @@ def shot_breakdown_stats(dff):
     midline_f = middle.mean() * 100 if total else 0
     right_f = right.mean() * 100 if total else 0
 
+    def ast_pct(mask):
+        made = dff.loc[mask & (dff["made"] == 1)]
+        if len(made) == 0:
+            return "—"
+        assisted = made["assisted"].fillna(0).sum()
+        return f"{assisted / len(made):.1%}"
+
+
     return {
         "fg": [
             ("Close FG%", pct(rim_close)),
             ("Mid FG%", pct(mid)),
             ("3P FG%", pct(three)),
         ],
-        "side_fg": [
-            ("Left FG%", pct(left)),
-            ("Middle FG%", pct(middle)),
-            ("Right FG%", pct(right)),
+        "ast": [
+            ("Close Ast%", ast_pct(rim_close)),
+            ("Mid Ast%", ast_pct(mid)),
+            ("3P Ast%", ast_pct(three)),
         ],
         "freq_vals": (rim_f, mid_f, three_f),
-        "side_freq_vals": (left_f, midline_f, right_f),
-    }
+}
+
 
 
 
@@ -1186,8 +1173,22 @@ def make_shot_chart(dff, title):
 
     #print(shooting_summary(dff2))
 
-    fg_line, pps_line, astd_line = shooting_summary(dff2)
-    add_chart_subtitle(fig, fg_line, pps_line, astd_line)
+    # fg_line, pps_line, astd_line = shooting_summary(dff2)
+    # add_chart_subtitle(fig, fg_line, pps_line, astd_line)
+
+    summary = shooting_summary(dff2)
+
+    fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
+    pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
+    
+    add_chart_subtitle(
+        fig,
+        fg_line,
+        pps_line,
+        f"{summary['astd_pct']:.1%} Ast'd"
+    )
+
+
 
     return fig
 
@@ -1319,8 +1320,22 @@ def make_zone_chart(dff, title):
 
     #add_zone_dividers(fig)
     # 🔹 ADD SUMMARY STATS
-    fg_line, pts_line, astd_line = shooting_summary(dff)
-    add_chart_subtitle(fig, fg_line, pts_line, astd_line)
+    # fg_line, pts_line, astd_line = shooting_summary(dff)
+    # add_chart_subtitle(fig, fg_line, pts_line, astd_line)
+
+    summary = shooting_summary(dff)
+
+    fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
+    pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
+    
+    add_chart_subtitle(
+        fig,
+        fg_line,
+        pps_line,
+        f"{summary['astd_pct']:.1%} Ast'd"
+    )
+
+
 
 
     return fig
@@ -2370,8 +2385,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         ),
 
         stat_row([stat_card(*s) for s in stats["fg"]]),
-
         html.Div(style={"height": "6px"}),
+        stat_row([stat_card(*s) for s in stats["ast"]]),
 
         
 
@@ -2436,6 +2451,9 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         stat_row([stat_card(*s) for s in stats["fg"]]),
 
         html.Div(style={"height": "6px"}),
+
+        stat_row([stat_card(*s) for s in stats["ast"]]),
+
 
         freq_bar(
             ["Close", "Mid", "3P"],
