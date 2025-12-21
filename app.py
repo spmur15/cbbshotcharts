@@ -1748,7 +1748,7 @@ app.layout = dbc.Container(
                                                                 },
                                                                 optionHeight=52,
                                                             ),
-                                                            title="Lineup on court",
+                                                            title="5-Man Lineups",
                                                         )
                                                     ],
                                                     start_collapsed=True,
@@ -1767,7 +1767,7 @@ app.layout = dbc.Container(
                                                                     dbc.Col(
                                                                         [
                                                                             html.Div(
-                                                                                "Player(s) ON court",
+                                                                                "Filter shots while players\nare ON or OFF the court",
                                                                                 style={
                                                                                     "fontSize": "12px",
                                                                                     "fontWeight": 600,
@@ -1778,7 +1778,10 @@ app.layout = dbc.Container(
                                                                             dcc.Dropdown(
                                                                                 id="on-court-dd",
                                                                                 multi=True,
-                                                                                placeholder="Shots with player(s) ON court",
+                                                                                placeholder="Player(s) ON court",
+                                                                                style={
+                                                                                    "fontSize": "13px",
+                                                                                },
                                                                             ),
                                                                         ],
                                                                         xs=12,
@@ -1787,18 +1790,21 @@ app.layout = dbc.Container(
                                                                     dbc.Col(
                                                                         [
                                                                             html.Div(
-                                                                                "Player(s) OFF court",
+                                                                                "&",
                                                                                 style={
                                                                                     "fontSize": "12px",
                                                                                     "fontWeight": 600,
                                                                                     "color": "#555",
-                                                                                    "marginBottom": "4px",
+                                                                                    "marginBottom": "10px",
                                                                                 }
                                                                             ),
                                                                             dcc.Dropdown(
                                                                                 id="off-court-dd",
                                                                                 multi=True,
-                                                                                placeholder="Shots with player(s) OFF court",
+                                                                                placeholder="Player(s) OFF court",
+                                                                                style={
+                                                                                    "fontSize": "13px",
+                                                                                },
                                                                             ),
                                                                         ],
                                                                         xs=12,
@@ -1807,7 +1813,7 @@ app.layout = dbc.Container(
                                                                 ],
                                                                 className="g-2",
                                                             ),
-                                                            title="On / Off Query",
+                                                            title="On / Off",
                                                         )
                                                     ],
                                                     start_collapsed=True,
@@ -2525,14 +2531,20 @@ def update_filter_options(team, exclude_non_d1):
         for lu, shots in zip(lu_counts["lineup_ord"], lu_counts["shots"])
     ]
 
-    team_players = (
-        dff.loc[dff["team_name"] == team, "shooter"]
-        .dropna()
-        .sort_values()
-        .unique()
-    )
+    # team_players = (
+    #     dff.loc[dff["team_name"] == team, "shooter"]
+    #     .dropna()
+    #     .sort_values()
+    #     .unique()
+    # )
     
-    on_off_opts = [{"label": p, "value": p} for p in team_players]
+   # on_off_opts = [{"label": p, "value": p} for p in team_players]
+
+    on_off_opts = [
+        {"label": p, "value": p}
+        #for p in (dff[PLAYER_COL].dropna().unique())
+        for p in list(name_team) + [' ------ Opponents↓ ----- '] + list(names_opp)
+    ]
 
 
 
