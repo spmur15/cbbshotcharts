@@ -90,10 +90,16 @@
   --bs-accordion-border-width: 0;
 }
 
-/* Allow dropdown menus to escape accordions & cards */
 .Select-menu-outer {
   position: absolute !important;
   z-index: 9999 !important;
+  max-height: 220px;
+}
+
+.accordion-body,
+.filters-wrap,
+.filters-accordion {
+  overflow: visible !important;
 }
 
 
