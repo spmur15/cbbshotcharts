@@ -867,7 +867,7 @@ def shot_breakdown_stats(dff):
         if len(made) == 0:
             return "—"
         assisted = made["assisted"].fillna(0).sum()
-        return f"{assisted / len(made):.1%}"
+        return f"{assisted / len(made):.0%}"
 
 
     return {
@@ -1203,7 +1203,7 @@ def make_shot_chart(dff, title):
         fig,
         fg_line,
         pps_line,
-        f"{summary['astd_pct']:.0%} Ast'd"
+        f"{summary['astd_pct']:.1%} Ast'd"
     )
 
 
@@ -1297,7 +1297,7 @@ def make_zone_chart(dff, title):
         fig.add_trace(go.Scatter(
             x=[x_txt],
             y=[y_txt],
-            text=[f"{r.made}/{r.att}<br>{r.pct:.0%}"],
+            text=[f"{r.made}/{r.att}<br>{r.pct:.1%}"],
             mode="text",
             textfont=dict(size=14, family="Funnel Display",color='black'),
             showlegend=False,
