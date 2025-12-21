@@ -769,7 +769,7 @@ def stat_card(label, value, subvalue=None):
             subvalue and html.Div(
                 subvalue,
                 style={
-                    "fontSize": "10px",
+                    "fontSize": "11px",
                     "color": "#888",
                     "marginTop": "10px",
                 }
@@ -1350,7 +1350,7 @@ def make_zone_chart(dff, title):
         fig,
         fg_line,
         pps_line,
-        f"{summary['astd_pct']:.1%} Ast'd"
+        f"{summary['astd_pct']:.0%} Ast'd"
     )
 
 
@@ -2619,7 +2619,7 @@ def update_filter_options(team, exclude_non_d1):
     # ---- lineup options ----
     # Count shots per lineup
     lu_counts = (
-        dff.dropna(subset=["lineup"])
+        dff.loc[dff["team_name"] == team].dropna(subset=["lineup"])
            .assign(lu_size=lambda x: x["lineup"].apply(len))
            .query("lu_size == 5")              # ✅ remove bad lineups
            .groupby("lineup")
