@@ -743,29 +743,47 @@ def chart_header(team, side, logo):
     )
 
 
-def stat_card(label, value):
+def stat_card(label, value, subvalue=None):
     return html.Div(
         [
-            html.Div(label, style={
-                "fontSize": "12px",
-                "color": "#777",
-                "textTransform": "uppercase",
-                "letterSpacing": "0.04em"
-            }),
-            html.Div(value, style={
-                "fontSize": "18px",
-                "fontWeight": 600,
-                "color": "#222"
-            })
+            html.Div(
+                label,
+                style={
+                    "fontSize": "12px",
+                    "color": "#777",
+                    "textTransform": "uppercase",
+                    "letterSpacing": "0.04em",
+                    "marginBottom": "2px",
+                }
+            ),
+            html.Div(
+                value,
+                style={
+                    "fontSize": "18px",
+                    "fontWeight": 600,
+                    "color": "#222",
+                    "lineHeight": "1.1",
+                }
+            ),
+            # 👇 Assisted % line (optional)
+            subvalue and html.Div(
+                subvalue,
+                style={
+                    "fontSize": "11px",
+                    "color": "#888",
+                    "marginTop": "2px",
+                }
+            ),
         ],
         style={
             "background": "#ffffff",
             "borderRadius": "10px",
             "padding": "10px 12px",
             "boxShadow": "0 6px 16px rgba(0,0,0,0.12)",
-            "textAlign": "center"
+            "textAlign": "center",
         }
     )
+
 
 def stat_row(cards):
     return dbc.Row(
@@ -2384,9 +2402,22 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
             }
         ),
 
-        stat_row([stat_card(*s) for s in stats["fg"]]),
-        html.Div(style={"height": "6px"}),
-        stat_row([stat_card(*s) for s in stats["ast"]]),
+        # stat_row([stat_card(*s) for s in stats["fg"]]),
+        # html.Div(style={"height": "6px"}),
+        # stat_row([stat_card(*s) for s in stats["ast"]]),
+
+        stat_row(
+            [
+                stat_card(
+                    label=fg_label,
+                    value=fg_val,
+                    subvalue=f"{ast_val} Ast'd" if ast_val != "—" else "—"
+                )
+                for (fg_label, fg_val), (_, ast_val)
+                in zip(stats["fg"], stats["ast"])
+            ]
+        ),
+
 
         
 
@@ -2448,11 +2479,22 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
             }
         ),
 
-        stat_row([stat_card(*s) for s in stats["fg"]]),
+        # stat_row([stat_card(*s) for s in stats["fg"]]),
+        # html.Div(style={"height": "6px"}),
+        # stat_row([stat_card(*s) for s in stats["ast"]]),
 
-        html.Div(style={"height": "6px"}),
+        stat_row(
+            [
+                stat_card(
+                    label=fg_label,
+                    value=fg_val,
+                    subvalue=f"{ast_val} Ast'd" if ast_val != "—" else "—"
+                )
+                for (fg_label, fg_val), (_, ast_val)
+                in zip(stats["fg"], stats["ast"])
+            ]
+        ),
 
-        stat_row([stat_card(*s) for s in stats["ast"]]),
 
 
         freq_bar(
