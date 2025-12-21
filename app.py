@@ -1771,6 +1771,7 @@ app.layout = dbc.Container(
                                                     style={
                                                         "marginTop": "6px",
                                                         "backgroundColor": "#f7f8fa",
+                                                        "overflow": "visible",
                                                     }
                                                 ),
 
@@ -1838,6 +1839,7 @@ app.layout = dbc.Container(
                                                     style={
                                                         "marginTop": "6px",
                                                         "backgroundColor": "#f7f8fa",
+                                                        "overflow": "visible",
                                                     },
                                                 ),
 
