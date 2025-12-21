@@ -1667,7 +1667,10 @@ app.layout = dbc.Container(
                                             dcc.Dropdown(
                                                 id="player-dd",
                                                 multi=True,
-                                                placeholder="Player(s)"
+                                                placeholder="Shooter(s)",
+                                                style={
+                                                    "fontSize": "16px",
+                                                },
                                             ),
                                             xs=12, md=4
                                         ),
@@ -1675,7 +1678,10 @@ app.layout = dbc.Container(
                                             dcc.Dropdown(
                                                 id="half-dd",
                                                 multi=True,
-                                                placeholder="Half"
+                                                placeholder="Half",
+                                                style={
+                                                    "fontSize": "16px",
+                                                },
                                             ),
                                             xs=6, md=2
                                         ),
@@ -1685,7 +1691,10 @@ app.layout = dbc.Container(
                                                 id="quad-dd",
                                                 options=['Q1A', 'Q1B', 'Q2', 'Q3', 'Q4'],
                                                 multi=True,
-                                                placeholder="Quad"
+                                                placeholder="Quad",
+                                                style={
+                                                    "fontSize": "16px",
+                                                },
                                             ),
                                             xs=6, md=2
                                         ),
@@ -1693,18 +1702,24 @@ app.layout = dbc.Container(
                                             dcc.Dropdown(
                                                 id="opp-dd",
                                                 multi=True,
-                                                placeholder="Opponent"
+                                                placeholder="Opponent",
+                                                style={
+                                                    "fontSize": "16px",
+                                                },
                                             ),
-                                            xs=12, md=4
+                                            xs=6, md=2
                                         ),
                                         dbc.Col(
                                             dcc.Dropdown(
                                                 id="loc-dd",
                                                 options=['Home', 'Away', 'Neutral'],
                                                 multi=True,
-                                                placeholder="Location"
+                                                placeholder="Location",
+                                                style={
+                                                    "fontSize": "16px",
+                                                },
                                             ),
-                                            xs=12, md=4
+                                            xs=6, md=2
                                         ),
                                         dbc.Col(
                                             html.Div(
@@ -1744,7 +1759,7 @@ app.layout = dbc.Container(
                                                                 multi=False,
                                                                 placeholder="Select 5-man lineup",
                                                                 style={
-                                                                    "fontSize": "13px",
+                                                                    "fontSize": "14px",
                                                                 },
                                                                 optionHeight=52,
                                                             ),
@@ -1767,12 +1782,13 @@ app.layout = dbc.Container(
                                                                     dbc.Col(
                                                                         [
                                                                             html.Div(
-                                                                                "Filter shots while players\nare ON or OFF the court",
+                                                                                "Get shots while players are ON or OFF the court",
                                                                                 style={
                                                                                     "fontSize": "12px",
                                                                                     "fontWeight": 600,
                                                                                     "color": "#555",
                                                                                     "marginBottom": "4px",
+                                                                                    "textAlign": "center"
                                                                                 }
                                                                             ),
                                                                             dcc.Dropdown(
@@ -1780,7 +1796,7 @@ app.layout = dbc.Container(
                                                                                 multi=True,
                                                                                 placeholder="Player(s) ON court",
                                                                                 style={
-                                                                                    "fontSize": "13px",
+                                                                                    "fontSize": "14px",
                                                                                 },
                                                                             ),
                                                                         ],
@@ -1790,12 +1806,13 @@ app.layout = dbc.Container(
                                                                     dbc.Col(
                                                                         [
                                                                             html.Div(
-                                                                                "&",
+                                                                                "AND",
                                                                                 style={
                                                                                     "fontSize": "12px",
                                                                                     "fontWeight": 600,
                                                                                     "color": "#555",
                                                                                     "marginBottom": "10px",
+                                                                                    "textAlign": "center"
                                                                                 }
                                                                             ),
                                                                             dcc.Dropdown(
@@ -1803,7 +1820,7 @@ app.layout = dbc.Container(
                                                                                 multi=True,
                                                                                 placeholder="Player(s) OFF court",
                                                                                 style={
-                                                                                    "fontSize": "13px",
+                                                                                    "fontSize": "14px",
                                                                                 },
                                                                             ),
                                                                         ],
