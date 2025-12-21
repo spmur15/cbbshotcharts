@@ -10,3 +10,82 @@
 .Select-value-label {
   white-space: normal !important;
 }
+
+/* ===== Accordion base styling ===== */
+
+.accordion-item {
+  background-color: #f7f8fa;
+  border-radius: 12px;
+  border: none;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.accordion-button {
+  background-color: #eef1f5;
+  color: #222;
+  font-weight: 600;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #dbe7ff;
+  color: #0b2a6f;
+}
+
+.accordion-button:focus {
+  box-shadow: none;
+}
+
+.accordion-body {
+  background-color: #f7f8fa;
+  padding: 12px 14px;
+}
+
+/* ===== Scoped: Filters accordion ===== */
+
+.filters-accordion .accordion-button {
+  background-color: #f1f3f6;
+}
+
+.filters-accordion .accordion-button:not(.collapsed) {
+  background-color: #dbe7ff;
+}
+
+/* ===== Nested accordions ===== */
+
+.filters-accordion .accordion .accordion-button {
+  background-color: #f8fafc;
+  font-size: 14px;
+}
+
+.filters-accordion .accordion .accordion-button:not(.collapsed) {
+  background-color: #e8f0ff;
+}
+
+/* ===== Hover & polish ===== */
+
+.accordion-button:hover {
+  background-color: #e3e9f5;
+}
+
+.accordion-button::after {
+  filter: brightness(0.6);
+}
+
+/* ===== Compact spacing ===== */
+
+.accordion-button {
+  padding: 10px 14px;
+}
+
+.accordion-body {
+  padding: 10px 12px;
+}
+
+/* ===== Remove borders ===== */
+
+.accordion {
+  --bs-accordion-border-width: 0;
+}
