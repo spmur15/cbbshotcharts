@@ -78,8 +78,8 @@ THEME = {
 
     # ---- Charts ----
     "court_line": "#dbdbdb",
-    "make": "rgba(60,200,120,0.55)",
-    "miss": "rgba(240,90,90,0.45)",
+    "make": "rgba(60,200,120,0.5)",
+    "miss": "rgba(240,90,90,0.3)",
 
     # ---- Frequency bar ----
     "freq_bg": "#2a2a2a",
@@ -1398,7 +1398,7 @@ def make_zone_chart(dff, title):
             textfont=dict(
                 size=14,
                 family="Funnel Display",
-                color=THEME["text_primary"]
+                color=THEME["bg_chart"]
             ),
 
             showlegend=False,
@@ -1945,7 +1945,7 @@ app.layout = dbc.Container(
                                                         "marginTop": "6px",
                                                         "overflow": "visible",
                                                         "backgroundColor": THEME["bg_dropdown"],
-                                                        "color": THEME["text_primary"],
+                                                        "color": THEME["text_secondary"],
                                                         "boxShadow": THEME["shadow_md"],
                                                         "borderRadius": "10px",
                                                         "fontWeight": "600",
@@ -1976,7 +1976,7 @@ app.layout = dbc.Container(
                                                                                 style={
                                                                                     "fontSize": "14px",
                                                                                     "backgroundColor": THEME["bg_dropdown"],
-                                                                                    "color": THEME["text_primary"],
+                                                                                    "color": THEME["text_secondary"],
                                                                                     "boxShadow": THEME["shadow_md"],
                                                                                     "borderRadius": "10px",
                                                                                     "fontWeight": "600",
@@ -1988,16 +1988,16 @@ app.layout = dbc.Container(
                                                                     ),
                                                                     dbc.Col(
                                                                         [
-                                                                            html.Div(
-                                                                                "AND",
-                                                                                style={
-                                                                                    "fontSize": "12px",
-                                                                                    "fontWeight": 600,
-                                                                                    "color": THEME["text_secondary"],
-                                                                                    "marginBottom": "10px",
-                                                                                    "textAlign": "center"
-                                                                                }
-                                                                            ),
+                                                                            # html.Div(
+                                                                            #     "",
+                                                                            #     style={
+                                                                            #         "fontSize": "12px",
+                                                                            #         "fontWeight": 600,
+                                                                            #         "color": THEME["text_secondary"],
+                                                                            #         "marginBottom": "10px",
+                                                                            #         "textAlign": "center"
+                                                                            #     }
+                                                                            # ),
                                                                             dcc.Dropdown(
                                                                                 id="off-court-dd",
                                                                                 multi=True,
