@@ -852,7 +852,7 @@ def stat_card(label, value, subvalue=None):
                 style={
                     "fontSize": "18px",
                     "fontWeight": 600,
-                    "color": THEME["text_primary"],
+                    "color": THEME["text_secondary"],
                 }
             ),
             subvalue and html.Div(
@@ -1829,7 +1829,7 @@ app.layout = dbc.Container(
                                             dcc.Dropdown(
                                                 id="player-dd",
                                                 multi=True,
-                                                placeholder="Shooter(s)",
+                                                placeholder="Shooter",
                                                 style={
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
@@ -1964,7 +1964,7 @@ app.layout = dbc.Container(
                                                     style={
                                                         "overflow": "visible",
                                                         "marginTop": "6px",
-                                                        "overflow": "visible",
+                                                        #"overflow": "visible",
                                                         "backgroundColor": THEME["bg_dropdown"],
                                                         "color": THEME["text_secondary"],
                                                         "boxShadow": THEME["shadow_md"],
@@ -2046,8 +2046,8 @@ app.layout = dbc.Container(
                                                     flush=True,
                                                     style={
                                                         "overflow": "visible",
-                                                        "marginTop": "6px",
-                                                        "overflow": "visible",
+                                                        "marginTop": "12px",
+                                                        #"overflow": "visible",
                                                         "backgroundColor": THEME["bg_dropdown"],
                                                         "color": THEME["text_secondary"],
                                                         "boxShadow": THEME["shadow_md"],
