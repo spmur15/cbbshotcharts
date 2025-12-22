@@ -701,20 +701,20 @@ def polar_wedge(r0, r1, a0, a1, n=40):
 
 def zone_label_xy(zone):
     if zone == "Rim":
-        return (0, -0.1)
+        return (0, -0.15)
 
     if zone == "Paint (Non-Rim)":
-        return (0, 6.875)
+        return (0, 6.95)
 
     if zone == "Top Mid":
         return (0, 17.5)
     if zone == "Left Mid":
-        return (12, 11.125)
+        return (11.975, 11.25)
     if zone == "Right Mid":
-        return (-12, 11.125)
+        return (-11.975, 11.25)
 
     if zone == "Top 3":
-        return (0, 25.875)
+        return (0, 26)
     if zone == "Left Wing 3":
         return (19, 18.125)
     if zone == "Right Wing 3":
@@ -1398,7 +1398,7 @@ def make_zone_chart(dff, title):
             textfont=dict(
                 size=14,
                 family="Funnel Display",
-                color=THEME["text_primary"]
+                color=THEME["text_secondary"]
             ),
 
             showlegend=False,
@@ -1563,7 +1563,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("YlGn", 0.4)[0]
+        return sample_colorscale("oranges", 0.4)[0]
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -1573,7 +1573,7 @@ def zone_color(pct, zone):
     # allow outside range but clip for color stability
     t = np.clip(t, 0.0, 1.0)
 
-    return sample_colorscale("YlGn", t)[0]
+    return sample_colorscale("oranges", t)[0]
 
 
 
@@ -1895,6 +1895,7 @@ app.layout = dbc.Container(
                                                     label="Exclude games vs non-D1",
                                                     inputStyle={
                                                         "marginRight": "8px",
+                                                        
                                                         "transform": "scale(1.25)",   # 🔹 increase checkbox size
                                                         "cursor": "pointer",
                                                         "color":'black'
@@ -1913,7 +1914,7 @@ app.layout = dbc.Container(
                                                     "fontSize": "14px",
                                                     "color": THEME["text_secondary"],
                                                     "marginBottom": "5px",
-                                                    "marginTop": "5px",
+                                                    "marginTop": "10px",
                                                 }
                                             ),
                                             xs=12
