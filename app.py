@@ -1563,7 +1563,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("BuGn", 0.4)[0]
+        return sample_colorscale("Turbo", 0.4)[0]
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -1573,7 +1573,7 @@ def zone_color(pct, zone):
     # allow outside range but clip for color stability
     t = np.clip(t, 0.0, 1.0)
 
-    return sample_colorscale("BuGn", t)[0]
+    return sample_colorscale("Turbo", t)[0]
 
 
 
