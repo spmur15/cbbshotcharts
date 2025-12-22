@@ -1563,7 +1563,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("Portland", 0.4)[0]
+        return sample_colorscale("YlGn", 0.4)[0]
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -1573,7 +1573,7 @@ def zone_color(pct, zone):
     # allow outside range but clip for color stability
     t = np.clip(t, 0.0, 1.0)
 
-    return sample_colorscale("Portland", t)[0]
+    return sample_colorscale("YlGn", t)[0]
 
 
 
@@ -1930,7 +1930,7 @@ app.layout = dbc.Container(
                                                                     "backgroundColor": THEME["bg_dropdown"],
                                                                     "color": THEME["text_secondary"],
                                                                     #"boxShadow": THEME["shadow_md"],
-                                                                    #"borderRadius": "10px",
+                                                                    "borderRadius": "10px",
                                                                     "fontWeight": "600",
                                                                 },
                                                                 optionHeight=52,
@@ -1977,7 +1977,7 @@ app.layout = dbc.Container(
                                                                                     "fontSize": "14px",
                                                                                     "backgroundColor": THEME["bg_dropdown"],
                                                                                     "color": THEME["text_secondary"],
-                                                                                    "boxShadow": THEME["shadow_md"],
+                                                                                    #"boxShadow": THEME["shadow_md"],
                                                                                     "borderRadius": "10px",
                                                                                     "fontWeight": "600",
                                                                                 },
@@ -2006,7 +2006,7 @@ app.layout = dbc.Container(
                                                                                     "fontSize": "14px",
                                                                                     "backgroundColor": THEME["bg_dropdown"],
                                                                                     "color": THEME["text_primary"],
-                                                                                    "boxShadow": THEME["shadow_md"],
+                                                                                    #"boxShadow": THEME["shadow_md"],
                                                                                     "borderRadius": "10px",
                                                                                     "fontWeight": "600",
                                                                                 },
@@ -2024,15 +2024,15 @@ app.layout = dbc.Container(
                                                     start_collapsed=True,
                                                     flush=True,
                                                     style={
+                                                        "overflow": "visible",
                                                         "marginTop": "6px",
-                                                        #"backgroundColor": "#f7f8fa",
                                                         "overflow": "visible",
                                                         "backgroundColor": THEME["bg_dropdown"],
                                                         "color": THEME["text_secondary"],
-                                                        #"boxShadow": THEME["shadow_md"],
-                                                        #"borderRadius": "10px",
+                                                        "boxShadow": THEME["shadow_md"],
+                                                        "borderRadius": "10px",
                                                         "fontWeight": "600",
-                                                    },
+                                                    }
                                                 ),
 
 
@@ -2048,6 +2048,7 @@ app.layout = dbc.Container(
                         className="filters-accordion",
                         style={# "maxWidth": "300px",   # mobile default
                                 "margin": "0 auto",
+                                #"borderRadius": "10px",
                                 "boxShadow": "0 6px 18px rgba(0,0,0,0.22)",
                                 "borderRadius": "14px",
                                 "backgroundColor": THEME['bg_panel'],}
@@ -2059,6 +2060,7 @@ app.layout = dbc.Container(
                         "boxShadow": THEME["shadow_md"],#"0 6px 18px rgba(0,0,0,0.22)",
                         "borderRadius": "14px",
                         "backgroundColor": THEME['bg_panel'],
+                         #"borderRadius": "10px",
                         #"overflow": "auto",   # 🔴 REQUIRED for rounding to clip children
                     }
                 ),
