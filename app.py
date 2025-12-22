@@ -11,43 +11,81 @@ warnings.filterwarnings("ignore")
 # GLOBAL THEME (single source of truth)
 # ==================================================
 
+# THEME = {
+#     # ---- Base colors ----
+#     "bg_app": "#ededed",
+#     "bg_panel": "#f7f8fa",
+#     "bg_card": "#ffffff",
+#     "bg_chart": "#f8f8f8",
+#     "bg_dropdown": "#ffffff",
+
+#     # ---- Text ----
+#     "text_primary": "#222222",
+#     "text_secondary": "#666666",
+#     "text_muted": "#888888",
+#     "text_inverse": "#ffffff",
+
+#     # ---- Accents ----
+#     "accent_primary": "#222222",
+#     "accent_secondary": "#999999",
+
+#     # ---- Borders / dividers ----
+#     "border_light": "#e0e0e0",
+#     "divider": "rgba(0,0,0,0.15)",
+
+#     # ---- Shadows ----
+#     "shadow_sm": "0 6px 16px rgba(0,0,0,0.12)",
+#     "shadow_md": "0 6px 18px rgba(0,0,0,0.22)",
+#     "shadow_lg": "0 10px 28px rgba(0,0,0,0.25)",
+
+#     # ---- Charts ----
+#     "court_line": "#999999",
+#     "make": "rgba(40,160,60,0.5)",
+#     "miss": "rgba(220,50,50,0.33)",
+
+#     # ---- Frequency bar ----
+#     "freq_bg": "#eeeeee",
+#     "freq_colors": ["#4CAF50", "#FFC107", "#2196F3"]
+
+# }
+
 THEME = {
     # ---- Base colors ----
-    "bg_app": "#ededed",
-    "bg_panel": "#f7f8fa",
-    "bg_card": "#ffffff",
-    "bg_chart": "#f8f8f8",
-    "bg_dropdown": "#ffffff",
+    "bg_app": "#121212",
+    "bg_panel": "#1a1d21",
+    "bg_card": "#1f2328",
+    "bg_chart": "#1f2328",
+    "bg_dropdown": "#1f2328",
 
     # ---- Text ----
-    "text_primary": "#222222",
-    "text_secondary": "#666666",
+    "text_primary": "#eaeaea",
+    "text_secondary": "#b0b0b0",
     "text_muted": "#888888",
-    "text_inverse": "#ffffff",
+    "text_inverse": "#000000",
 
     # ---- Accents ----
-    "accent_primary": "#222222",
-    "accent_secondary": "#999999",
+    "accent_primary": "#ffffff",
+    "accent_secondary": "#bbbbbb",
 
     # ---- Borders / dividers ----
-    "border_light": "#e0e0e0",
-    "divider": "rgba(0,0,0,0.15)",
+    "border_light": "#2a2a2a",
+    "divider": "rgba(255,255,255,0.15)",
 
     # ---- Shadows ----
-    "shadow_sm": "0 6px 16px rgba(0,0,0,0.12)",
-    "shadow_md": "0 6px 18px rgba(0,0,0,0.22)",
-    "shadow_lg": "0 10px 28px rgba(0,0,0,0.25)",
+    "shadow_sm": "0 6px 16px rgba(0,0,0,0.7)",
+    "shadow_md": "0 6px 18px rgba(0,0,0,0.85)",
+    "shadow_lg": "0 10px 28px rgba(0,0,0,0.95)",
 
     # ---- Charts ----
-    "court_line": "#999999",
-    "make": "rgba(40,160,60,0.5)",
-    "miss": "rgba(220,50,50,0.33)",
+    "court_line": "#bbbbbb",
+    "make": "rgba(60,200,120,0.55)",
+    "miss": "rgba(240,90,90,0.45)",
 
     # ---- Frequency bar ----
-    "freq_bg": "#eeeeee",
-    "freq_colors": ["#4CAF50", "#FFC107", "#2196F3"]
-
+    "freq_bg": "#2a2a2a",
+    "freq_colors": ["#6ddf8c", "#ffd166", "#6fa8ff"]
 }
+
 
 
 logo_path = r'currentSzn.csv'
