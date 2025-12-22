@@ -186,6 +186,28 @@ h1, h2, h3, h4, h5 {
   border-color: #e6e6e6 !important;
 }
 
+/* Single-select selected value (TEAM DROPDOWN) */
+.Select-value-label {
+  color: #e6e6e6 !important;
+  font-weight: 600;
+}
+
+/* Placeholder text */
+.Select-placeholder {
+  color: #9aa0a6 !important;
+}
+
+/* Input text when typing */
+.Select-input > input {
+  color: #e6e6e6 !important;
+}
+
+/* Force all select text to light */
+.Select,
+.Select * {
+  color: #e6e6e6;
+}
+
 
 
 
