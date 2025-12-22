@@ -7,6 +7,49 @@ from plotly.colors import sample_colorscale
 import warnings
 warnings.filterwarnings("ignore")
 
+# ==================================================
+# GLOBAL THEME (single source of truth)
+# ==================================================
+
+THEME = {
+    # ---- Base colors ----
+    "bg_app": "#ededed",
+    "bg_panel": "#f7f8fa",
+    "bg_card": "#ffffff",
+    "bg_chart": "#f8f8f8",
+    "bg_dropdown": "#ffffff",
+
+    # ---- Text ----
+    "text_primary": "#222222",
+    "text_secondary": "#666666",
+    "text_muted": "#888888",
+    "text_inverse": "#ffffff",
+
+    # ---- Accents ----
+    "accent_primary": "#222222",
+    "accent_secondary": "#999999",
+
+    # ---- Borders / dividers ----
+    "border_light": "#e0e0e0",
+    "divider": "rgba(0,0,0,0.15)",
+
+    # ---- Shadows ----
+    "shadow_sm": "0 6px 16px rgba(0,0,0,0.12)",
+    "shadow_md": "0 6px 18px rgba(0,0,0,0.22)",
+    "shadow_lg": "0 10px 28px rgba(0,0,0,0.25)",
+
+    # ---- Charts ----
+    "court_line": "#999999",
+    "make": "rgba(40,160,60,0.5)",
+    "miss": "rgba(220,50,50,0.33)",
+
+    # ---- Frequency bar ----
+    "freq_bg": "#eeeeee",
+    "freq_colors": ["#4CAF50", "#FFC107", "#2196F3"]
+
+}
+
+
 logo_path = r'currentSzn.csv'
 LOGO_DF = pd.read_csv(logo_path)[['Team', 'Logo']]
 LOGO_DF['Team'] = LOGO_DF['Team'].str.replace(' State$', ' St.', regex=True)
@@ -28,7 +71,7 @@ THREE_TO_MID = {
 MID_TO_THREE = {v: k for k, v in THREE_TO_MID.items()}
 
 
-COURT_LINE_COLOR = "#999"
+COURT_LINE_COLOR = THEME["court_line"]
 COURT_LINE_WIDTH = 0.67
 
 COURT_SHADOW_COLOR = "rgba(0,0,0,0.18)"
@@ -441,19 +484,30 @@ def create_half_court_layout():
             showgrid=False, zeroline=False, showticklabels=False,
             scaleanchor="x", scaleratio=1
         ),
-        plot_bgcolor="#FFFFFF",
-        margin=dict(l=4, r=4, t=8, b=4),
+        plot_bgcolor=THEME["bg_chart"],
+        paper_bgcolor=THEME["bg_chart"],
         legend=dict(
-            bgcolor="rgba(0,0,0,0)",  
+            bgcolor="rgba(0,0,0,0)",
+            font=dict(color=THEME["text_secondary"], size=14),
             orientation="v",
             yanchor="top",
             y=0.98,
             xanchor="left",
             x=0.02,
-            font=dict(size=14),
             itemsizing="constant",
-            #valign='center'
-        )
+        ),
+        margin=dict(l=4, r=4, t=8, b=4),
+        # legend=dict(
+        #     bgcolor="rgba(0,0,0,0)",  
+        #     orientation="v",
+        #     yanchor="top",
+        #     y=0.98,
+        #     xanchor="left",
+        #     x=0.02,
+        #     font=dict(size=14),
+        #     itemsizing="constant",
+        #     #valign='center'
+        # )
 
     )
 
@@ -708,7 +762,7 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
                         subtitle,
                         style={
                             "fontSize": "14px",
-                            "color": "#666"
+                            "color": THEME["text_secondary"]
                         }
                     )
                 ]
@@ -750,10 +804,9 @@ def stat_card(label, value, subvalue=None):
                 label,
                 style={
                     "fontSize": "12px",
-                    "color": "#777",
+                    "color": THEME["text_secondary"],
                     "textTransform": "uppercase",
                     "letterSpacing": "0.04em",
-                    "marginBottom": "2px",
                 }
             ),
             html.Div(
@@ -761,28 +814,27 @@ def stat_card(label, value, subvalue=None):
                 style={
                     "fontSize": "18px",
                     "fontWeight": 600,
-                    "color": "#222",
-                    "lineHeight": "1.1",
+                    "color": THEME["text_primary"],
                 }
             ),
-            # 👇 Assisted % line (optional)
             subvalue and html.Div(
                 subvalue,
                 style={
-                    "fontSize": "11px",
-                    "color": "#888",
+                    "fontSize": "10px",
+                    "color": THEME["text_muted"],
                     "marginTop": "10px",
                 }
             ),
         ],
         style={
-            "background": "#ffffff",
+            "background": THEME["bg_card"],
             "borderRadius": "10px",
             "padding": "10px 12px",
-            "boxShadow": "0 6px 16px rgba(0,0,0,0.12)",
+            "boxShadow": THEME["shadow_sm"],
             "textAlign": "center",
         }
     )
+
 
 
 def stat_row(cards):
@@ -823,11 +875,11 @@ def shot_breakdown_stats(dff):
         range_three = dff["is_three"]
     )
     
-    print(
-        debug.loc[debug.zone_three != debug.range_three,
-                  ["zone", "shot_range", "x_plot", "y_plot"]]
-        .head(10)
-    )
+    # print(
+    #     debug.loc[debug.zone_three != debug.range_three,
+    #               ["zone", "shot_range", "x_plot", "y_plot"]]
+    #     .head(10)
+    # )
 
     # dff['3P'] = np.where(dff['zone'].str.contains('3'), True, False)
     # dff.loc[dff['3P'] & dff['result']=='made', '3P_made']=True
@@ -891,7 +943,7 @@ def shot_breakdown_stats(dff):
 
 def freq_bar(labels, values, colors=None):
     if colors is None:
-        colors = ["#4CAF50", "#FFC107", "#2196F3"]
+        colors = THEME["freq_colors"]
 
     return html.Div(
         [
@@ -912,7 +964,7 @@ def freq_bar(labels, values, colors=None):
                     "height": "12px",
                     "borderRadius": "6px",
                     "overflow": "hidden",
-                    "background": "#eee"
+                    "background": THEME["freq_bg"]
                 }
             ),
 
@@ -949,7 +1001,7 @@ def freq_bar(labels, values, colors=None):
                 ],
                 style={
                     "fontSize": "12px",
-                    "color": "#666",
+                    "color": THEME["text_secondary"],
                     "marginTop": "6px",
                     "display": "flex",
                     "justifyContent": "center",
@@ -959,10 +1011,10 @@ def freq_bar(labels, values, colors=None):
             )
         ],
         style={
-            "background": "#fff",
+            "background": THEME["bg_card"],
+            "boxShadow": THEME["shadow_sm"],
             "borderRadius": "10px",
-            "padding": "10px 12px",
-            "boxShadow": "0 6px 16px rgba(0,0,0,0.12)",
+            "padding": "10px 12px"
         }
     )
 
@@ -975,14 +1027,19 @@ def empty_shot_figure(message="No shots match the selected filters"):
         x=0.5, y=0.8,
         xref="paper", yref="paper",
         showarrow=False,
-        font=dict(size=16, color="#666", family="Funnel Display"),
+        font=dict(
+            size=16,
+            color=THEME["text_secondary"],
+            family="Funnel Display"
+        ),
         align="center"
     )
 
     fig.update_layout(
-        plot_bgcolor="#f8f8f8",
-        paper_bgcolor="#f8f8f8"
+        plot_bgcolor=THEME["bg_chart"],
+        paper_bgcolor=THEME["bg_chart"]
     )
+
 
     return fig
 
@@ -1129,31 +1186,28 @@ def make_shot_chart(dff, title):
     gx, gy = rotate_for_display(made["x_plot"], made["y_plot"])
 
     fig.add_trace(go.Scattergl(
-        x=gx,
-        y=gy,
+        x=gx, y=gy,
         mode="markers",
-        marker=dict(size=7, color="rgba(40,160,60,0.5)"),
+        marker=dict(size=7, color=THEME["make"]),
         name="Make",
-        hoverinfo="skip",
-        #zorder=2
+        hoverinfo="skip"
+    ))
+    
+    fig.add_trace(go.Scattergl(
+        x=mx, y=my,
+        mode="markers",
+        marker=dict(size=7, color=THEME["miss"]),
+        name="Miss",
+        hoverinfo="skip"
     ))
 
-    fig.add_trace(go.Scattergl(
-        x=mx,
-        y=my,
-        mode="markers",
-        marker=dict(size=7, color="rgba(220,50,50,0.33)"),
-        name="Miss",
-        hoverinfo="skip",
-        #zorder=1
-    ))
 
 
     fig.update_layout(
-        #title=dict(text=title, x=0.5, y=0.98),
-        plot_bgcolor='#f8f8f8',
-        paper_bgcolor="#f8f8f8"
+        plot_bgcolor=THEME["bg_chart"],
+        paper_bgcolor=THEME["bg_chart"]
     )
+
 
     # fig.update_layout(
     #     title=dict(
@@ -1275,7 +1329,11 @@ def make_zone_chart(dff, title):
     for _, r in zs.iterrows():
         zone_shape = ZONE_SHAPES[r["zone"]].copy()
         #print(zone_shape)
-        zone_shape['line'] = {'width':3,'color':'#f8f8f8'}
+        zone_shape['line'] = {
+            'width': 3,
+            'color': THEME["bg_chart"]
+        }
+
 
         # # Rotate PATH shapes
         # if zone_shape["type"] == "path":
@@ -1299,16 +1357,21 @@ def make_zone_chart(dff, title):
             y=[y_txt],
             text=[f"{r.made}/{r.att}<br>{r.pct:.1%}"],
             mode="text",
-            textfont=dict(size=14, family="Funnel Display",color='black'),
+            textfont=dict(
+                size=14,
+                family="Funnel Display",
+                color=THEME["text_primary"]
+            ),
+
             showlegend=False,
             #fillcolor='#777'
         ))
 
     fig.update_layout(
-        #title=dict(text=title, x=0.5),
-        plot_bgcolor="#f8f8f8",
-        paper_bgcolor="#f8f8f8"
+        plot_bgcolor=THEME["bg_chart"],
+        paper_bgcolor=THEME["bg_chart"]
     )
+
 
     fig.update_layout(showlegend=False)
 
@@ -1493,7 +1556,7 @@ def add_zone_dividers(fig):
             type="line",
             x0=xr0, y0=yr0,
             x1=xr1, y1=yr1,
-            line=dict(color="#666", width=3),
+            line=dict(color=THEME["text_secondary"], width=3)
             layer="above"
         )
 
@@ -1540,8 +1603,9 @@ def add_chart_subtitle(fig, fg_line, pps_line, astd_line):
 
     common_font = dict(
         family="Funnel Display",
-        color="#6b6b6b"   # grey for BOTH
+        color=THEME["text_secondary"]
     )
+
 
     fig.add_annotation(
         x=0.99, y=y1,
@@ -1615,7 +1679,7 @@ team_options = [
 app.layout = dbc.Container(
     fluid=True,
     style={
-        "backgroundColor": "#ededed",
+        "backgroundColor": THEME["bg_app"],#"#ededed",
         "minHeight": "100vh",
         "paddingBottom": "40px",
        # "fontFamily": "'Funnel Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
@@ -1644,7 +1708,7 @@ app.layout = dbc.Container(
                         className="text-center",
                         style={
                             "fontSize": "12.5px",
-                            "color": "#666",
+                            "color": THEME["text_secondary"],
                             "marginTop": "0",
                         }
                     ),
@@ -1656,7 +1720,12 @@ app.layout = dbc.Container(
             )
         ),
 
-        html.Hr(style={"margin": "0",'padding':'0'}),
+        html.Hr(style={
+                "borderColor": THEME["divider"],
+                "opacity": 1,
+                "margin": "12px 0"
+            }),
+
 
 
 
@@ -1676,7 +1745,9 @@ app.layout = dbc.Container(
                     style={
                         "maxWidth": "360px",
                         "margin": "0 auto",
-                        "boxShadow": "0 6px 18px rgba(0,0,0,0.22)",
+                        "backgroundColor": THEME["bg_dropdown"],
+                        "color": THEME["text_primary"],
+                        "boxShadow": THEME["shadow_md"],
                         "borderRadius": "10px",
                         "fontWeight": "600",
                                             }
@@ -1703,6 +1774,11 @@ app.layout = dbc.Container(
                                                 placeholder="Shooter(s)",
                                                 style={
                                                     "fontSize": "14px",
+                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                    "color": THEME["text_primary"],
+                                                    "boxShadow": THEME["shadow_md"],
+                                                    "borderRadius": "10px",
+                                                    "fontWeight": "600",
                                                 },
                                             ),
                                             xs=12, md=4
@@ -1714,6 +1790,11 @@ app.layout = dbc.Container(
                                                 placeholder="Half",
                                                 style={
                                                     "fontSize": "14px",
+                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                    "color": THEME["text_primary"],
+                                                    "boxShadow": THEME["shadow_md"],
+                                                    "borderRadius": "10px",
+                                                    "fontWeight": "600",
                                                 },
                                             ),
                                             xs=6, md=2
@@ -1727,6 +1808,11 @@ app.layout = dbc.Container(
                                                 placeholder="Quad",
                                                 style={
                                                     "fontSize": "14px",
+                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                    "color": THEME["text_primary"],
+                                                    "boxShadow": THEME["shadow_md"],
+                                                    "borderRadius": "10px",
+                                                    "fontWeight": "600",
                                                 },
                                             ),
                                             xs=6, md=2
@@ -1738,6 +1824,11 @@ app.layout = dbc.Container(
                                                 placeholder="Opponent",
                                                 style={
                                                     "fontSize": "14px",
+                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                    "color": THEME["text_primary"],
+                                                    "boxShadow": THEME["shadow_md"],
+                                                    "borderRadius": "10px",
+                                                    "fontWeight": "600",
                                                 },
                                             ),
                                             xs=6, md=2
@@ -1750,6 +1841,11 @@ app.layout = dbc.Container(
                                                 placeholder="Location",
                                                 style={
                                                     "fontSize": "14px",
+                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                    "color": THEME["text_primary"],
+                                                    "boxShadow": THEME["shadow_md"],
+                                                    "borderRadius": "10px",
+                                                    "fontWeight": "600",
                                                 },
                                             ),
                                             xs=6, md=2
@@ -1777,7 +1873,7 @@ app.layout = dbc.Container(
                                                     "justifyContent": "center",
                                                     "gap": "6px",
                                                     "fontSize": "14px",
-                                                    "color": "#666",
+                                                    "color": THEME["text_secondary"],
                                                     "marginBottom": "5px",
                                                     "marginTop": "5px",
                                                 }
@@ -1793,6 +1889,11 @@ app.layout = dbc.Container(
                                                                 placeholder="Select 5-man lineup",
                                                                 style={
                                                                     "fontSize": "14px",
+                                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                                    "color": THEME["text_primary"],
+                                                                    "boxShadow": THEME["shadow_md"],
+                                                                    "borderRadius": "10px",
+                                                                    "fontWeight": "600",
                                                                 },
                                                                 optionHeight=52,
                                                             ),
@@ -1820,7 +1921,7 @@ app.layout = dbc.Container(
                                                                                 style={
                                                                                     "fontSize": "12px",
                                                                                     "fontWeight": 600,
-                                                                                    "color": "#555",
+                                                                                    "color": THEME["text_secondary"],
                                                                                     "marginBottom": "4px",
                                                                                     "textAlign": "center"
                                                                                 }
@@ -1831,6 +1932,11 @@ app.layout = dbc.Container(
                                                                                 placeholder="Player(s) ON court",
                                                                                 style={
                                                                                     "fontSize": "14px",
+                                                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                                                    "color": THEME["text_primary"],
+                                                                                    "boxShadow": THEME["shadow_md"],
+                                                                                    "borderRadius": "10px",
+                                                                                    "fontWeight": "600",
                                                                                 },
                                                                             ),
                                                                         ],
@@ -1844,7 +1950,7 @@ app.layout = dbc.Container(
                                                                                 style={
                                                                                     "fontSize": "12px",
                                                                                     "fontWeight": 600,
-                                                                                    "color": "#555",
+                                                                                    "color": THEME["text_secondary"],
                                                                                     "marginBottom": "10px",
                                                                                     "textAlign": "center"
                                                                                 }
@@ -1855,6 +1961,11 @@ app.layout = dbc.Container(
                                                                                 placeholder="Player(s) OFF court",
                                                                                 style={
                                                                                     "fontSize": "14px",
+                                                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                                                    "color": THEME["text_primary"],
+                                                                                    "boxShadow": THEME["shadow_md"],
+                                                                                    "borderRadius": "10px",
+                                                                                    "fontWeight": "600",
                                                                                 },
                                                                             ),
                                                                         ],
@@ -1871,8 +1982,13 @@ app.layout = dbc.Container(
                                                     flush=True,
                                                     style={
                                                         "marginTop": "6px",
-                                                        "backgroundColor": "#f7f8fa",
+                                                        #"backgroundColor": "#f7f8fa",
                                                         "overflow": "visible",
+                                                        "backgroundColor": THEME["bg_dropdown"],
+                                                        "color": THEME["text_primary"],
+                                                        "boxShadow": THEME["shadow_md"],
+                                                        "borderRadius": "10px",
+                                                        "fontWeight": "600",
                                                     },
                                                 ),
 
@@ -1891,15 +2007,15 @@ app.layout = dbc.Container(
                                 "margin": "0 auto",
                                 "boxShadow": "0 6px 18px rgba(0,0,0,0.22)",
                                 "borderRadius": "14px",
-                                "backgroundColor": "#f7f8fa",}
+                                "backgroundColor": THEME['bg_panel'],}
                     ),
                     className="filters-wrap mb-3",
                     style={
                         #"maxWidth": "800px",   # mobile default
                         "margin": "0 auto",
-                        "boxShadow": "0 6px 18px rgba(0,0,0,0.22)",
+                        "boxShadow": THEME["shadow_md"],#"0 6px 18px rgba(0,0,0,0.22)",
                         "borderRadius": "14px",
-                        "backgroundColor": "#f7f8fa",
+                        "backgroundColor": THEME['bg_panel'],
                         #"overflow": "auto",   # 🔴 REQUIRED for rounding to clip children
                     }
                 ),
@@ -1950,7 +2066,7 @@ app.layout = dbc.Container(
                 "justifyContent": "center",
                 "gap": "6px",
                 "fontSize": "16px",
-                "color": "#666",
+                "color": THEME["text_secondary"],
                 "marginBottom": "2px",
                 "marginTop": "18px",
 
@@ -1960,7 +2076,12 @@ app.layout = dbc.Container(
 
 
 
-        html.Hr(),
+        html.Hr(style={
+            "borderColor": THEME["divider"],
+            "opacity": 1,
+            "margin": "12px 0"
+        }),
+
 
 
         dbc.Row(
@@ -1975,14 +2096,14 @@ app.layout = dbc.Container(
                                 style={
                                     "height": "40vh",
                                     "minHeight": "270px",
-                                    "paper_bgcolor":"#f8f8f8",
-                                    "plot":"#f8f8f8",
+                                    #"paper_bgcolor":"#f8f8f8",
+                                    #"plot":"#f8f8f8",
                                 }
                             ),
                             style={
-                                "background": "#f5f5f5",
+                                "background": THEME["bg_panel"],
                                 "borderRadius": "14px",
-                                "boxShadow": "0 10px 28px rgba(0,0,0,0.25)",
+                                "boxShadow": THEME["shadow_lg"],
                                 "padding": "5px"
                             }
                         ),
@@ -2000,15 +2121,15 @@ app.layout = dbc.Container(
                                 style={
                                     "height": "40vh",
                                     "minHeight": "270px",
-                                    "paper_bgcolor":"#f8f8f8",
-                                    "plot":"#f8f8f8",
+                                   # "paper_bgcolor":"#f8f8f8",
+                                    #"plot":"#f8f8f8",
                                 }
 
                             ),
                             style={
-                                "background": "#f8f8f8",
+                                "background": THEME["bg_panel"],
                                 "borderRadius": "14px",
-                                "boxShadow": "0 10px 28px rgba(0,0,0,0.25)",
+                                "boxShadow": THEME["shadow_lg"],
                                 "padding": "5px"
                             }
                         ),
@@ -2021,7 +2142,11 @@ app.layout = dbc.Container(
             ),
 
             html.Br(),
-            html.Hr(),
+            html.Hr(style={
+                "borderColor": THEME["divider"],
+                "opacity": 1,
+                "margin": "12px 0"
+            }),
 
             html.Div(
                 [
@@ -2051,7 +2176,7 @@ app.layout = dbc.Container(
                 style={
                     "textAlign": "center",
                     "fontSize": "12px",
-                    "color": "#777",
+                    "color": THEME["text_muted"],
                     "paddingBottom": "12px"
                 }
             ),
@@ -2102,7 +2227,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
     # Load correct team file
     dff = load_team_data(team)
-    print("players input:", players)
+    #print("players input:", players)
 
 
     
@@ -2143,7 +2268,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
     # REMOVE FREE THROWS
     if "shot_range" in dff.columns:
-        print("Dup shot id", dff['shot_id'].duplicated().sum())
+        #print("Dup shot id", dff['shot_id'].duplicated().sum())
         dff = dff[~dff["shot_range"].str.lower().isin(["freethrow"])]
         dff = dff.drop_duplicates(subset=['shot_id'])
         # after FT removal & dedupe
@@ -2157,12 +2282,12 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     
 
 
-    print("Missing quad 1:", dff['Quad'].isna().sum())
+    #print("Missing quad 1:", dff['Quad'].isna().sum())
 
     dff.loc[dff['Quad'].isna(), 'Quad'] = 'Q4'
     dff.loc[dff['Quad'].str.strip()=='', 'Quad'] = 'Q4'
 
-    print("Missing quad 2:", dff['Quad'].isna().sum())
+    #print("Missing quad 2:", dff['Quad'].isna().sum())
 
     dff['opponent'] = dff['opponent'].fillna('Non-D1')
 
@@ -2395,7 +2520,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
                 "textAlign": "center",
                 "fontSize": "13px",
                 "fontWeight": 600,
-                "color": "#666",
+                "color": THEME["text_secondary"],
                 "marginBottom": "6px",
                 "letterSpacing": "0.04em",
                 "textTransform": "uppercase"
@@ -2427,8 +2552,9 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         ),
 
         html.Hr(style={
-            "margin": "12px 0",
-            "opacity": 0.4
+            "borderColor": THEME["divider"],
+            "opacity": 1,
+            "margin": "12px 0"
         }),
         # html.Div(
         #     "Court Thirds",
@@ -2436,7 +2562,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         #         "textAlign": "center",
         #         "fontSize": "13px",
         #         "fontWeight": 600,
-        #         "color": "#666",
+        #         "color": THEME["text_secondary"],
         #         "marginBottom": "6px",
         #         "letterSpacing": "0.04em",
         #         "textTransform": "uppercase"
@@ -2472,7 +2598,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
                 "textAlign": "center",
                 "fontSize": "13px",
                 "fontWeight": 600,
-                "color": "#666",
+                "color": THEME["text_secondary"],
                 "marginBottom": "6px",
                 "letterSpacing": "0.04em",
                 "textTransform": "uppercase"
@@ -2506,8 +2632,9 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
 
         html.Hr(style={
-            "margin": "12px 0",
-            "opacity": 0.4
+            "borderColor": THEME["divider"],
+            "opacity": 1,
+            "margin": "12px 0"
         }),
         # html.Div(
         #     "Court Thirds",
@@ -2515,7 +2642,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         #         "textAlign": "center",
         #         "fontSize": "13px",
         #         "fontWeight": 600,
-        #         "color": "#666",
+        #         "color": THEME["text_secondary"],
         #         "marginBottom": "6px",
         #         "letterSpacing": "0.04em",
         #         "textTransform": "uppercase"
