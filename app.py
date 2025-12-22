@@ -701,24 +701,24 @@ def polar_wedge(r0, r1, a0, a1, n=40):
 
 def zone_label_xy(zone):
     if zone == "Rim":
-        return (0, 0)
+        return (0, -0.1)
 
     if zone == "Paint (Non-Rim)":
-        return (0, 6.75)
+        return (0, 6.875)
 
     if zone == "Top Mid":
         return (0, 17.5)
     if zone == "Left Mid":
-        return (12, 11)
+        return (12, 11.125)
     if zone == "Right Mid":
-        return (-12, 11)
+        return (-12, 11.125)
 
     if zone == "Top 3":
-        return (0, 25.85)
+        return (0, 25.875)
     if zone == "Left Wing 3":
-        return (19, 18)
+        return (19, 18.125)
     if zone == "Right Wing 3":
-        return (-19, 18)
+        return (-19, 18.125)
     if zone == "Right Corner 3":
         return (26.25, 2)
     if zone == "Left Corner 3":
@@ -1398,7 +1398,7 @@ def make_zone_chart(dff, title):
             textfont=dict(
                 size=14,
                 family="Funnel Display",
-                color=THEME["bg_chart"]
+                color=THEME["text_primary"]
             ),
 
             showlegend=False,
@@ -2674,11 +2674,11 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         html.Div(style={"height": "10px"}),
 
 
-        html.Hr(style={
-            "borderColor": THEME["divider"],
-            "opacity": 1,
-            "margin": "12px 0"
-        }),
+        # html.Hr(style={
+        #     "borderColor": THEME["divider"],
+        #     "opacity": 1,
+        #     "margin": "12px 0"
+        # }),
         # html.Div(
         #     "Court Thirds",
         #     style={
