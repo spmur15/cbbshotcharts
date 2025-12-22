@@ -1563,7 +1563,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("Turbo", 0.4)[0]
+        return sample_colorscale("Portland", 0.4)[0]
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -1573,7 +1573,7 @@ def zone_color(pct, zone):
     # allow outside range but clip for color stability
     t = np.clip(t, 0.0, 1.0)
 
-    return sample_colorscale("Turbo", t)[0]
+    return sample_colorscale("Portland", t)[0]
 
 
 
@@ -1928,9 +1928,9 @@ app.layout = dbc.Container(
                                                                 style={
                                                                     "fontSize": "14px",
                                                                     "backgroundColor": THEME["bg_dropdown"],
-                                                                    "color": THEME["text_primary"],
-                                                                    "boxShadow": THEME["shadow_md"],
-                                                                    "borderRadius": "10px",
+                                                                    "color": THEME["text_secondary"],
+                                                                    #"boxShadow": THEME["shadow_md"],
+                                                                    #"borderRadius": "10px",
                                                                     "fontWeight": "600",
                                                                 },
                                                                 optionHeight=52,
@@ -1962,10 +1962,10 @@ app.layout = dbc.Container(
                                                                             html.Div(
                                                                                 "Get shots while players are ON or OFF the court",
                                                                                 style={
-                                                                                    "fontSize": "12px",
+                                                                                    "fontSize": "13px",
                                                                                     "fontWeight": 600,
                                                                                     "color": THEME["text_secondary"],
-                                                                                    "marginBottom": "4px",
+                                                                                    "marginBottom": "8px",
                                                                                     "textAlign": "center"
                                                                                 }
                                                                             ),
@@ -2028,9 +2028,9 @@ app.layout = dbc.Container(
                                                         #"backgroundColor": "#f7f8fa",
                                                         "overflow": "visible",
                                                         "backgroundColor": THEME["bg_dropdown"],
-                                                        "color": THEME["text_primary"],
-                                                        "boxShadow": THEME["shadow_md"],
-                                                        "borderRadius": "10px",
+                                                        "color": THEME["text_secondary"],
+                                                        #"boxShadow": THEME["shadow_md"],
+                                                        #"borderRadius": "10px",
                                                         "fontWeight": "600",
                                                     },
                                                 ),
@@ -2380,26 +2380,26 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     
     if halves: 
         dff = dff[dff[HALF_COL].isin(halves)]
-        off_title = off_title + ' - ' + ', '.join(halves)
-        def_title = def_title + ' - ' + ', '.join(halves)
+        off_title = off_title + ' | ' + ', '.join(halves)
+        def_title = def_title + ' | ' + ', '.join(halves)
 
     
     if opps: 
         dff = dff[dff[OPP_COL].isin(opps)]
-        off_title = off_title + ' - Against: ' + ', '.join(opps)
-        def_title = def_title + ' - Against: ' + ', '.join(opps)
+        off_title = off_title + ' | Against: ' + ', '.join(opps)
+        def_title = def_title + ' | Against: ' + ', '.join(opps)
 
     
     if loc: 
         dff = dff[dff['loc'].isin(loc)]
-        off_title = off_title + ' - ' + ', '.join(loc) + ' games'
-        def_title = def_title + ' - ' + ', '.join(loc) + ' games'
+        off_title = off_title + ' | ' + ', '.join(loc) + ' games'
+        def_title = def_title + ' | ' + ', '.join(loc) + ' games'
 
     
     if quad: 
         dff = dff[dff['Quad'].isin(quad)]
-        off_title = off_title + ' - ' + ', '.join(quad) + ' games'
-        def_title = def_title + ' - ' + ', '.join(quad) + ' games'
+        off_title = off_title + ' | ' + ', '.join(quad) + ' games'
+        def_title = def_title + ' | ' + ', '.join(quad) + ' games'
             
         off_title = re.sub('Q1A, Q1B', 'Q1', off_title)
         def_title = re.sub('Q1A, Q1B', 'Q1', def_title)
@@ -2469,7 +2469,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     
         if off_players:
             off_df = off_df[off_df[PLAYER_COL].isin(off_players)]
-            off_title += " - " + ", ".join(off_players)
+            off_title += " | Shots by " + ", ".join(off_players)
     
         if def_players:
             def_df = def_df[def_df[PLAYER_COL].isin(def_players)]
