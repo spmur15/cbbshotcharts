@@ -1563,7 +1563,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("purp", 0.4)[0]
+        return sample_colorscale("purpor", 0.4)[0]
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -1573,7 +1573,7 @@ def zone_color(pct, zone):
     # allow outside range but clip for color stability
     t = np.clip(t, 0.0, 1.0)
 
-    return sample_colorscale("purp", t)[0]
+    return sample_colorscale("purpor", t)[0]
 
 
 
@@ -1968,7 +1968,7 @@ app.layout = dbc.Container(
                                                         "backgroundColor": THEME["bg_dropdown"],
                                                         "color": THEME["text_secondary"],
                                                         "boxShadow": THEME["shadow_md"],
-                                                        "borderRadius": "10px",
+                                                        #"borderRadius": "10px",
                                                         "fontWeight": "600",
                                                     }
                                                 ),
@@ -2051,7 +2051,7 @@ app.layout = dbc.Container(
                                                         "backgroundColor": THEME["bg_dropdown"],
                                                         "color": THEME["text_secondary"],
                                                         "boxShadow": THEME["shadow_md"],
-                                                        "borderRadius": "10px",
+                                                        #"borderRadius": "10px",
                                                         "fontWeight": "600",
                                                     }
                                                 ),
