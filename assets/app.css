@@ -208,6 +208,16 @@ h1, h2, h3, h4, h5 {
   color: #e6e6e6;
 }
 
+/* Prevent mobile auto-zoom on dropdowns */
+.Select-control,
+.Select-menu-outer,
+.Select-placeholder,
+.Select-value-label,
+.Select-input > input {
+  font-size: 16px !important;
+}
+
+
 
 
 
