@@ -1398,7 +1398,7 @@ def make_zone_chart(dff, title):
             textfont=dict(
                 size=14,
                 family="Funnel Display",
-                color=THEME["text_primary"]
+                color=THEME["text_secondary"]
             ),
 
             showlegend=False,
