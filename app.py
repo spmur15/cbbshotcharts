@@ -77,7 +77,7 @@ THEME = {
     "shadow_lg": "0 10px 28px rgba(0,0,0,0.95)",
 
     # ---- Charts ----
-    "court_line": "#bbbbbb",
+    "court_line": "#dbdbdb",
     "make": "rgba(60,200,120,0.55)",
     "miss": "rgba(240,90,90,0.45)",
 
@@ -110,7 +110,7 @@ MID_TO_THREE = {v: k for k, v in THREE_TO_MID.items()}
 
 
 COURT_LINE_COLOR = THEME["court_line"]
-COURT_LINE_WIDTH = 0.67
+COURT_LINE_WIDTH = 0.75
 
 COURT_SHADOW_COLOR = "rgba(0,0,0,0.18)"
 COURT_SHADOW_OFFSET = 0.6
@@ -858,9 +858,9 @@ def stat_card(label, value, subvalue=None):
             subvalue and html.Div(
                 subvalue,
                 style={
-                    "fontSize": "10px",
+                    "fontSize": "11px",
                     "color": THEME["text_muted"],
-                    "marginTop": "10px",
+                    "marginTop": "6px",
                 }
             ),
         ],
@@ -1398,7 +1398,7 @@ def make_zone_chart(dff, title):
             textfont=dict(
                 size=14,
                 family="Funnel Display",
-                color=THEME["text_secondary"]
+                color=THEME["text_primary"]
             ),
 
             showlegend=False,
@@ -1941,9 +1941,14 @@ app.layout = dbc.Container(
                                                     start_collapsed=True,
                                                     flush=True,
                                                     style={
-                                                        "marginTop": "6px",
-                                                        "backgroundColor": "#f7f8fa",
                                                         "overflow": "visible",
+                                                        "marginTop": "6px",
+                                                        "overflow": "visible",
+                                                        "backgroundColor": THEME["bg_dropdown"],
+                                                        "color": THEME["text_primary"],
+                                                        "boxShadow": THEME["shadow_md"],
+                                                        "borderRadius": "10px",
+                                                        "fontWeight": "600",
                                                     }
                                                 ),
 
