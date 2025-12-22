@@ -1398,7 +1398,7 @@ def make_zone_chart(dff, title):
             textfont=dict(
                 size=14,
                 family="Funnel Display",
-                color=THEME["text_secondary"]
+                color=THEME["bg_chart"]
             ),
 
             showlegend=False,
@@ -1563,7 +1563,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("oranges", 0.4)[0]
+        return sample_colorscale("purp", 0.4)[0]
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -1573,7 +1573,7 @@ def zone_color(pct, zone):
     # allow outside range but clip for color stability
     t = np.clip(t, 0.0, 1.0)
 
-    return sample_colorscale("oranges", t)[0]
+    return sample_colorscale("purp", t)[0]
 
 
 
@@ -1734,15 +1734,35 @@ app.layout = dbc.Container(
             dbc.Col(
                 [
                     html.H3(
-                        "CBB Shot Charts",
+                        [
+                            "CBB Shot Charts ",
+                            html.Span(
+                                "BETA",
+                                style={
+                                    "backgroundColor": "#d32f2f",
+                                    "color": "white",
+                                    "fontSize": "11px",
+                                    "fontWeight": 700,
+                                    "padding": "3px 8px",
+                                    "borderRadius": "999px",
+                                    "marginLeft": "8px",
+                                    "verticalAlign": "middle",
+                                    "letterSpacing": "0.06em",
+                                }
+                            )
+                        ],
                         className="text-center",
                         style={
-                            "marginBottom": "1px",   # 👈 very tight spacing
-                            "marginTop": "4px"
+                            "marginBottom": "1px",
+                            "marginTop": "4px",
+                            "display": "flex",
+                            "justifyContent": "center",
+                            "alignItems": "center",
+                            "gap": "6px",
                         }
                     ),
                     html.Div(
-                        "Games thru Dec. 18",
+                        "Games thru Dec. 21",
                         className="text-center",
                         style={
                             "fontSize": "12.5px",
