@@ -800,7 +800,7 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
                         subtitle,
                         style={
                             "fontSize": "14px",
-                            "color": THEME["text_secondary"]
+                            "color": THEME["text_primary"]
                         }
                     )
                 ]
