@@ -2379,6 +2379,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
     if team == 'Miami (FL)': team_logo = "logos/Miami-FL-Hurricanes.png"
     elif team == 'West Virginia': team_logo = "logos/west-virginia-mountaineers.png"
+    elif team == 'New Haven': team_logo = "logos/new-haven-chargers.png"
+    elif team == 'New Haven': team_logo = "logos/lehigh-mountain-hawks.png"
     elif team_logo_str == 'West Georgia': team_logo = "logos/west-georgia-wolves.png"
     elif team == 'NC State': team_logo = "logos/NC-State-Wolfpack.png"
     elif team == 'CSUN': team_logo = "logos/Cal-State-Northridge-Matadors.png"
