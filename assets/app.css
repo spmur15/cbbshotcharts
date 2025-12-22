@@ -102,6 +102,90 @@
   overflow: visible !important;
 }
 
+/* Dropdown menu background */
+.Select-menu-outer,
+.VirtualizedSelectOption {
+  background-color: #1f2429 !important;
+  color: #e6e6e6 !important;
+}
+
+/* Hovered option */
+.VirtualizedSelectFocusedOption {
+  background-color: #2b3138 !important;
+  color: #ffffff !important;
+}
+
+/* Selected option */
+.VirtualizedSelectSelectedOption {
+  background-color: #3a4149 !important;
+  color: #ffffff !important;
+}
+
+/* Dropdown control itself */
+.Select-control {
+  background-color: #1f2429 !important;
+  color: #e6e6e6 !important;
+  border-color: #3a4149 !important;
+}
+
+/* Accordion header */
+.accordion-button {
+  background-color: #1f2429 !important;
+  color: #e6e6e6 !important;
+  font-weight: 600;
+}
+
+/* Accordion body */
+.accordion-body {
+  background-color: #23282e !important;
+  color: #d0d0d0 !important;
+}
+
+/* Remove bright focus ring */
+.accordion-button:focus {
+  box-shadow: none !important;
+}
+
+/* Chevron color */
+.accordion-button::after {
+  filter: invert(1);
+}
+
+body {
+  background-color: #0f1113;
+  color: #d6d6d6;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5 {
+  color: #eaeaea;
+}
+
+/* Muted text */
+.text-muted {
+  color: #9aa0a6 !important;
+}
+
+/* Inactive toggle button */
+.btn-outline-dark {
+  color: #cfd3d7 !important;
+  border-color: #4a4f55 !important;
+  background-color: #1c1f23 !important;
+}
+
+/* Hover inactive */
+.btn-outline-dark:hover {
+  background-color: #2a2f35 !important;
+  color: #ffffff !important;
+}
+
+/* Active toggle */
+.btn-dark {
+  background-color: #e6e6e6 !important;
+  color: #111 !important;
+  border-color: #e6e6e6 !important;
+}
+
 
 
 
