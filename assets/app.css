@@ -277,6 +277,32 @@ h1, h2, h3, h4, h5 {
 }
 
 
+/* Remove default accordion item background */
+.filters-accordion .accordion-item {
+  background-color: transparent;
+  border: none;
+}
+
+
+/* Prevent white gaps when expanded */
+.filters-accordion .accordion-collapse {
+  background-color: transparent;
+}
+
+
+/* Ensure rounded corners clip children */
+.filters-wrap {
+  overflow: hidden;
+}
+
+
+/* Inner accordion panel spacing */
+.filters-accordion .accordion-body {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: #1f232a;
+  border-radius: 12px;
+}
 
 
 
