@@ -1556,7 +1556,7 @@ def add_zone_dividers(fig):
             type="line",
             x0=xr0, y0=yr0,
             x1=xr1, y1=yr1,
-            line=dict(color=THEME["text_secondary"], width=3)
+            line=dict(color=THEME["text_secondary"], width=3),
             layer="above"
         )
 
