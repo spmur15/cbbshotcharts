@@ -793,7 +793,8 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
                         team,
                         style={
                             "fontSize": "24px",
-                            "fontWeight": 700
+                            "fontWeight": 700,
+                            "color": THEME["text_primary"]
                         }
                     ),
                     subtitle and html.Div(
@@ -852,7 +853,7 @@ def stat_card(label, value, subvalue=None):
                 style={
                     "fontSize": "18px",
                     "fontWeight": 600,
-                    "color": THEME["text_secondary"],
+                    "color": THEME["text_primary"],
                 }
             ),
             subvalue and html.Div(
@@ -1563,7 +1564,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("peach", 0.4)[0]
+        return sample_colorscale("purp", 0.4)[0]
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -1573,7 +1574,7 @@ def zone_color(pct, zone):
     # allow outside range but clip for color stability
     t = np.clip(t, 0.0, 1.0)
 
-    return sample_colorscale("peach", t)[0]
+    return sample_colorscale("purp", t)[0]
 
 
 
@@ -2380,15 +2381,26 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     if team == 'Miami (FL)': team_logo = "logos/Miami-FL-Hurricanes.png"
     elif team == 'West Virginia': team_logo = "logos/west-virginia-mountaineers.png"
     elif team == 'Southeast Mo. St.': team_logo = "logos/southeast-missouri-state-redhawks.png"
+    elif team == 'Purdue Fort Wayne': team_logo = "logos/Purdue-FW-Mastodons.png"
     elif team == 'Saint Francis': team_logo = "logos/saint-francis-pa-red-flash.png"
     elif team == 'Little Rock': team_logo = "logos/little-rock-trojans.png"
+    elif team == 'San Diego': team_logo = "logos/San-Diego-Toreros.png"
     elif team == 'New Haven': team_logo = "logos/new-haven-chargers.png"
+    elif team == 'St. Bonaventure': team_logo = "logos/Saint-Bonaventure-Bonnies.png"
+    elif team == 'Southern Ind.': team_logo = "logos/Southern-Indiana-Screaming-Eagles.png"
     elif team == 'Lindenwood': team_logo = "logos/Lindenwood-Lions.png"
-    elif team == 'St. Thomas (MN)': team_logo = "logos/saint-thomas-mn-tommies.png"
+    elif team == 'St. Thomas \(MN\)': team_logo = "logos/st-thomas-mn-tommies.png"
     elif team == "Mount St. Mary's": team_logo = "logos/mount-saint-marys-mountaineers.png"
     elif team == 'Lehigh': team_logo = "logos/lehigh-mountain-hawks.png"
     elif team == 'West Ga.': team_logo = "logos/west-georgia-wolves.png"
     elif team == 'NC State': team_logo = "logos/NC-State-Wolfpack.png"
+    elif team == 'UC San Diego': team_logo = "logos/UC-San-Diego-Tritons.png"
+    elif team == 'UAB': team_logo = "logos/UAB-Blazers.png"
+    elif team == 'UMass Lowell': team_logo = "logos/UMass-Lowell.png"
+    elif team == 'UIC': team_logo = "logos/Illinois-Chicago-Flames.png"
+    elif team == 'UNC Greensboro': team_logo = "logos/UNCG.png"
+    elif team == 'UNCW': team_logo = "logos/UNC-Wilmington-Seahawks.png"
+    elif team == 'UC Davis': team_logo = "logos/UC-Davis-Aggies.png"
     elif team == 'CSUN': team_logo = "logos/Cal-State-Northridge-Matadors.png"
     elif team == 'Milwaukee': team_logo = "logos/UW-Milwaukee-Panthers.png"
     elif team == 'Nicholls': team_logo = "logos/Nicholls-State-Colonels.png"
@@ -2397,7 +2409,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     elif team == 'Michigan': team_logo = "logos/michigan-wolverines.png"
     elif team == 'McNeese': team_logo = "logos/mcneese-state.png"
     elif team == 'Miami (OH)': team_logo = "logos/Miami-Ohio-Redhawks.png"
-    elif team == 'St. John\'s (NY)': team_logo = "logos/st.-john's-red-storm.png"
+    elif team == 'St. John\'s \(NY\)': team_logo = "logos/Saint-Johns-Red-Storm.png"
     elif team == 'App State': team_logo = "logos/app-state-mountaineers.png"
     elif team == 'SIUE': team_logo = "logos/SIUE.png"
         
