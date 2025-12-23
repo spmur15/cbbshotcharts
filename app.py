@@ -2379,6 +2379,9 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     except: team_logo = "logos/unknown.png"
 
     if team == 'Miami (FL)': team_logo = "logos/Miami-FL-Hurricanes.png"
+    elif team == 'Boston U.': team_logo = "logos/Boston-U-Terriers.png"
+    elif team == 'California Baptist': team_logo = "logos/Cal-Baptist-Lancers.png"
+    elif team == 'FIU': team_logo = "logos/Florida-International-Panthers.png"
     elif team == 'West Virginia': team_logo = "logos/west-virginia-mountaineers.png"
     elif team == 'Southeast Mo. St.': team_logo = "logos/southeast-missouri-state-redhawks.png"
     elif team == 'Purdue Fort Wayne': team_logo = "logos/Purdue-FW-Mastodons.png"
