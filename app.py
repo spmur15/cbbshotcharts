@@ -827,7 +827,8 @@ def chart_header(team, side, logo):
             "gap": "8px",
             "fontFamily": "Funnel Display",
             "fontWeight": 600,
-            "fontSize": "18px"
+            "fontSize": "18px",
+            "color":theme['text_primary']
         },
         children=[
             html.Img(src=logo, style={"height": "30px"}),
@@ -1564,7 +1565,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("purp", 0.4)[0]
+        return sample_colorscale("peach", 0.4)[0]
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -1574,7 +1575,7 @@ def zone_color(pct, zone):
     # allow outside range but clip for color stability
     t = np.clip(t, 0.0, 1.0)
 
-    return sample_colorscale("purp", t)[0]
+    return sample_colorscale("peach", t)[0]
 
 
 
@@ -1756,10 +1757,12 @@ app.layout = dbc.Container(
                         style={
                             "marginBottom": "1px",
                             "marginTop": "4px",
+                            "marginLeft": "24px",
                             "display": "flex",
                             "justifyContent": "center",
                             "alignItems": "center",
                             "gap": "6px",
+                            "color":theme['text_primary']
                         }
                     ),
                     html.Div(
