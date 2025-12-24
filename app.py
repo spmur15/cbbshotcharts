@@ -1741,8 +1741,8 @@ app.layout = dbc.Container(
                             html.Span(
                                 "BETA",
                                 style={
-                                    "backgroundColor": "#d32f2f",
-                                    "color": "white",
+                                    "backgroundColor": "#a32fba",
+                                    "color":THEME['text_primary'],
                                     "fontSize": "11px",
                                     "fontWeight": 700,
                                     "padding": "3px 8px",
@@ -2875,11 +2875,12 @@ def update_filter_options(team, exclude_non_d1):
     
     lineup_opts = [
         {
-            "label": f"{format_lineup_label(lu)}  ({shots})",
+            "label": f"{format_lineup_label(lu)}  ({shots} shots)",
             "value": lineup_key(lu)
         }
         for lu, shots in zip(lu_counts["lineup_ord"], lu_counts["shots"])
     ]
+
 
     # team_players = (
     #     dff.loc[dff["team_name"] == team, "shooter"]
