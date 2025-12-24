@@ -716,9 +716,9 @@ def zone_label_xy(zone):
     if zone == "Top 3":
         return (0, 26)
     if zone == "Left Wing 3":
-        return (19, 18.125)
+        return (19.125, 18.125)
     if zone == "Right Wing 3":
-        return (-19, 18.125)
+        return (-19.125, 18.125)
     if zone == "Right Corner 3":
         return (26.25, 2)
     if zone == "Left Corner 3":
@@ -1698,7 +1698,9 @@ def parse_lineup_key(key):
 # --------------------------------------------------
 # DASH APP
 # --------------------------------------------------
-app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = Dash(__name__, 
+           title="CBB Shot Charts",
+           external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server  # for Render
 
 # --------------------------------------------------
