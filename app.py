@@ -828,7 +828,7 @@ def chart_header(team, side, logo):
             "fontFamily": "Funnel Display",
             "fontWeight": 600,
             "fontSize": "18px",
-            "color":theme['text_primary']
+            "color":THEME['text_primary']
         },
         children=[
             html.Img(src=logo, style={"height": "30px"}),
