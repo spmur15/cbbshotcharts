@@ -1762,7 +1762,7 @@ app.layout = dbc.Container(
                             "justifyContent": "center",
                             "alignItems": "center",
                             "gap": "6px",
-                            "color":theme['text_primary']
+                            "color":THEME['text_primary']
                         }
                     ),
                     html.Div(
