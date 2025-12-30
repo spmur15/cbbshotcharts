@@ -559,27 +559,42 @@ HOOP_FROM_BASELINE_FT = 5.25
 HOOP_X_FT = COURT_L_FT - HOOP_FROM_BASELINE_FT   # 88.75 ft from left baseline
 
 
-def standardize_to_right_basket(dff, x_col="x", y_col="y"):
-    """
-    NCAA coords are on a 0..100-ish full court for BOTH axes.
-    Shots on the left half (x < 50) are flipped so that all shots end up
-    on the right half (attacking the same basket).
+# def standardize_to_right_basket(dff, x_col="x", y_col="y"):
+#     """
+#     NCAA coords are on a 0..100-ish full court for BOTH axes.
+#     Shots on the left half (x < 50) are flipped so that all shots end up
+#     on the right half (attacking the same basket).
 
-    We flip both x and y to preserve left/right orientation.
-    """
+#     We flip both x and y to preserve left/right orientation.
+#     """
+#     out = dff.copy()
+#     x = out[x_col].astype(float).to_numpy()
+#     y = out[y_col].astype(float).to_numpy()
+
+#     left_half = x < HALF_DIVIDER
+
+#     # Flip across full-court axes in the 0..100 coordinate system
+#     x[left_half] = 100.0 - x[left_half]
+#     y[left_half] = 100.0 - y[left_half]
+
+#     out["x_std"] = x
+#     out["y_std"] = y
+#     return out
+
+def standardize_to_right_basket(dff, x_col="x", y_col="y"):
     out = dff.copy()
     x = out[x_col].astype(float).to_numpy()
     y = out[y_col].astype(float).to_numpy()
 
-    left_half = x < HALF_DIVIDER
+    left_half = x < 50
 
-    # Flip across full-court axes in the 0..100 coordinate system
+    # ✅ flip ONLY x
     x[left_half] = 100.0 - x[left_half]
-    y[left_half] = 100.0 - y[left_half]
 
     out["x_std"] = x
     out["y_std"] = y
     return out
+
 
 
 def to_feet_hoop_centered(dff):
