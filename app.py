@@ -591,8 +591,8 @@ def standardize_to_right_basket(dff, x_col="x", y_col="y"):
     x[left_half] = 100.0 - x[left_half]
     
     # ✅ flip y too
-    right_half = x >= 50
-    x[right_half] = 100.0 - x[right_half]
+    #right_half = x >= 50
+    #x[right_half] = 100.0 - x[right_half]
 
     out["x_std"] = x
     out["y_std"] = y
