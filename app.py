@@ -586,10 +586,13 @@ def standardize_to_right_basket(dff, x_col="x", y_col="y"):
     x = out[x_col].astype(float).to_numpy()
     y = out[y_col].astype(float).to_numpy()
 
+    # ✅ flip x
     left_half = x < 50
-
-    # ✅ flip ONLY x
-    #x[left_half] = 100.0 - x[left_half]
+    x[left_half] = 100.0 - x[left_half]
+    
+    # ✅ flip y too
+    right_half = x >= 50
+    x[right_half] = 100.0 - x[right_half]
 
     out["x_std"] = x
     out["y_std"] = y
