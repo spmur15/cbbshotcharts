@@ -1658,8 +1658,8 @@ def rotate_path(path_str):
 def add_chart_subtitle(fig, fg_line, pps_line, astd_line):
     # closer to title (title is at y=0.98)
     y1 = 0.99
-    y2 = 0.95
-    y3 = 0.91
+    y2 = 0.94
+    y3 = 0.88
 
     common_font = dict(
         family="Funnel Display",
