@@ -2256,12 +2256,12 @@ app.layout = dbc.Container(
                     html.Span("•", style={"margin": "0 8px"}),
 
                     html.Span(
-                        "Built by Smur",
+                        "Built by ",
                         style={"marginRight": "4px"}
                     ),
                     html.A(
-                        "@cbb_players",
-                        href="https://twitter.com/cbb_players",
+                        "@smur_cbb",
+                        href="https://x.com/smur_cbb",
                         target="_blank"
                     )
                 ],
