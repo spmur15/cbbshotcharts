@@ -1453,73 +1453,41 @@ def make_zone_chart(dff, title):
             opacity=0.75,
             layer="below"
         )
-
-        # Old code:
+        
         x_txt, y_txt = zone_label_xy(r["zone"])
-        # fig.add_trace(go.Scatter(
-        #     x=[x_txt],
-        #     y=[y_txt],
-        #     text=[f"{r.made}/{r.att}<br>{r.pct:.1%}"],
-        #     mode="text",
-        #     textfont=dict(
-        #         size=14,
-        #         family="Funnel Display",
-        #         color=THEME["bg_chart"]
-        #     ),
 
-        #     showlegend=False,
-        #     #fillcolor='#777'
-        # ))
-
-        # fig.add_trace(go.Scatter(
-        #     x=[x_txt],
-        #     y=[y_txt],
-        #     text=[f"<span style='line-height: 0.8'>{r.made}/{r.att}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"],
-        #     mode="text",
-        #     textfont=dict(
-        #         size=13,  # Slightly smaller for better fit
-        #         family="Arial Narrow, Arial, sans-serif",  # With fallbacks  # More web-safe, cleaner font
-        #         color=THEME["bg_chart"],
-        #         weight=600  # Semi-bold for better readability
-        #     ),
-        #     showlegend=False,
-        #     hoverinfo='skip'  # Disable hover to keep it clean
-        # ))
-
-    #x_txt, y_txt = zone_label_xy(r["zone"])
-
-    # Add circle background first
-    fig.add_trace(go.Scatter(
-        x=[x_txt],
-        y=[y_txt],
-        mode="markers",
-        marker=dict(
-            size=45,  # Adjust size to fit your text
-            color="rgba(255, 255, 255, 0.2)",  # Semi-transparent white
-            line=dict(
-                color=THEME["bg_chart"],  # Border color
-                width=1  # Border width (thin line)
-            )
-        ),
-        showlegend=False,
-        hoverinfo='skip'
-    ))
-    
-    # Then add text on top
-    fig.add_trace(go.Scatter(
-        x=[x_txt],
-        y=[y_txt],
-        text=[f"<span style='line-height: 0.9'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
-        mode="text",
-        textfont=dict(
-            size=12,
-            family="Univers Condensed, sans-serif",
-            color=THEME["bg_chart"],
-            weight=600
-        ),
-        showlegend=False,
-        hoverinfo='skip'
-    ))
+        # Add circle background first
+        fig.add_trace(go.Scatter(
+            x=[x_txt],
+            y=[y_txt],
+            mode="markers",
+            marker=dict(
+                size=40,  # Adjust size to fit your text
+                color="rgba(255, 255, 255, 0.1)",  # Semi-transparent white
+                line=dict(
+                    color=THEME["bg_chart"],  # Border color
+                    width=1  # Border width (thin line)
+                )
+            ),
+            showlegend=False,
+            hoverinfo='skip'
+        ))
+        
+        # Then add text on top
+        fig.add_trace(go.Scatter(
+            x=[x_txt],
+            y=[y_txt],
+            text=[f"<span style='line-height: 0.9'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
+            mode="text",
+            textfont=dict(
+                size=12,
+                family="Univers Condensed, sans-serif",
+                color=THEME["bg_chart"],
+                weight=600
+            ),
+            showlegend=False,
+            hoverinfo='skip'
+        ))
 
     fig.update_layout(
         plot_bgcolor=THEME["bg_chart"],
@@ -1528,35 +1496,6 @@ def make_zone_chart(dff, title):
 
 
     fig.update_layout(showlegend=False)
-
-    # fig.update_layout(
-    #     title=dict(
-    #         text=title,
-    #         x=0.5,
-    #         y=0.98,
-    #         font=dict(
-    #             family="Funnel Display",
-    #             size=20,
-    #             weight=600
-    #         )
-    #     ),
-    #     legend=dict(
-    #         font=dict(
-    #             family="Funnel Display",
-    #             size=16
-    #         )
-    #     ),
-    #     font=dict(
-    #         family="Funnel Display"
-    #     ),
-    #     plot_bgcolor="#f8f8f8",
-    #     paper_bgcolor="#f8f8f8"
-    # )
-
-    #add_zone_dividers(fig)
-    # 🔹 ADD SUMMARY STATS
-    # fg_line, pts_line, astd_line = shooting_summary(dff)
-    # add_chart_subtitle(fig, fg_line, pts_line, astd_line)
 
     summary = shooting_summary(dff)
 
@@ -2850,7 +2789,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
 
         freq_bar(
-            ["Rim", "Mid", "3P"],
+            ["Rim", "Short Mid", "Long Mid", "3P"],
             stats["freq_vals"]
         ),
 
