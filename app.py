@@ -938,7 +938,7 @@ def stat_card(label, value, subvalue=None):
 
 def stat_row(cards):
     return dbc.Row(
-        [dbc.Col(card, xs=4) for card in cards],
+        [dbc.Col(card, xs=3) for card in cards],
         className="g-2 mb-2"
     )
 
@@ -1471,20 +1471,55 @@ def make_zone_chart(dff, title):
         #     #fillcolor='#777'
         # ))
 
-        fig.add_trace(go.Scatter(
-            x=[x_txt],
-            y=[y_txt],
-            text=[f"<span style='line-height: 0.8'>{r.made}/{r.att}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"],
-            mode="text",
-            textfont=dict(
-                size=13,  # Slightly smaller for better fit
-                family="Arial Narrow, Arial, sans-serif",  # With fallbacks  # More web-safe, cleaner font
-                color=THEME["bg_chart"],
-                weight=600  # Semi-bold for better readability
-            ),
-            showlegend=False,
-            hoverinfo='skip'  # Disable hover to keep it clean
-        ))
+        # fig.add_trace(go.Scatter(
+        #     x=[x_txt],
+        #     y=[y_txt],
+        #     text=[f"<span style='line-height: 0.8'>{r.made}/{r.att}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"],
+        #     mode="text",
+        #     textfont=dict(
+        #         size=13,  # Slightly smaller for better fit
+        #         family="Arial Narrow, Arial, sans-serif",  # With fallbacks  # More web-safe, cleaner font
+        #         color=THEME["bg_chart"],
+        #         weight=600  # Semi-bold for better readability
+        #     ),
+        #     showlegend=False,
+        #     hoverinfo='skip'  # Disable hover to keep it clean
+        # ))
+
+    #x_txt, y_txt = zone_label_xy(r["zone"])
+
+    # Add circle background first
+    fig.add_trace(go.Scatter(
+        x=[x_txt],
+        y=[y_txt],
+        mode="markers",
+        marker=dict(
+            size=45,  # Adjust size to fit your text
+            color="rgba(255, 255, 255, 0.2)",  # Semi-transparent white
+            line=dict(
+                color=THEME["bg_chart"],  # Border color
+                width=1  # Border width (thin line)
+            )
+        ),
+        showlegend=False,
+        hoverinfo='skip'
+    ))
+    
+    # Then add text on top
+    fig.add_trace(go.Scatter(
+        x=[x_txt],
+        y=[y_txt],
+        text=[f"<span style='line-height: 0.9'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
+        mode="text",
+        textfont=dict(
+            size=12,
+            family="Univers Condensed, sans-serif",
+            color=THEME["bg_chart"],
+            weight=600
+        ),
+        showlegend=False,
+        hoverinfo='skip'
+    ))
 
     fig.update_layout(
         plot_bgcolor=THEME["bg_chart"],
@@ -2738,7 +2773,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         
 
         freq_bar(
-            ["Rim", "Mid", "3P"],
+            ["Rim", "Short Mid","Long Mid", "3P"],
             stats["freq_vals"]
         ),
 
