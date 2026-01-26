@@ -196,8 +196,8 @@ team_p5 = [
 
 
 # ---- Zone geometry (feet, hoop-centered) ----
-R_RIM = 4
-R_PAINT = 9
+R_RIM = 5
+R_PAINT = 10
 R_3 = 22
 
 R_RIM = 5
@@ -759,11 +759,11 @@ def zone_label_xy(zone):
         return (0, 6.95)
 
     if zone == "Paint (Non-Rim) Right":
-        return (-7.5,-1)
+        return (-8,-1)
     if zone == "Paint (Non-Rim) Middle":
         return (0, 8.5)
     if zone == "Paint (Non-Rim) Left":
-        return (7.5, -1)
+        return (8, -1)
 
     if zone == "Top Mid":
         return (0, 17.5)
