@@ -209,6 +209,9 @@ R_MAX = 31
 
 ZONE_DRAW_ORDER = [
     "Paint (Non-Rim)",
+     "Paint (Non-Rim) Right",
+     "Paint (Non-Rim) Middle",
+     "Paint (Non-Rim) Left",
     "Left Baseline 2", "Right Baseline 2",
     "Top Mid", "Left Mid", "Right Mid",
     "Top 3", "Left Wing 3", "Right Wing 3", "Corner 3",
@@ -219,7 +222,11 @@ ZONE_DRAW_ORDER = [
 ZONE_FAMILY = {
     # Rim / Paint
     "Rim": "paint",
-    "Paint (Non-Rim)": "mid",
+    "Paint (Non-Rim)": "short_mid",
+
+    "Paint (Non-Rim) Left": "short_mid",
+    "Paint (Non-Rim) Middle": "short_mid",
+    "Paint (Non-Rim) Right": "short_mid",
 
     # Midrange
     "Top Mid": "mid",
@@ -239,6 +246,7 @@ ZONE_FAMILY = {
 
 ZONE_PCT_RANGES = {
     "three": (0.2, 0.50),   # 25% bad → 40% good
+    "short_mid":   (0.3, 0.65),
     "mid":   (0.2, 0.60),   # 35% bad → 50% good
     "paint": (0.3, 0.75),   # 50% bad → 70% good
 }
@@ -298,9 +306,23 @@ ZONE_SHAPES = {
     ),
 
     # Paint non-rim
-    "Paint (Non-Rim)": dict(
+    "Paint (Non-Rim) Right": dict(
         type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -180, 180),
+        path=polar_wedge(R_RIM, R_PAINT, 90, 180),
+        line=dict(width=3)
+    ),
+
+    # Paint non-rim
+    "Paint (Non-Rim) Middle": dict(
+        type="path",
+        path=polar_wedge(R_RIM, R_PAINT, -90, 90),
+        line=dict(width=3)
+    ),
+
+    # Paint non-rim
+    "Paint (Non-Rim) Left": dict(
+        type="path",
+        path=polar_wedge(R_RIM, R_PAINT, -180, -90),
         line=dict(width=3)
     ),
 
@@ -373,6 +395,10 @@ ZONE_SHAPES = {
 ZONE_LABEL_POS = {
     "Rim": (0, 0),
     "Paint (Non-Rim)": (0,6),
+
+    "Paint (Non-Rim) Right": (0,6),
+    "Paint (Non-Rim) Middle": (0,6),
+    "Paint (Non-Rim) Left": (0,6),
 
     "Top Mid": (18,0),
     "Left Mid": (10, 12),
@@ -732,6 +758,13 @@ def zone_label_xy(zone):
     if zone == "Paint (Non-Rim)":
         return (0, 6.95)
 
+    if zone == "Paint (Non-Rim) Right":
+        return (-6, 3)
+    if zone == "Paint (Non-Rim) Middle":
+        return (0, 6.95)
+    if zone == "Paint (Non-Rim) Left":
+        return (6, 3)
+
     if zone == "Top Mid":
         return (0, 17.5)
     if zone == "Left Mid":
@@ -959,7 +992,10 @@ def shot_breakdown_stats(dff):
     rim_close = dff["zone"].isin(["Rim"])
 
     # Midrange ring
-    mid = ( dff["zone"].str.contains("Mid") | dff["zone"].isin(["Paint (Non-Rim)"]) )
+    mid_long = dff["zone"].str.contains("Mid")
+
+    # Midrange ring
+    mid_short = dff["zone"].str.contains("Paint")
 
     # Threes
     #three = dff["zone"].str.contains("3")
@@ -991,12 +1027,14 @@ def shot_breakdown_stats(dff):
     return {
         "fg": [
             ("Rim FG%", pct(rim_close)),
-            ("Mid FG%", pct(mid)),
+            ("Short Mid FG%", pct(mid_short)),
+            ("Long Mid FG%", pct(mid_long)),
             ("3P FG%", pct(three)),
         ],
         "ast": [
             ("Close Ast%", ast_pct(rim_close)),
-            ("Mid Ast%", ast_pct(mid)),
+            ("Short Mid Ast%", ast_pct(mid_short)),
+            ("Long Mid Ast%", ast_pct(mid_long)),
             ("3P Ast%", ast_pct(three)),
         ],
         "freq_vals": (rim_f, mid_f, three_f),
