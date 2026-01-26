@@ -308,21 +308,21 @@ ZONE_SHAPES = {
     # Paint non-rim
     "Paint (Non-Rim) Right": dict(
         type="path",
-        path=polar_wedge(R_RIM, R_PAINT, 90, 180),
+        path=polar_wedge(R_RIM, R_PAINT, 60, 180),
         line=dict(width=3)
     ),
 
     # Paint non-rim
     "Paint (Non-Rim) Middle": dict(
         type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -90, 90),
+        path=polar_wedge(R_RIM, R_PAINT, -60, 60),
         line=dict(width=3)
     ),
 
     # Paint non-rim
     "Paint (Non-Rim) Left": dict(
         type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -180, -90),
+        path=polar_wedge(R_RIM, R_PAINT, -180, -60),
         line=dict(width=3)
     ),
 
@@ -1008,9 +1008,9 @@ def shot_breakdown_stats(dff):
     right = dff["angle"] > 22
 
     rim_f = rim_close.mean() * 100 if total else 0
-    mid_f = mid.mean() * 100 if total else 0
+    mid_long_f = mid_long.mean() * 100 if total else 0
+    mid_short_f = mid_short.mean() * 100 if total else 0
     three_f = three.mean() * 100 if total else 0
-
 
     left_f = left.mean() * 100 if total else 0
     midline_f = middle.mean() * 100 if total else 0
@@ -1037,7 +1037,7 @@ def shot_breakdown_stats(dff):
             ("Long Mid Ast%", ast_pct(mid_long)),
             ("3P Ast%", ast_pct(three)),
         ],
-        "freq_vals": (rim_f, mid_f, three_f),
+        "freq_vals": (rim_f, mid_short_f, mid_long_f, three_f),
 }
 
 
