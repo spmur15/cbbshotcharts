@@ -990,7 +990,7 @@ def shot_breakdown_stats(dff):
 
     return {
         "fg": [
-            ("Close FG%", pct(rim_close)),
+            ("Rim FG%", pct(rim_close)),
             ("Mid FG%", pct(mid)),
             ("3P FG%", pct(three)),
         ],
@@ -2676,7 +2676,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         
 
         freq_bar(
-            ["Close", "Mid", "3P"],
+            ["Rim", "Mid", "3P"],
             stats["freq_vals"]
         ),
 
@@ -2753,7 +2753,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
 
         freq_bar(
-            ["Close", "Mid", "3P"],
+            ["Rim", "Mid", "3P"],
             stats["freq_vals"]
         ),
 
