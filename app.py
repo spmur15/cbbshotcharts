@@ -1466,10 +1466,10 @@ def make_zone_chart(dff, title):
                 mode="markers",
                 marker=dict(
                     size=45,  # Adjust size to fit your text
-                    color="rgba(255, 255, 255, 0.075)",  # Semi-transparent white
+                    color="rgba(255, 255, 255, 0.1)",  # Semi-transparent white
                     line=dict(
                         color=THEME["bg_chart"],  # Border color
-                        width=1  # Border width (thin line)
+                        width=1.5  # Border width (thin line)
                     )
                 ),
                 showlegend=False,
@@ -1480,12 +1480,12 @@ def make_zone_chart(dff, title):
         fig.add_trace(go.Scatter(
             x=[x_txt],
             y=[y_txt],
-            text=[f"<span style='line-height: 0.8'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
+            text=[f"<span style='line-height: 0.6'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
             mode="text",
             textfont=dict(
                 size=12,
                 family="Funnel Display, sans-serif",
-                color=THEME["text_secondary"],
+                color=THEME["bg_chart"],
                 weight=600
             ),
             showlegend=False,
