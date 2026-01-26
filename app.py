@@ -1093,7 +1093,7 @@ def freq_bar(labels, values, colors=None):
                                         "lineHeight": "1"
                                     }
                                 ),
-                                f"{l}: {v:.1f}%"
+                                f"{l}: {v:.0f}%"
                             ],
                             style={
                                 "margin": "0 3px",
@@ -1108,9 +1108,9 @@ def freq_bar(labels, values, colors=None):
                     "color": THEME["text_secondary"],
                     "marginTop": "6px",
                     "display": "flex",
-                    "justifyContent": "center",
+                    "justifyContent": "left",
                     "flexWrap": "wrap",
-                    "alignItems": "center"
+                    "alignItems": "left"
                 }
             )
         ],
@@ -1118,7 +1118,7 @@ def freq_bar(labels, values, colors=None):
             "background": THEME["bg_card"],
             "boxShadow": THEME["shadow_sm"],
             "borderRadius": "10px",
-            "padding": "10px 12px"
+            "padding": "3px 4px"
         }
     )
 
