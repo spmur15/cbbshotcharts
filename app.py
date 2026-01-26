@@ -759,18 +759,18 @@ def zone_label_xy(zone):
         return (0, 6.95)
 
     if zone == "Paint (Non-Rim) Right":
-        return (-8,-1)
+        return (-9,-1)
     if zone == "Paint (Non-Rim) Middle":
         return (0, 8.5)
     if zone == "Paint (Non-Rim) Left":
-        return (8, -1)
+        return (9, -1)
 
     if zone == "Top Mid":
         return (0, 17.5)
     if zone == "Left Mid":
-        return (11.975, 11.25)
+        return (12.975, 11.25)
     if zone == "Right Mid":
-        return (-11.975, 11.25)
+        return (-12.975, 11.25)
 
     if zone == "Top 3":
         return (0, 26)
@@ -785,9 +785,9 @@ def zone_label_xy(zone):
 
     # ✅ NEW BASELINE ZONES
     if zone == "Left Mid Low":
-        return (-16, 0)
+        return (-18, 0)
     if zone == "Right Mid Low":
-        return (16, 0)
+        return (18, 0)
 
     # Fallback (never crashes)
     return rotate_for_display(0, 0)
@@ -1478,7 +1478,7 @@ def make_zone_chart(dff, title):
             mode="text",
             textfont=dict(
                 size=12,  # Slightly smaller for better fit
-                family="DIN Condensed, DIN, sans-serif",  # With fallbacks  # More web-safe, cleaner font
+                family="Arial, sans-serif",  # With fallbacks  # More web-safe, cleaner font
                 color=THEME["bg_chart"],
                 weight=600  # Semi-bold for better readability
             ),
