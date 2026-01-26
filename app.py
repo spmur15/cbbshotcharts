@@ -1456,20 +1456,35 @@ def make_zone_chart(dff, title):
 
 
         x_txt, y_txt = zone_label_xy(r["zone"])
-        fig.add_trace(go.Scatter(
-            x=[x_txt],
-            y=[y_txt],
-            text=[f"{r.made}/{r.att}<br>{r.pct:.1%}"],
-            mode="text",
-            textfont=dict(
-                size=14,
-                family="Funnel Display",
-                color=THEME["bg_chart"]
-            ),
+        # fig.add_trace(go.Scatter(
+        #     x=[x_txt],
+        #     y=[y_txt],
+        #     text=[f"{r.made}/{r.att}<br>{r.pct:.1%}"],
+        #     mode="text",
+        #     textfont=dict(
+        #         size=14,
+        #         family="Funnel Display",
+        #         color=THEME["bg_chart"]
+        #     ),
 
-            showlegend=False,
-            #fillcolor='#777'
-        ))
+        #     showlegend=False,
+        #     #fillcolor='#777'
+        # ))
+
+    fig.add_trace(go.Scatter(
+        x=[x_txt],
+        y=[y_txt],
+        text=[f"<span style='line-height: 0.9'>{r.made}/{r.att}<br><span style='font-size: 10px'>{r.pct:.0%}</span></span>"],
+        mode="text",
+        textfont=dict(
+            size=12,  # Slightly smaller for better fit
+            family="Arial, sans-serif",  # More web-safe, cleaner font
+            color=THEME["bg_chart"],
+            weight=600  # Semi-bold for better readability
+        ),
+        showlegend=False,
+        hoverinfo='skip'  # Disable hover to keep it clean
+    ))
 
     fig.update_layout(
         plot_bgcolor=THEME["bg_chart"],
