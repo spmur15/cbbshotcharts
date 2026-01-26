@@ -953,13 +953,13 @@ def shot_breakdown_stats(dff):
 
     
 
-    # print(dff["zone"])
+    print(dff["zone"].value_counts())
 
     # Rim / Close = rim + non-rim paint
-    rim_close = dff["zone"].isin(["Rim", "Paint (Non-Rim)"])
+    rim_close = dff["zone"].isin(["Rim"])
 
     # Midrange ring
-    mid = dff["zone"].str.contains("Mid")
+    mid = ( dff["zone"].str.contains("Mid") | dff["zone"].isin(["Paint (Non-Rim)"]) )
 
     # Threes
     #three = dff["zone"].str.contains("3")
