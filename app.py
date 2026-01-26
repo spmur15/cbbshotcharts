@@ -588,14 +588,14 @@ def standardize_to_right_basket(dff, x_col="x", y_col="y"):
 
     # ✅ flip x
     left_half = x < 50
-    x[left_half] = 100.0 - x[left_half]
+    x[left_half] = 100.0 - x[left_half].copy()
 
     # flip first half shots on other side of court, mirrored at FT nail line
     first_half = (out['period']=='1st Half')
-    y[first_half] = 100.0 - y[first_half]
+    y[first_half] = 100.0 - y[first_half].copy()
 
-    out["x_std"] = x
-    out["y_std"] = y
+    out["x_std"] = x.copy()
+    out["y_std"] = y.copy()
 
 
     return out
