@@ -83,7 +83,7 @@ THEME = {
 
     # ---- Frequency bar ----
     "freq_bg": "#2a2a2a",
-    "freq_colors": ["#6ddf8c", "#ffd166", "#6fa8ff"]
+    "freq_colors": ["#6ddf8c", "#ffd166", "#6fa8ff", "#800080"]
 }
 
 
@@ -759,11 +759,11 @@ def zone_label_xy(zone):
         return (0, 6.95)
 
     if zone == "Paint (Non-Rim) Right":
-        return (-9,-1)
+        return (-8.75,-1)
     if zone == "Paint (Non-Rim) Middle":
         return (0, 8.5)
     if zone == "Paint (Non-Rim) Left":
-        return (9, -1)
+        return (8.75, -1)
 
     if zone == "Top Mid":
         return (0, 17.5)
@@ -1456,28 +1456,30 @@ def make_zone_chart(dff, title):
         
         x_txt, y_txt = zone_label_xy(r["zone"])
 
-        # Add circle background first
-        fig.add_trace(go.Scatter(
-            x=[x_txt],
-            y=[y_txt],
-            mode="markers",
-            marker=dict(
-                size=40,  # Adjust size to fit your text
-                color="rgba(255, 255, 255, 0.1)",  # Semi-transparent white
-                line=dict(
-                    color=THEME["bg_chart"],  # Border color
-                    width=1  # Border width (thin line)
-                )
-            ),
-            showlegend=False,
-            hoverinfo='skip'
-        ))
+        if r["zone"] != 'Rim':
+
+            # Add circle background first
+            fig.add_trace(go.Scatter(
+                x=[x_txt],
+                y=[y_txt],
+                mode="markers",
+                marker=dict(
+                    size=42,  # Adjust size to fit your text
+                    color="rgba(255, 255, 255, 0.01)",  # Semi-transparent white
+                    line=dict(
+                        color=THEME["bg_chart"],  # Border color
+                        width=0.5  # Border width (thin line)
+                    )
+                ),
+                showlegend=False,
+                hoverinfo='skip'
+            ))
         
         # Then add text on top
         fig.add_trace(go.Scatter(
             x=[x_txt],
             y=[y_txt],
-            text=[f"<span style='line-height: 0.9'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
+            text=[f"<span style='line-height: 0.8'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
             mode="text",
             textfont=dict(
                 size=12,
