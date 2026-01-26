@@ -83,7 +83,7 @@ THEME = {
 
     # ---- Frequency bar ----
     "freq_bg": "#2a2a2a",
-    "freq_colors": ["#6ddf8c", "#ffd166", "#6fa8ff", "#800080"]
+    "freq_colors": ["#6ddf8c", "#ffd166", "#6fa8ff", "#e36d6d"]
 }
 
 
@@ -1027,14 +1027,14 @@ def shot_breakdown_stats(dff):
     return {
         "fg": [
             ("Rim FG%", pct(rim_close)),
-            ("Short Mid FG%", pct(mid_short)),
-            ("Long Mid FG%", pct(mid_long)),
+            ("S-Mid FG%", pct(mid_short)),
+            ("L-Mid FG%", pct(mid_long)),
             ("3P FG%", pct(three)),
         ],
         "ast": [
             ("Close Ast%", ast_pct(rim_close)),
-            ("Short Mid Ast%", ast_pct(mid_short)),
-            ("Long Mid Ast%", ast_pct(mid_long)),
+            ("S-Mid Ast%", ast_pct(mid_short)),
+            ("L-Mid Ast%", ast_pct(mid_long)),
             ("3P Ast%", ast_pct(three)),
         ],
         "freq_vals": (rim_f, mid_short_f, mid_long_f, three_f),
@@ -1088,15 +1088,15 @@ def freq_bar(labels, values, colors=None):
                                     "●",
                                     style={
                                         "color": c,
-                                        "fontSize": "14px",
-                                        "marginRight": "4px",
+                                        "fontSize": "13px",
+                                        "marginRight": "2px",
                                         "lineHeight": "1"
                                     }
                                 ),
                                 f"{l}: {v:.1f}%"
                             ],
                             style={
-                                "margin": "0 6px",
+                                "margin": "0 3px",
                                 "whiteSpace": "nowrap"
                             }
                         )
@@ -2714,7 +2714,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         
 
         freq_bar(
-            ["Rim", "Short Mid","Long Mid", "3P"],
+            ["Rim", "S-Mid","L-Mid", "3P"],
             stats["freq_vals"]
         ),
 
@@ -2791,7 +2791,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
 
         freq_bar(
-            ["Rim", "Short Mid", "Long Mid", "3P"],
+            ["Rim", "S-Mid", "L-Mid", "3P"],
             stats["freq_vals"]
         ),
 
