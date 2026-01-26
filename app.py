@@ -768,9 +768,9 @@ def zone_label_xy(zone):
     if zone == "Top Mid":
         return (0, 17.5)
     if zone == "Left Mid":
-        return (12.975, 11.25)
+        return (12.75, 11.375)
     if zone == "Right Mid":
-        return (-12.975, 11.25)
+        return (-12.75, 11.375)
 
     if zone == "Top 3":
         return (0, 26)
@@ -785,9 +785,9 @@ def zone_label_xy(zone):
 
     # ✅ NEW BASELINE ZONES
     if zone == "Left Mid Low":
-        return (-18, 0)
+        return (-17.5, 0)
     if zone == "Right Mid Low":
-        return (18, 0)
+        return (17.5, 0)
 
     # Fallback (never crashes)
     return rotate_for_display(0, 0)
@@ -1474,11 +1474,11 @@ def make_zone_chart(dff, title):
         fig.add_trace(go.Scatter(
             x=[x_txt],
             y=[y_txt],
-            text=[f"<span style='line-height: 0.8'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
+            text=[f"<span style='line-height: 0.8'>{r.made}/{r.att}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"],
             mode="text",
             textfont=dict(
-                size=12,  # Slightly smaller for better fit
-                family="Arial, sans-serif",  # With fallbacks  # More web-safe, cleaner font
+                size=13,  # Slightly smaller for better fit
+                family="Arial Narrow, Arial, sans-serif",  # With fallbacks  # More web-safe, cleaner font
                 color=THEME["bg_chart"],
                 weight=600  # Semi-bold for better readability
             ),
