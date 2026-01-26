@@ -1540,8 +1540,17 @@ def assign_zone(row):
     # ----------------
     # 2. PAINT (NON-RIM)
     # ----------------
-    if d <= R_PAINT_EDGE:
-        return "Paint (Non-Rim)"
+    #if d <= R_PAINT_EDGE:
+    #    return "Paint (Non-Rim)"
+
+    if (d <= R_PAINT_EDGE) & (a < -60):
+        return "Paint (Non-Rim) Left"
+
+    if (d <= R_PAINT_EDGE) & (a >= -60) & (a <= 60):
+        return "Paint (Non-Rim) Middle"
+
+    if (d <= R_PAINT_EDGE)  & (a > 60):
+        return "Paint (Non-Rim) Right"
 
     # ----------------
     # 3. MIDRANGE (INSIDE 3PT LINE)
