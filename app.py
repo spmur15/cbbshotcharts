@@ -604,7 +604,7 @@ def standardize_to_right_basket(dff, x_col="x", y_col="y"):
     out2["y_std"] = y2.copy()
 
 
-    return out
+    return out2
 
 
 
