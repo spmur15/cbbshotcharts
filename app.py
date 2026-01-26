@@ -1096,7 +1096,7 @@ def freq_bar(labels, values, colors=None):
                                 f"{l}: {v:.0f}%"
                             ],
                             style={
-                                "margin": "0 3px",
+                                "margin": "0 6px",
                                 "whiteSpace": "nowrap"
                             }
                         )
@@ -1106,7 +1106,7 @@ def freq_bar(labels, values, colors=None):
                 style={
                     "fontSize": "12px",
                     "color": THEME["text_secondary"],
-                    "marginTop": "6px",
+                    "marginTop": "10px",
                     "marginLeft": "10px",
                     "display": "flex",
                     "justifyContent": "left",
@@ -1119,7 +1119,7 @@ def freq_bar(labels, values, colors=None):
             "background": THEME["bg_card"],
             "boxShadow": THEME["shadow_sm"],
             "borderRadius": "10px",
-            "padding": "3px 4px"
+            "padding": "6px 8px"
         }
     )
 
@@ -1465,8 +1465,8 @@ def make_zone_chart(dff, title):
                 y=[y_txt],
                 mode="markers",
                 marker=dict(
-                    size=45,  # Adjust size to fit your text
-                    color="rgba(255, 255, 255, 0.1)",  # Semi-transparent white
+                    size=48,  # Adjust size to fit your text
+                    color="rgba(255, 255, 255, 0.2)",  # Semi-transparent white
                     line=dict(
                         color=THEME["bg_chart"],  # Border color
                         width=1.5  # Border width (thin line)
@@ -1480,7 +1480,7 @@ def make_zone_chart(dff, title):
         fig.add_trace(go.Scatter(
             x=[x_txt],
             y=[y_txt],
-            text=[f"<span style='line-height: 0.6'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
+            text=[f"<span style='line-height: 1.0'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
             mode="text",
             textfont=dict(
                 size=12,
