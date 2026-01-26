@@ -1454,7 +1454,7 @@ def make_zone_chart(dff, title):
             layer="below"
         )
 
-
+        # Old code:
         x_txt, y_txt = zone_label_xy(r["zone"])
         # fig.add_trace(go.Scatter(
         #     x=[x_txt],
@@ -1471,20 +1471,20 @@ def make_zone_chart(dff, title):
         #     #fillcolor='#777'
         # ))
 
-    fig.add_trace(go.Scatter(
-        x=[x_txt],
-        y=[y_txt],
-        text=[f"<span style='line-height: 0.9'>{r.made}/{r.att}<br><span style='font-size: 10px'>{r.pct:.0%}</span></span>"],
-        mode="text",
-        textfont=dict(
-            size=12,  # Slightly smaller for better fit
-            family="Arial, sans-serif",  # More web-safe, cleaner font
-            color=THEME["bg_chart"],
-            weight=600  # Semi-bold for better readability
-        ),
-        showlegend=False,
-        hoverinfo='skip'  # Disable hover to keep it clean
-    ))
+        fig.add_trace(go.Scatter(
+            x=[x_txt],
+            y=[y_txt],
+            text=[f"<span style='line-height: 0.8'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
+            mode="text",
+            textfont=dict(
+                size=12,  # Slightly smaller for better fit
+                family="DIN Condensed, DIN, sans-serif",  # With fallbacks  # More web-safe, cleaner font
+                color=THEME["bg_chart"],
+                weight=600  # Semi-bold for better readability
+            ),
+            showlegend=False,
+            hoverinfo='skip'  # Disable hover to keep it clean
+        ))
 
     fig.update_layout(
         plot_bgcolor=THEME["bg_chart"],
