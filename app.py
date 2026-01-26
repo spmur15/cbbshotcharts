@@ -308,21 +308,21 @@ ZONE_SHAPES = {
     # Paint non-rim
     "Paint (Non-Rim) Right": dict(
         type="path",
-        path=polar_wedge(R_RIM, R_PAINT, ANGLE_WING, ANGLE_CORNER),
+        path=polar_wedge(R_RIM, R_PAINT, ANGLE_CORNER, 180),
         line=dict(width=3)
     ),
 
     # Paint non-rim
     "Paint (Non-Rim) Middle": dict(
         type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -ANGLE_WING, ANGLE_WING),
+        path=polar_wedge(R_RIM, R_PAINT, -ANGLE_CORNER, ANGLE_CORNER),
         line=dict(width=3)
     ),
 
     # Paint non-rim
     "Paint (Non-Rim) Left": dict(
         type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -ANGLE_WING, -ANGLE_CORNER),
+        path=polar_wedge(R_RIM, R_PAINT, -ANGLE_CORNER, -180),
         line=dict(width=3)
     ),
 
@@ -759,11 +759,11 @@ def zone_label_xy(zone):
         return (0, 6.95)
 
     if zone == "Paint (Non-Rim) Right":
-        return (-7,-1)
+        return (-7.5,-1)
     if zone == "Paint (Non-Rim) Middle":
         return (0, 8.5)
     if zone == "Paint (Non-Rim) Left":
-        return (7, -1)
+        return (7.5, -1)
 
     if zone == "Top Mid":
         return (0, 17.5)
