@@ -1107,6 +1107,7 @@ def freq_bar(labels, values, colors=None):
                     "fontSize": "12px",
                     "color": THEME["text_secondary"],
                     "marginTop": "6px",
+                    "marginLeft": "10px",
                     "display": "flex",
                     "justifyContent": "left",
                     "flexWrap": "wrap",
@@ -1464,11 +1465,11 @@ def make_zone_chart(dff, title):
                 y=[y_txt],
                 mode="markers",
                 marker=dict(
-                    size=42,  # Adjust size to fit your text
-                    color="rgba(255, 255, 255, 0.01)",  # Semi-transparent white
+                    size=45,  # Adjust size to fit your text
+                    color="rgba(255, 255, 255, 0.075)",  # Semi-transparent white
                     line=dict(
                         color=THEME["bg_chart"],  # Border color
-                        width=0.5  # Border width (thin line)
+                        width=1  # Border width (thin line)
                     )
                 ),
                 showlegend=False,
@@ -1483,8 +1484,8 @@ def make_zone_chart(dff, title):
             mode="text",
             textfont=dict(
                 size=12,
-                family="Univers Condensed, sans-serif",
-                color=THEME["bg_chart"],
+                family="Funnel Display, sans-serif",
+                color=THEME["text_secondary"],
                 weight=600
             ),
             showlegend=False,
