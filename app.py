@@ -504,7 +504,7 @@ def create_half_court_layout():
     # ))
 
     # Calculate the arc
-    center_y = -15.0  # midpoint of your x0 and x1
+    center_y = 15.0  # midpoint of your x0 and x1
     center_x = 0.0    # midpoint of your y0 and y1
     radius = 6.0
 
@@ -1536,7 +1536,7 @@ def make_zone_chart(dff, title):
         f"{summary['astd_pct']:.0%} Ast'd"
     )
     add_signature(fig)
-    
+
     return fig
 
 
