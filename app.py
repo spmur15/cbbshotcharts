@@ -196,8 +196,8 @@ team_p5 = [
 
 
 # ---- Zone geometry (feet, hoop-centered) ----
-R_RIM = 5
-R_PAINT = 10
+R_RIM = 6
+R_PAINT = 12
 R_3 = 22
 
 R_RIM = 5
@@ -205,7 +205,7 @@ R_PAINT_EDGE = R_PAINT + 1
 R_PAINT = R_PAINT + 2.6
 R_3_EDGE = R_3 + 0.25
 R_3 = R_3 + 0.25
-R_MAX = 31
+R_MAX = 33
 
 ZONE_DRAW_ORDER = [
     "Paint (Non-Rim)",
@@ -1077,7 +1077,7 @@ def freq_bar(labels, values, colors=None):
                 [
                     html.Span(
                         "% of shots:",
-                        style={"fontWeight": 600, "marginRight": "2px"}
+                        style={"fontWeight": 600, "marginRight": "1px"}
                     ),
 
                     *[
@@ -1088,15 +1088,15 @@ def freq_bar(labels, values, colors=None):
                                     "●",
                                     style={
                                         "color": c,
-                                        "fontSize": "14px",
-                                        "marginRight": "2px",
+                                        "fontSize": "12px",
+                                        "marginRight": "1px",
                                         "lineHeight": "1"
                                     }
                                 ),
                                 f"{l}: {v:.0f}%"
                             ],
                             style={
-                                "margin": "0 6px",
+                                "margin": "0 3px",
                                 "whiteSpace": "nowrap"
                             }
                         )
@@ -1104,7 +1104,7 @@ def freq_bar(labels, values, colors=None):
                     ]
                 ],
                 style={
-                    "fontSize": "13px",
+                    "fontSize": "12px",
                     "color": THEME["text_secondary"],
                     "marginTop": "10px",
                     "marginLeft": "5px",
@@ -1480,10 +1480,10 @@ def make_zone_chart(dff, title):
         fig.add_trace(go.Scatter(
             x=[x_txt],
             y=[y_txt],
-            text=[f"<span style='line-height: 1.0'>{r.made}/{r.att}<br><span style='font-size: 11px'>{r.pct:.0%}</span></span>"],
+            text=[f"<span style='line-height: 1.0'>{r.made}/{r.att}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"],
             mode="text",
             textfont=dict(
-                size=12,
+                size=13,
                 family="Funnel Display, sans-serif",
                 color=THEME["bg_chart"],
                 weight=600
