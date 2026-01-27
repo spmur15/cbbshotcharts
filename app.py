@@ -197,15 +197,15 @@ team_p5 = [
 
 # ---- Zone geometry (feet, hoop-centered) ----
 R_RIM = 6
-R_PAINT = 12
+R_PAINT = 10
 R_3 = 22
 
-R_RIM = 5
+R_RIM = 6
 R_PAINT_EDGE = R_PAINT + 1
 R_PAINT = R_PAINT + 2.6
 R_3_EDGE = R_3 + 0.25
 R_3 = R_3 + 0.25
-R_MAX = 33
+R_MAX = 32
 
 ZONE_DRAW_ORDER = [
     "Paint (Non-Rim)",
