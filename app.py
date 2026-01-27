@@ -495,17 +495,17 @@ def create_half_court_layout():
 
     ))
 
-    # Free throw circle (radius 6 ft, centered at FT line)
-    shapes.append(dict(
-        type="circle",
-        x0=-21.0, y0=-6.0, x1=-9.0, y1=6.0,
-        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH)
+    # # Free throw circle (radius 6 ft, centered at FT line)
+    # shapes.append(dict(
+    #     type="circle",
+    #     x0=-21.0, y0=-6.0, x1=-9.0, y1=6.0,
+    #     line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH)
 
-    ))
-    
+    # ))
+
     # Calculate the arc
-    center_x = -15.0  # midpoint of your x0 and x1
-    center_y = 0.0    # midpoint of your y0 and y1
+    center_y = -15.0  # midpoint of your x0 and x1
+    center_x = 0.0    # midpoint of your y0 and y1
     radius = 6.0
 
     # Create points for the top semi-circle
@@ -1387,6 +1387,7 @@ def make_shot_chart(dff, title):
         pps_line,
         f"{summary['astd_pct']:.1%} Ast'd"
     )
+    add_signature(fig)
 
 
 
@@ -1534,10 +1535,8 @@ def make_zone_chart(dff, title):
         pps_line,
         f"{summary['astd_pct']:.0%} Ast'd"
     )
-
-
-
-
+    add_signature(fig)
+    
     return fig
 
 
@@ -1734,7 +1733,6 @@ def add_chart_subtitle(fig, fg_line, pps_line, astd_line):
         color=THEME["text_secondary"]
     )
 
-
     fig.add_annotation(
         x=0.99, y=y1,
         xref="paper", yref="paper",
@@ -1761,6 +1759,23 @@ def add_chart_subtitle(fig, fg_line, pps_line, astd_line):
             font=dict(**common_font, size=13),
             align="right"
         )
+    
+
+def add_signature(fig):
+    # closer to title (title is at y=0.98)
+    y1 = 0.99
+    common_font = dict(
+        family="Funnel Display",
+        color=THEME["text_secondary"]
+    )
+    fig.add_annotation(
+        x=0, y=y1,
+        xref="paper", yref="paper",
+        text='cbbshotcharts.com',           # no bold
+        showarrow=False,
+        font=dict(**common_font, size=13),
+        align="left"
+    )
 
 SUFFIXES = {"jr", "jr.", "sr", "sr.", "ii", "iii", "iv"}
 
