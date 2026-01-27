@@ -2182,33 +2182,33 @@ app.layout = dbc.Container(
 
         #html.Br(),
 
-        html.Div(
-            dbc.Checkbox(
-                id="show-shot-stats",
-                label="Show shot stats",
-                value=True,
-                inputStyle={
-                    "marginRight": "10px",
-                    "transform": "scale(1.5)",   # 🔹 increase checkbox size
-                    "cursor": "pointer",
-                    "color":'black'
-                },
-                labelStyle={
-                    "cursor": "pointer"
-                }
-            ),
-            style={
-                "display": "flex",
-                "alignItems": "center",
-                "justifyContent": "center",
-                "gap": "6px",
-                "fontSize": "16px",
-                "color": THEME["text_secondary"],
-                "marginBottom": "2px",
-                "marginTop": "18px",
+        # html.Div(
+        #     dbc.Checkbox(
+        #         id="show-shot-stats",
+        #         label="Show shot stats",
+        #         value=True,
+        #         inputStyle={
+        #             "marginRight": "10px",
+        #             "transform": "scale(1.5)",   # 🔹 increase checkbox size
+        #             "cursor": "pointer",
+        #             "color":'black'
+        #         },
+        #         labelStyle={
+        #             "cursor": "pointer"
+        #         }
+        #     ),
+        #     style={
+        #         "display": "flex",
+        #         "alignItems": "center",
+        #         "justifyContent": "center",
+        #         "gap": "6px",
+        #         "fontSize": "16px",
+        #         "color": THEME["text_secondary"],
+        #         "marginBottom": "2px",
+        #         "marginTop": "18px",
 
-            }
-        ),
+        #     }
+        # ),
 
 
 
@@ -2345,7 +2345,7 @@ app.layout = dbc.Container(
     Input("opp-dd", "value"),
     Input("loc-dd", "value"),
     Input("quad-dd", "value"),
-    Input("show-shot-stats", "value"),
+    #Input("show-shot-stats", "value"),
     Input("exclude-non-d1", "value"),
     Input("lineup-dd", "value"),
     Input("on-court-dd", "value"),
@@ -2356,7 +2356,8 @@ app.layout = dbc.Container(
 )
 
 def update_charts(team, view_mode, players, halves, opps, loc, quad,
-                  show_stats, exclude_non_d1, lineup,
+                  #show_stats,
+                  exclude_non_d1, lineup,
                   on_players, off_players):
 
     off_title = "Offense"
@@ -2645,37 +2646,37 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         dragmode=False
     )
 
-    if not show_stats:
-        # if players:
+    # if not show_stats:
+    #     # if players:
 
-        #     return (
-        #         fig_off,
-        #         fig_def,
-        #         team_title_with_logo(team, "Shot Charts", team_logo),
-        #         chart_header(team, "Offense" + ' - ' + ', '.join(players), team_logo),
-        #         chart_header(team, "Defense" + ' - ' + ', '.join(players), team_logo),
-        #         [],
-        #         []
-        #     )
-        # else:
-        #     return (
-        #     fig_off,
-        #     fig_def,
-        #     team_title_with_logo(team, "Shot Charts", team_logo),
-        #     chart_header(team, "Offense", team_logo),
-        #     chart_header(team, "Defense", team_logo),
-        #     [],
-        #     []
-        #     )
-        return (
-            fig_off,
-            fig_def,
-            team_title_with_logo(team, "Shot Charts", team_logo),
-            chart_header(team, off_title, team_logo),
-            chart_header(team, def_title, team_logo),
-            [],
-            []
-            )
+    #     #     return (
+    #     #         fig_off,
+    #     #         fig_def,
+    #     #         team_title_with_logo(team, "Shot Charts", team_logo),
+    #     #         chart_header(team, "Offense" + ' - ' + ', '.join(players), team_logo),
+    #     #         chart_header(team, "Defense" + ' - ' + ', '.join(players), team_logo),
+    #     #         [],
+    #     #         []
+    #     #     )
+    #     # else:
+    #     #     return (
+    #     #     fig_off,
+    #     #     fig_def,
+    #     #     team_title_with_logo(team, "Shot Charts", team_logo),
+    #     #     chart_header(team, "Offense", team_logo),
+    #     #     chart_header(team, "Defense", team_logo),
+    #     #     [],
+    #     #     []
+    #     #     )
+    #     return (
+    #         fig_off,
+    #         fig_def,
+    #         team_title_with_logo(team, "Shot Charts", team_logo),
+    #         chart_header(team, off_title, team_logo),
+    #         chart_header(team, def_title, team_logo),
+    #         [],
+    #         []
+    #         )
 
 
     stats = shot_breakdown_stats(off_df)
