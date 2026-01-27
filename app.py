@@ -205,7 +205,7 @@ R_PAINT_EDGE = R_PAINT + 1
 R_PAINT = R_PAINT + 2.6
 R_3_EDGE = R_3 + 0.25
 R_3 = R_3 + 0.25
-R_MAX = 32
+R_MAX = 31.5
 
 ZONE_DRAW_ORDER = [
     "Paint (Non-Rim)",
@@ -502,6 +502,29 @@ def create_half_court_layout():
         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH)
 
     ))
+    
+    # Calculate the arc
+    center_x = -15.0  # midpoint of your x0 and x1
+    center_y = 0.0    # midpoint of your y0 and y1
+    radius = 6.0
+
+    # Create points for the top semi-circle
+    theta = np.linspace(0, np.pi, 50)  # 0 to π for top half
+    x_points = center_x + radius * np.cos(theta)
+    y_points = center_y + radius * np.sin(theta)
+
+    # Create the path
+    path = f"M {x_points[0]},{y_points[0]}"
+    for x, y in zip(x_points[1:], y_points[1:]):
+        path += f" L {x},{y}"
+
+    shapes.append(dict(
+        type="path",
+        path=path,
+        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH)
+    ))
+
+    
 
     # # Restricted area (approx 4 ft radius)
     # shapes.append(dict(
