@@ -1119,7 +1119,7 @@ def freq_bar(labels, values, colors=None):
             "background": THEME["bg_card"],
             "boxShadow": THEME["shadow_sm"],
             "borderRadius": "10px",
-            "padding": "6px 8px"
+            "padding": "3px 4px"
         }
     )
 
@@ -1457,24 +1457,24 @@ def make_zone_chart(dff, title):
         
         x_txt, y_txt = zone_label_xy(r["zone"])
 
-        if r["zone"] != 'Rim':
+        # if r["zone"] != 'Rim':
 
-            # Add circle background first
-            fig.add_trace(go.Scatter(
-                x=[x_txt],
-                y=[y_txt],
-                mode="markers",
-                marker=dict(
-                    size=48,  # Adjust size to fit your text
-                    color="rgba(255, 255, 255, 0.2)",  # Semi-transparent white
-                    line=dict(
-                        color=THEME["bg_chart"],  # Border color
-                        width=1.5  # Border width (thin line)
-                    )
-                ),
-                showlegend=False,
-                hoverinfo='skip'
-            ))
+        #     # Add circle background first
+        #     fig.add_trace(go.Scatter(
+        #         x=[x_txt],
+        #         y=[y_txt],
+        #         mode="markers",
+        #         marker=dict(
+        #             size=48,  # Adjust size to fit your text
+        #             color="rgba(255, 255, 255, 0.2)",  # Semi-transparent white
+        #             line=dict(
+        #                 color=THEME["bg_chart"],  # Border color
+        #                 width=1.5  # Border width (thin line)
+        #             )
+        #         ),
+        #         showlegend=False,
+        #         hoverinfo='skip'
+        #     ))
         
         # Then add text on top
         fig.add_trace(go.Scatter(
@@ -1833,7 +1833,7 @@ app.layout = dbc.Container(
                         }
                     ),
                     html.Div(
-                        "Games thru Dec. 21",
+                        "Games thru Jan. 25",
                         className="text-center",
                         style={
                             "fontSize": "12.5px",
