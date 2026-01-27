@@ -1088,7 +1088,7 @@ def freq_bar(labels, values, colors=None):
                                     "●",
                                     style={
                                         "color": c,
-                                        "fontSize": "13px",
+                                        "fontSize": "14px",
                                         "marginRight": "2px",
                                         "lineHeight": "1"
                                     }
@@ -1104,10 +1104,10 @@ def freq_bar(labels, values, colors=None):
                     ]
                 ],
                 style={
-                    "fontSize": "12px",
+                    "fontSize": "13px",
                     "color": THEME["text_secondary"],
                     "marginTop": "10px",
-                    "marginLeft": "10px",
+                    "marginLeft": "5px",
                     "display": "flex",
                     "justifyContent": "left",
                     "flexWrap": "wrap",
