@@ -196,11 +196,11 @@ team_p5 = [
 
 
 # ---- Zone geometry (feet, hoop-centered) ----
-R_RIM = 5
+R_RIM = 5.5
 R_PAINT = 10
 R_3 = 22
 
-R_RIM = 5
+R_RIM = 5.5
 R_PAINT_EDGE = R_PAINT + 1
 R_PAINT = R_PAINT + 2.6
 R_3_EDGE = R_3 + 0.25
@@ -1773,7 +1773,7 @@ def add_signature(fig):
         xref="paper", yref="paper",
         text='cbbshotcharts.com',           # no bold
         showarrow=False,
-        font=dict(**common_font, size=13),
+        font=dict(**common_font, size=11),
         align="left"
     )
 
@@ -2549,7 +2549,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     elif team == 'Michigan': team_logo = "logos/michigan-wolverines.png"
     elif team == 'McNeese': team_logo = "logos/Mcneese-State-Cowboys.png"
     elif team == 'Miami (OH)': team_logo = "logos/Miami-Ohio-Redhawks.png"
-    elif team == 'St. John\'s \(NY\)': team_logo = "logos/St.-John's-Red-Storm.png"
+    #elif team == 'St. John\'s \(NY\)': team_logo = "logos/St.-John's-Red-Storm.png"
     elif team == 'App State': team_logo = "logos/app-state-mountaineers.png"
     elif team == 'SIUE': team_logo = "logos/SIUE.png"
         
