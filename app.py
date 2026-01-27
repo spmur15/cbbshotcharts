@@ -2264,16 +2264,27 @@ app.layout = dbc.Container(
                     dbc.Col([
                         html.Div(id="offense-title", className="text-center mb-2"),
                         html.Div(
-                            dcc.Graph(
-                                id="offense-chart",
-                                config={"displayModeBar": False,
-                                        "scrollZoom": False},
-                                style={
-                                    "height": "40vh",
-                                    "minHeight": "270px",
-                                    #"paper_bgcolor":"#f8f8f8",
-                                    #"plot":"#f8f8f8",
-                                }
+                            dcc.Loading(
+                                id="loading-2",
+                                type="cube",             # Spinner type
+                                color="#a32fba",       # Spinner color (can use your THEME colors)
+                                fullscreen=False,        # Set to True for fullscreen overlay
+                                parent_style={},         # Style the loading container
+                                style={},                # Style the spinner itself
+                                className="",            # Add custom CSS class
+                                debug=False,             # Show loading state in console
+                                children=[
+                                dcc.Graph(
+                                    id="offense-chart",
+                                    config={"displayModeBar": False,
+                                            "scrollZoom": False},
+                                    style={
+                                        "height": "40vh",
+                                        "minHeight": "270px",
+                                        #"paper_bgcolor":"#f8f8f8",
+                                        #"plot":"#f8f8f8",
+                                    }
+                                )]
                             ),
                             style={
                                 "background": THEME["bg_panel"],
@@ -2290,16 +2301,28 @@ app.layout = dbc.Container(
                     dbc.Col([
                         html.Div(id="defense-title", className="text-center mb-2"),
                         html.Div(
-                            dcc.Graph(
-                                id="defense-chart",
-                                config={"displayModeBar": False},
-                                style={
-                                    "height": "40vh",
-                                    "minHeight": "270px",
-                                   # "paper_bgcolor":"#f8f8f8",
-                                    #"plot":"#f8f8f8",
-                                }
-
+                            dcc.Loading(
+                                id="loading-1",
+                                type="cube",             # Spinner type
+                                color="#a32fba",       # Spinner color (can use your THEME colors)
+                                fullscreen=False,        # Set to True for fullscreen overlay
+                                parent_style={},         # Style the loading container
+                                style={},                # Style the spinner itself
+                                className="",            # Add custom CSS class
+                                debug=False,             # Show loading state in console
+                                children=[
+                                    dcc.Graph(
+                                    id="defense-chart",
+                                    config={"displayModeBar": False},
+                                    style={
+                                        "height": "40vh",
+                                        "minHeight": "270px",
+                                    # "paper_bgcolor":"#f8f8f8",
+                                        #"plot":"#f8f8f8",
+                                    }
+                                    )
+                                ],  
+                                
                             ),
                             style={
                                 "background": THEME["bg_panel"],
