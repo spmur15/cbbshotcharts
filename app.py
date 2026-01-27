@@ -1763,7 +1763,7 @@ def add_chart_subtitle(fig, fg_line, pps_line, astd_line):
 
 def add_signature(fig):
     # closer to title (title is at y=0.98)
-    y1 = 0.99
+    y1 = 0
     common_font = dict(
         family="Funnel Display",
         color=THEME["text_secondary"]
@@ -2266,7 +2266,7 @@ app.layout = dbc.Container(
                         html.Div(
                             dcc.Loading(
                                 id="loading-2",
-                                type="graph",             # Spinner type
+                                type="cube",             # Spinner type
                                 color="#a32fba",       # Spinner color (can use your THEME colors)
                                 fullscreen=False,        # Set to True for fullscreen overlay
                                 parent_style={},         # Style the loading container
@@ -2303,7 +2303,7 @@ app.layout = dbc.Container(
                         html.Div(
                             dcc.Loading(
                                 id="loading-1",
-                                type="graph",             # Spinner type
+                                type="cube",             # Spinner type
                                 color="#a32fba",       # Spinner color (can use your THEME colors)
                                 fullscreen=False,        # Set to True for fullscreen overlay
                                 parent_style={},         # Style the loading container
