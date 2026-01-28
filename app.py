@@ -411,7 +411,7 @@ ZONE_SHAPES = {
         line=dict(width=3)
     ),
 
-    # Midrange
+    # Midrange - FIXED angle ranges
     "Top Mid": dict(
         type="path",
         path=polar_wedge(R_PAINT, R_3, -ANGLE_WING, ANGLE_WING),
@@ -427,18 +427,18 @@ ZONE_SHAPES = {
         path=polar_wedge(R_PAINT, R_3, -ANGLE_CORNER, -ANGLE_WING),
         line=dict(width=0)
     ),
-    "Right Mid Low": dict(
-        type="path",
-        path=polar_wedge(R_PAINT, R_3, -ANGLE_CORNER, -180),
-        line=dict(width=0)
-    ),
-    "Left Mid Low": dict(
+    "Left Mid Low": dict(  # ✅ FIXED
         type="path",
         path=polar_wedge(R_PAINT, R_3, ANGLE_CORNER, 180),
         line=dict(width=0)
     ),
+    "Right Mid Low": dict(  # ✅ FIXED
+        type="path",
+        path=polar_wedge(R_PAINT, R_3, -180, -ANGLE_CORNER),
+        line=dict(width=0)
+    ),
 
-    # Threes
+    # Threes - FIXED angle ranges
     "Top 3": dict(
         type="path",
         path=polar_wedge(R_3, R_MAX, -ANGLE_WING, ANGLE_WING),
@@ -454,14 +454,14 @@ ZONE_SHAPES = {
         path=polar_wedge(R_3, R_MAX, -ANGLE_CORNER, -ANGLE_WING),
         line=dict(width=0)
     ),
-    "Right Corner 3": dict(
-        type="path",
-        path=polar_wedge(R_3, R_MAX, -ANGLE_CORNER, -180),
-        line=dict(width=0)
-    ),
-    "Left Corner 3": dict(
+    "Left Corner 3": dict(  # ✅ FIXED
         type="path",
         path=polar_wedge(R_3, R_MAX, ANGLE_CORNER, 180),
+        line=dict(width=0)
+    ),
+    "Right Corner 3": dict(  # ✅ FIXED
+        type="path",
+        path=polar_wedge(R_3, R_MAX, -180, -ANGLE_CORNER),
         line=dict(width=0)
     ),
 }
@@ -1625,6 +1625,82 @@ def make_zone_chart(dff, title):
     return fig
 
 
+# def assign_zone(row):
+#     d = row["dist"]      # distance from hoop (ft)
+#     a = row["angle"]     # angle in degrees
+#                           # (+ = RIGHT side after rotation)
+
+#     # ----------------
+#     # 1. RIM
+#     # ----------------
+#     if d <= R_RIM:
+#         return "Rim"
+
+#     # ----------------
+#     # 2. SHORT MID (PAINT)
+#     # ----------------
+
+#     if (d <= R_PAINT_EDGE) & (a > 45):
+#         return "Paint (Non-Rim) Left"
+#     if (d <= R_PAINT_EDGE) & (a >= -45) & (a <= 45):
+#         return "Paint (Non-Rim) Middle"
+#     if (d <= R_PAINT_EDGE)  & (a < -45):
+#         return "Paint (Non-Rim) Right"
+
+#     # # ----------------
+#     # # 3. LONG MIDRANGE (INSIDE 3PT LINE)
+#     # # ----------------
+#     if (d <= R_3_EDGE) & (a > ANGLE_CORNER):
+#         return "Left Mid Low"
+#     if (d <= R_3_EDGE) & (a <= ANGLE_CORNER) & (a > ANGLE_WING):
+#         return "Left Mid"
+#     if (d <= R_3_EDGE) & (a <= ANGLE_WING) & (a > -ANGLE_WING):
+#         return "Top Mid"
+#     if (d <= R_3_EDGE) & (a <= -ANGLE_WING) & (a > -ANGLE_CORNER):
+#         return "Right Mid"
+#     if (d <= R_3_EDGE) & (a <= -ANGLE_CORNER):
+#         return "Right Mid Low"
+
+#     # # ----------------
+#     # # 4. THREES (OUTSIDE 3PT LINE)
+#     # # ----------------
+#     if (d > R_3_EDGE) & (a > ANGLE_CORNER):
+#         return "Left Corner 3"
+#     if (d > R_3_EDGE) & (a <= ANGLE_CORNER) & (a > ANGLE_WING):
+#         return "Left Wing 3"
+#     if (d > R_3_EDGE) & (a <= ANGLE_WING) & (a > -ANGLE_WING):
+#         return "Top 3"
+#     if (d > R_3_EDGE) & (a <= -ANGLE_WING) & (a > -ANGLE_CORNER):
+#         return "Right Wing 3"
+#     if (d > R_3_EDGE) & (a <= -ANGLE_CORNER):
+#         return "Right Corner 3"
+
+ 
+#     # if d < R_3_EDGE:
+
+#     #     # Baseline midrange (short corner 2s)
+#     #     if abs(a) >= ANGLE_CORNER:
+#     #         return "Right Mid Low" if a > 0 else "Left Mid Low" # flipped to the other side, which flips both colors and labels. We only want the color to flip
+
+#     #     # Wings
+#     #     if abs(a) > ANGLE_WING:
+#     #         return "Right Mid" if a > 0 else "Left Mid"
+
+#     #     # Top
+#     #     return "Top Mid"
+
+    
+#     # # Corners
+#     # if abs(a) >= ANGLE_CORNER:
+#     #     return "Right Corner 3" if a > 0 else "Left Corner 3"  # flipped to the other side, which flips both colors and labels. We only want the color to flip
+
+#     # # Wings
+#     # if abs(a) > ANGLE_WING:
+#     #     return "Right Wing 3" if a > 0 else "Left Wing 3"
+
+#     # Top
+#     #return "Top 3"
+
 def assign_zone(row):
     d = row["dist"]      # distance from hoop (ft)
     a = row["angle"]     # angle in degrees
@@ -1637,73 +1713,48 @@ def assign_zone(row):
         return "Rim"
 
     # ----------------
-    # 2. PAINT (NON-RIM)
+    # 2. SHORT MID (PAINT)
     # ----------------
-    #if d <= R_PAINT_EDGE:
-    #    return "Paint (Non-Rim)"
+    if d <= R_PAINT_EDGE:
+        if a > 45:
+            return "Paint (Non-Rim) Left"
+        elif a >= -45:
+            return "Paint (Non-Rim) Middle"
+        else:
+            return "Paint (Non-Rim) Right"
 
-    if (d <= R_PAINT_EDGE) & (a > 45):
-        return "Paint (Non-Rim) Left"
+    # ----------------
+    # 3. LONG MIDRANGE (INSIDE 3PT LINE)
+    # ----------------
+    if d <= R_3_EDGE:
+        if a > ANGLE_CORNER:  # ~67 degrees
+            return "Left Mid Low"
+        elif a > ANGLE_WING:  # ~22 degrees
+            return "Left Mid"
+        elif a >= -ANGLE_WING:
+            return "Top Mid"
+        elif a >= -ANGLE_CORNER:
+            return "Right Mid"
+        else:
+            return "Right Mid Low"
 
-    if (d <= R_PAINT_EDGE) & (a >= -45) & (a <= 45):
-        return "Paint (Non-Rim) Middle"
-
-    if (d <= R_PAINT_EDGE)  & (a < -45):
-        return "Paint (Non-Rim) Right"
-
-
-    if (d <= R_3_EDGE) & (a > ANGLE_CORNER):
-        return "Left Mid Low"
-    if (d <= R_3_EDGE) & (a <= ANGLE_CORNER) & (a > ANGLE_WING):
-        return "Left Mid"
-    if (d <= R_3_EDGE) & (a <= ANGLE_WING) & (a > -ANGLE_WING):
-        return "Top Mid"
-    if (d <= R_3_EDGE) & (a <= -ANGLE_WING) & (a > -ANGLE_CORNER):
-        return "Right Mid"
-    if (d <= R_3_EDGE) & (a <= -ANGLE_CORNER):
-        return "Right Mid Low"
-    
-
-    if (d > R_3_EDGE) & (a > ANGLE_CORNER):
+    # ----------------
+    # 4. THREES (OUTSIDE 3PT LINE)
+    # ----------------
+    # d > R_3_EDGE
+    if a > ANGLE_CORNER:
         return "Left Corner 3"
-    if (d > R_3_EDGE) & (a <= ANGLE_CORNER) & (a > ANGLE_WING):
+    elif a > ANGLE_WING:
         return "Left Wing 3"
-    if (d > R_3_EDGE) & (a <= ANGLE_WING) & (a > -ANGLE_WING):
+    elif a >= -ANGLE_WING:
         return "Top 3"
-    if (d > R_3_EDGE) & (a <= -ANGLE_WING) & (a > -ANGLE_CORNER):
+    elif a >= -ANGLE_CORNER:
         return "Right Wing 3"
-    if (d > R_3_EDGE) & (a <= -ANGLE_CORNER):
+    else:
         return "Right Corner 3"
 
-    # # ----------------
-    # # 3. MIDRANGE (INSIDE 3PT LINE)
-    # # ----------------
-    # if d < R_3_EDGE:
 
-    #     # Baseline midrange (short corner 2s)
-    #     if abs(a) >= ANGLE_CORNER:
-    #         return "Right Mid Low" if a > 0 else "Left Mid Low" # flipped to the other side, which flips both colors and labels. We only want the color to flip
 
-    #     # Wings
-    #     if abs(a) > ANGLE_WING:
-    #         return "Right Mid" if a > 0 else "Left Mid"
-
-    #     # Top
-    #     return "Top Mid"
-
-    # # ----------------
-    # # 4. THREES (OUTSIDE 3PT LINE)
-    # # ----------------
-    # # Corners
-    # if abs(a) >= ANGLE_CORNER:
-    #     return "Right Corner 3" if a > 0 else "Left Corner 3"  # flipped to the other side, which flips both colors and labels. We only want the color to flip
-
-    # # Wings
-    # if abs(a) > ANGLE_WING:
-    #     return "Right Wing 3" if a > 0 else "Left Wing 3"
-
-    # Top
-    #return "Top 3"
 
 
 def reconcile_zone_with_shot_range(df):
