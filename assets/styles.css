@@ -39,3 +39,14 @@ html, body {
 }
 
 
+.shadow-button {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.7);
+}
+
+/* Optional: Add a different shadow on hover for interactivity */
+.shadow-button:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+
+

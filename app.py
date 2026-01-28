@@ -2166,8 +2166,8 @@ app.layout = dbc.Container(
                                                 ),
 
                                                 dbc.Col(
-                                                    dbc.Button("Reset", color="secondary", className="me-1", size='sm'),
-                                                    xs=4, md=4
+                                                    dbc.Button("Reset", color="secondary", className="shadow-button", size='sm'),
+                                                    xs=4, md=4, width={"offset": 5},
                                                 ),
 
 
@@ -2199,11 +2199,8 @@ app.layout = dbc.Container(
                         #"overflow": "auto",   # 🔴 REQUIRED for rounding to clip children
                     }
                 ),
-                xs=9, md=5
+                xs=9, md=5, lg=4
             ),
-
-            
-            
             ], 
         
             justify='center'
