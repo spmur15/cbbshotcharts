@@ -110,7 +110,7 @@ MID_TO_THREE = {v: k for k, v in THREE_TO_MID.items()}
 
 
 COURT_LINE_COLOR = THEME["court_line"]
-COURT_LINE_WIDTH = 1
+COURT_LINE_WIDTH = 2
 
 COURT_SHADOW_COLOR = "rgba(0,0,0,0.18)"
 COURT_SHADOW_OFFSET = 0.6
@@ -782,11 +782,11 @@ def zone_label_xy(zone):
         return (0, 6.95)
 
     if zone == "Paint (Non-Rim) Right":
-        return (-9,-1)
+        return (-9,0)
     if zone == "Paint (Non-Rim) Middle":
         return (0, 8.75)
     if zone == "Paint (Non-Rim) Left":
-        return (9, -1)
+        return (9, 0)
 
     if zone == "Top Mid":
         return (0, 17.5)
