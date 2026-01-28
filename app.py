@@ -2196,7 +2196,7 @@ app.layout = dbc.Container(
                 ),
                 xs=9, md=5
             ),
-            dbc.Button("Secondary", color="secondary", className="me-1", size='sm'),
+            dbc.Button("Reset", color="secondary", className="me-1", size='sm'),
             
             
             ], 
