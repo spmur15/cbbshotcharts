@@ -1948,7 +1948,7 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            xs=12, md=4
+                                            xs=12, md=12
                                         ),
                                         dbc.Col(
                                             dcc.Dropdown(
@@ -1964,7 +1964,7 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            xs=6, md=2
+                                            xs=6, md=6
                                         ),
                                         
                                         dbc.Col(
@@ -1982,7 +1982,7 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            xs=6, md=2
+                                            xs=6, md=6
                                         ),
                                         dbc.Col(
                                             dcc.Dropdown(
@@ -1998,7 +1998,7 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            xs=6, md=2
+                                            xs=6, md=6
                                         ),
                                         dbc.Col(
                                             dcc.Dropdown(
@@ -2015,7 +2015,7 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            xs=6, md=2
+                                            xs=6, md=6
                                         ),
                                         dbc.Col(
                                             html.Div(
@@ -2195,7 +2195,11 @@ app.layout = dbc.Container(
                     }
                 ),
                 xs=9, md=5
-            )], 
+            ),
+            dbc.Button("Secondary", color="secondary", className="me-1", size='sm'),
+            
+            
+            ], 
         
             justify='center'
         ),
