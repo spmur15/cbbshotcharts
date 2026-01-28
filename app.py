@@ -306,7 +306,7 @@ ZONE_SHAPES = {
     ),
 
     # Paint non-rim
-    "Paint (Non-Rim) Right": dict(
+    "Paint (Non-Rim) Left": dict(
         type="path",
         path=polar_wedge(R_RIM, R_PAINT, 45, 180),
         line=dict(width=3)
@@ -320,7 +320,7 @@ ZONE_SHAPES = {
     ),
 
     # Paint non-rim
-    "Paint (Non-Rim) Left": dict(
+    "Paint (Non-Rim) Right": dict(
         type="path",
         path=polar_wedge(R_RIM, R_PAINT, -45, -180),
         line=dict(width=3)
@@ -1557,13 +1557,13 @@ def assign_zone(row):
     #if d <= R_PAINT_EDGE:
     #    return "Paint (Non-Rim)"
 
-    if (d <= R_PAINT_EDGE) & (a < -60):
+    if (d <= R_PAINT_EDGE) & (a > 45):
         return "Paint (Non-Rim) Left"
 
-    if (d <= R_PAINT_EDGE) & (a >= -60) & (a <= 60):
+    if (d <= R_PAINT_EDGE) & (a >= -45) & (a <= 45):
         return "Paint (Non-Rim) Middle"
 
-    if (d <= R_PAINT_EDGE)  & (a > 60):
+    if (d <= R_PAINT_EDGE)  & (a < -45):
         return "Paint (Non-Rim) Right"
 
     # ----------------
