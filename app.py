@@ -1926,7 +1926,7 @@ app.layout = dbc.Container(
 
         #html.Br(),
 
-        dbc.Row(
+        dbc.Row([
             dbc.Col(
                 html.Div(
                     dbc.Accordion(
@@ -2194,9 +2194,9 @@ app.layout = dbc.Container(
                         #"overflow": "auto",   # 🔴 REQUIRED for rounding to clip children
                     }
                 ),
-                xs=9, md=9
-            ), 
-            
+                xs=9, md=5
+            )], 
+        
             justify='center'
         ),
 
