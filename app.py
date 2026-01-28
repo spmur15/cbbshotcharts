@@ -2169,10 +2169,10 @@ app.layout = dbc.Container(
 
                                                     dbc.Col(
                                                         dbc.Button("Reset", color="secondary", className="shadow-button", size='sm'),
-                                                        xs=4, md=4,
+                                                        width=4,#xs=4, md=4,
                                                     ),
 
-                                                ],justify='center'),
+                                                ],justify='center', className="text-center"),
 
 
                                         html.Br(),
