@@ -2165,6 +2165,11 @@ app.layout = dbc.Container(
                                                     }
                                                 ),
 
+                                                dbc.Col(
+                                                    dbc.Button("Reset", color="secondary", className="me-1", size='sm'),
+                                                    xs=4, md=4
+                                                ),
+
 
                                         html.Br(),
                                     ],
@@ -2196,7 +2201,7 @@ app.layout = dbc.Container(
                 ),
                 xs=9, md=5
             ),
-            dbc.Button("Reset", color="secondary", className="me-1", size='sm'),
+
             
             
             ], 
