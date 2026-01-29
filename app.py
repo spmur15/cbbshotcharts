@@ -1569,6 +1569,10 @@ def make_zone_chart(dff, title):
 
     for _, r in zs.iterrows():
         zone_shape = ZONE_SHAPES[r["zone"]].copy()
+        zone_shape['line'] = {
+            'width': 3,
+            'color': THEME["bg_chart"]
+        }
 
 
         # # Rotate PATH shapes
