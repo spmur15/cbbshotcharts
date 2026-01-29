@@ -2159,19 +2159,19 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            width =9#xs=10, md=10
+                                            width =10#xs=10, md=10
                                         ),
 
                                         dbc.Col(
                                             dbc.Button(
-                                                "Clear All", 
+                                                "Clear", 
                                                 id="reset-button", 
                                                 color="secondary", 
                                                 className="shadow-button",  # ✅ full width of column
                                                 size='sm'
                                             ),
                                             width=3,  
-                                            #className="px-3"  # ✅ adds padding on sides
+                                            className="px-3"  # ✅ adds padding on sides
                                         ),
 
                                         #], justify='left'),
