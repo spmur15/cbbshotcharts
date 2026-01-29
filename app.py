@@ -2375,14 +2375,20 @@ app.layout = dbc.Container(
                                                 ),
 
                                                 dbc.Row([
-
                                                     dbc.Col(
-                                                        dbc.Button("Reset", color="secondary", className="shadow-button", size='sm'),
-                                                        width=4
+                                                        dbc.Button(
+                                                            "Reset", 
+                                                            id="reset-button", 
+                                                            color="secondary", 
+                                                            className="w-100",  # ✅ full width of column
+                                                            size='sm'
+                                                        ),
+                                                        width=12,  # ✅ changed from 4 to 12 for full width
+                                                        className="px-3"  # ✅ adds padding on sides
                                                     ),
-
-                                                ], justify='center', className="text-center", style={'marginTop':'5px'}),
-
+                                                ], justify='center',
+                                                   className="text-center",
+                                                   style={'marginTop':'20px'}),  # ✅ increased from 5px to 20px
 
                                         html.Br(),
                                     ],
@@ -3262,6 +3268,31 @@ def update_filter_options(team, exclude_non_d1):
     on_off_opts,
 )
 
+# --------------------------------------------------
+# RESET BUTTON CALLBACK
+# --------------------------------------------------
+@app.callback(
+    Output("player-dd", "value"),
+    Output("half-dd", "value"),
+    Output("opp-dd", "value"),
+    Output("loc-dd", "value"),
+    Output("quad-dd", "value"),
+    Output("lineup-dd", "value"),
+    Output("on-court-dd", "value"),
+    Output("off-court-dd", "value"),
+    Input("reset-button", "n_clicks"),
+    prevent_initial_call=True
+)
+def reset_filters(n_clicks):
+    """Reset all filter dropdowns to empty"""
+    return None, None, None, None, None, None, None, None
+
+
+# --------------------------------------------------
+# MAIN
+# --------------------------------------------------
+if __name__ == "__main__":
+    app.run(debug=True)
 
 
 # --------------------------------------------------
