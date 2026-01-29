@@ -887,15 +887,15 @@ def zone_label_xy(zone):
     if zone == "Right Wing 3":
         return (-19.125, 18.125)
     if zone == "Right Corner 3":
-        return (26.5, 2)
+        return (-26.5, 2)  # ✅ SWAPPED: was (26.5, 2)
     if zone == "Left Corner 3":
-        return (-26.5, 2)
+        return (26.5, 2)   # ✅ SWAPPED: was (-26.5, 2)
 
-    # ✅ NEW BASELINE ZONES
+    # ✅ NEW BASELINE ZONES - also swap these
     if zone == "Left Mid Low":
-        return (-17.5, 0)
+        return (17.5, 0)   # ✅ SWAPPED: was (-17.5, 0)
     if zone == "Right Mid Low":
-        return (17.5, 0)
+        return (-17.5, 0)  # ✅ SWAPPED: was (17.5, 0)
 
     # Fallback (never crashes)
     return rotate_for_display(0, 0)
