@@ -2159,7 +2159,7 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            width =10#xs=10, md=10
+                                            width = 9 #xs=10, md=10
                                         ),
 
                                         dbc.Col(
@@ -2171,7 +2171,7 @@ app.layout = dbc.Container(
                                                 size='sm'
                                             ),
                                             width=3,  
-                                            className="px-3"  # ✅ adds padding on sides
+                                            #className="px-3"  # ✅ adds padding on sides
                                         ),
 
                                         #], justify='left'),
