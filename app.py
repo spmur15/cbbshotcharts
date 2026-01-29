@@ -1570,7 +1570,7 @@ def make_zone_chart(dff, title):
     for _, r in zs.iterrows():
         zone_shape = ZONE_SHAPES[r["zone"]].copy()
         zone_shape['line'] = {
-            'width': 3,
+            'width': 4,
             'color': THEME["bg_chart"]
         }
 
@@ -1631,9 +1631,9 @@ def make_zone_chart(dff, title):
                 # Then add text on top
         if r.att == 0:
             # Show "No shots" for empty zones
-            text_display = "<span style='line-height: 1.0'>No<br>shots</span>"
+            text_display = "<span style='line-height: 1.0; font-size: 10px'>None</span>"
         else:
-            text_display = f"<span style='line-height: 1.0'>{int(r.made)}/{int(r.att)}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"
+            text_display = f"<span style='line-height: 1.0'>{int(r.made)}/{int(r.att)}<br><span style='font-size: 13px'>{r.pct:.0%}</span></span>"
 
         fig.add_trace(go.Scatter(
             x=[x_txt],
@@ -1641,7 +1641,7 @@ def make_zone_chart(dff, title):
             text=[text_display],
             mode="text",
             textfont=dict(
-                size=13,
+                size=14,
                 family="Funnel Display, sans-serif",
                 color=THEME["bg_chart"],
                 weight=600
