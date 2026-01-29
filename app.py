@@ -1533,6 +1533,22 @@ def make_zone_chart(dff, title):
     if "shot_range" in dff.columns:
         dff = reconcile_zone_with_shot_range(dff)
 
+    # zs = (
+    #     dff.groupby("zone")
+    #     .agg(att=("made", "count"), made=("made", "sum"))
+    #     .reset_index()
+    # )
+    # zs["pct"] = zs["made"] / zs["att"]
+
+    # for _, r in zs.iterrows():
+    #     zone_shape = ZONE_SHAPES[r["zone"]].copy()
+    #     #print(zone_shape)
+    #     zone_shape['line'] = {
+    #         'width': 3,
+    #         'color': THEME["bg_chart"]
+    #     }
+
+    # Get actual shot data
     zs = (
         dff.groupby("zone")
         .agg(att=("made", "count"), made=("made", "sum"))
@@ -1540,13 +1556,19 @@ def make_zone_chart(dff, title):
     )
     zs["pct"] = zs["made"] / zs["att"]
 
+    # Create a complete zone list with 0 shots for missing zones
+    all_zones = pd.DataFrame({
+        "zone": list(ZONE_SHAPES.keys())
+    })
+
+    # Merge to include zones with no shots
+    zs = all_zones.merge(zs, on="zone", how="left")
+    zs["att"] = zs["att"].fillna(0).astype(int)
+    zs["made"] = zs["made"].fillna(0).astype(int)
+    zs["pct"] = zs["pct"].fillna(0)  # 0% for zones with no shots
+
     for _, r in zs.iterrows():
         zone_shape = ZONE_SHAPES[r["zone"]].copy()
-        #print(zone_shape)
-        zone_shape['line'] = {
-            'width': 3,
-            'color': THEME["bg_chart"]
-        }
 
 
         # # Rotate PATH shapes
@@ -1586,10 +1608,33 @@ def make_zone_chart(dff, title):
         #     ))
         
         # Then add text on top
+        # fig.add_trace(go.Scatter(
+        #     x=[x_txt],
+        #     y=[y_txt],
+        #     text=[f"<span style='line-height: 1.0'>{r.made}/{r.att}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"],
+        #     mode="text",
+        #     textfont=dict(
+        #         size=13,
+        #         family="Funnel Display, sans-serif",
+        #         color=THEME["bg_chart"],
+        #         weight=600
+        #     ),
+        #     showlegend=False,
+        #     hoverinfo='skip'
+        # ))
+
+
+                # Then add text on top
+        if r.att == 0:
+            # Show "No shots" for empty zones
+            text_display = "<span style='line-height: 1.0'>No<br>shots</span>"
+        else:
+            text_display = f"<span style='line-height: 1.0'>{int(r.made)}/{int(r.att)}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"
+
         fig.add_trace(go.Scatter(
             x=[x_txt],
             y=[y_txt],
-            text=[f"<span style='line-height: 1.0'>{r.made}/{r.att}<br><span style='font-size: 12px'>{r.pct:.0%}</span></span>"],
+            text=[text_display],
             mode="text",
             textfont=dict(
                 size=13,
@@ -1812,7 +1857,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("peach", 0.4)[0]
+        return sample_colorscale("peach", 0.0)[0]  # ✅ changed to 0.0 for lightest
 
     lo, hi = ZONE_PCT_RANGES[family]
 
