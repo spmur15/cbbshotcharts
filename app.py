@@ -2380,7 +2380,7 @@ app.layout = dbc.Container(
                                                             "Reset", 
                                                             id="reset-button", 
                                                             color="secondary", 
-                                                            className="w-100",  # ✅ full width of column
+                                                            className="shadow-button",  # ✅ full width of column
                                                             size='sm'
                                                         ),
                                                         width=12,  # ✅ changed from 4 to 12 for full width
