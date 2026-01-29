@@ -2170,11 +2170,11 @@ app.layout = dbc.Container(
                                                     className="shadow-button",  # ✅ full width of column
                                                     size='sm'
                                                 ),
-                                                width=2,  # ✅ changed from 4 to 12 for full width
-                                                className="px-3"  # ✅ adds padding on sides
+                                                width=2,  
+                                                #className="px-3"  # ✅ adds padding on sides
                                             ),
 
-                                        ], justify='center'),
+                                        ], justify='left'),
                                         
                                         dbc.Col(
                                             dcc.Dropdown(
@@ -2391,21 +2391,21 @@ app.layout = dbc.Container(
                                                     }
                                                 ),
 
-                                                dbc.Row([
-                                                    dbc.Col(
-                                                        dbc.Button(
-                                                            "Clear", 
-                                                            id="reset-button", 
-                                                            color="secondary", 
-                                                            className="shadow-button",  # ✅ full width of column
-                                                            size='sm'
-                                                        ),
-                                                        width=12,  # ✅ changed from 4 to 12 for full width
-                                                        className="px-3"  # ✅ adds padding on sides
-                                                    ),
-                                                ], justify='center',
-                                                   className="text-center",
-                                                   style={'marginTop':'20px'}),  # ✅ increased from 5px to 20px
+                                                # dbc.Row([
+                                                #     dbc.Col(
+                                                #         dbc.Button(
+                                                #             "Clear", 
+                                                #             id="reset-button", 
+                                                #             color="secondary", 
+                                                #             className="shadow-button",  # ✅ full width of column
+                                                #             size='sm'
+                                                #         ),
+                                                #         width=12,  # ✅ changed from 4 to 12 for full width
+                                                #         className="px-3"  # ✅ adds padding on sides
+                                                #     ),
+                                                # ], justify='center',
+                                                #    className="text-center",
+                                                #    style={'marginTop':'20px'}),  # ✅ increased from 5px to 20px
 
                                         html.Br(),
                                     ],
