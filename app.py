@@ -2143,22 +2143,39 @@ app.layout = dbc.Container(
                             dbc.AccordionItem(
                                 dbc.Row(
                                     [
-                                        dbc.Col(
-                                            dcc.Dropdown(
-                                                id="player-dd",
-                                                multi=True,
-                                                placeholder="Shooter",
-                                                style={
-                                                    "fontSize": "14px",
-                                                    "backgroundColor": THEME["bg_dropdown"],
-                                                    "color": THEME["text_primary"],
-                                                    "boxShadow": THEME["shadow_md"],
-                                                    "borderRadius": "10px",
-                                                    "fontWeight": "600",
-                                                },
+                                        dbc.Row([
+
+                                            dbc.Col(
+                                                dcc.Dropdown(
+                                                    id="player-dd",
+                                                    multi=True,
+                                                    placeholder="Shooter",
+                                                    style={
+                                                        "fontSize": "14px",
+                                                        "backgroundColor": THEME["bg_dropdown"],
+                                                        "color": THEME["text_primary"],
+                                                        "boxShadow": THEME["shadow_md"],
+                                                        "borderRadius": "10px",
+                                                        "fontWeight": "600",
+                                                    },
+                                                ),
+                                                width = 10#xs=10, md=10
                                             ),
-                                            xs=12, md=12
-                                        ),
+
+                                            dbc.Col(
+                                                dbc.Button(
+                                                    "Clear", 
+                                                    id="reset-button", 
+                                                    color="secondary", 
+                                                    className="shadow-button",  # ✅ full width of column
+                                                    size='sm'
+                                                ),
+                                                width=2,  # ✅ changed from 4 to 12 for full width
+                                                className="px-3"  # ✅ adds padding on sides
+                                            ),
+
+                                        ], justify='center'),
+                                        
                                         dbc.Col(
                                             dcc.Dropdown(
                                                 id="half-dd",
@@ -2377,7 +2394,7 @@ app.layout = dbc.Container(
                                                 dbc.Row([
                                                     dbc.Col(
                                                         dbc.Button(
-                                                            "Reset", 
+                                                            "Clear", 
                                                             id="reset-button", 
                                                             color="secondary", 
                                                             className="shadow-button",  # ✅ full width of column
