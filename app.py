@@ -2143,38 +2143,38 @@ app.layout = dbc.Container(
                             dbc.AccordionItem(
                                 dbc.Row(
                                     [
-                                        dbc.Row([
+                                        #dbc.Row([
 
-                                            dbc.Col(
-                                                dcc.Dropdown(
-                                                    id="player-dd",
-                                                    multi=True,
-                                                    placeholder="Shooter",
-                                                    style={
-                                                        "fontSize": "14px",
-                                                        "backgroundColor": THEME["bg_dropdown"],
-                                                        "color": THEME["text_primary"],
-                                                        "boxShadow": THEME["shadow_md"],
-                                                        "borderRadius": "10px",
-                                                        "fontWeight": "600",
-                                                    },
-                                                ),
-                                                width = 10#xs=10, md=10
+                                        dbc.Col(
+                                            dcc.Dropdown(
+                                                id="player-dd",
+                                                multi=True,
+                                                placeholder="Shooter",
+                                                style={
+                                                    "fontSize": "14px",
+                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                    "color": THEME["text_primary"],
+                                                    "boxShadow": THEME["shadow_md"],
+                                                    "borderRadius": "10px",
+                                                    "fontWeight": "600",
+                                                },
                                             ),
+                                            width = 10#xs=10, md=10
+                                        ),
 
-                                            dbc.Col(
-                                                dbc.Button(
-                                                    "Clear", 
-                                                    id="reset-button", 
-                                                    color="secondary", 
-                                                    className="shadow-button",  # ✅ full width of column
-                                                    size='sm'
-                                                ),
-                                                width=2,  
-                                                #className="px-3"  # ✅ adds padding on sides
+                                        dbc.Col(
+                                            dbc.Button(
+                                                "Clear All", 
+                                                id="reset-button", 
+                                                color="secondary", 
+                                                className="shadow-button",  # ✅ full width of column
+                                                size='sm'
                                             ),
+                                            width=2,  
+                                            #className="px-3"  # ✅ adds padding on sides
+                                        ),
 
-                                        ], justify='left'),
+                                        #], justify='left'),
                                         
                                         dbc.Col(
                                             dcc.Dropdown(
