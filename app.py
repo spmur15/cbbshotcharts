@@ -1339,7 +1339,7 @@ def make_hexbin_chart(dff, title):
         x=x_bins[:-1],
         y=y_bins[:-1],
         z=z_values.T,
-        colorscale='Peach',#sample_colorscale("peach"),#[
+        colorscale='Turbo',#sample_colorscale("peach"),#[
         #     [0.0, "rgba(100, 100, 255, 0.1)"],
         #     [0.3, "rgba(100, 200, 255, 0.4)"],
         #     [0.5, "rgba(255, 200, 100, 0.6)"],
@@ -2074,7 +2074,7 @@ app.layout = dbc.Container(
             options=[
                 {"label": "Zones", "value": "zones"},
                 {"label": "Shots", "value": "shots"},
-                {"label": "Hex", "value": "hex"},
+                {"label": "Heatmap", "value": "hex"},
             ],
             value="zones",
             inline=True,
