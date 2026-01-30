@@ -154,15 +154,11 @@ team_p5 = [
 ]
 
 # ---- Zone geometry (feet, hoop-centered) ----
-R_RIM = 5.5
-R_PAINT = 10
-R_3 = 22
-
-R_RIM = 5.5
-R_PAINT_EDGE = R_PAINT# + 1
-R_PAINT = R_PAINT + 2.6
-R_3_EDGE = R_3# + 0.25
-R_3 = R_3 + 0.25
+R_RIM = 6
+R_PAINT = 15
+R_PAINT_EDGE = R_PAINT
+R_3 = 22.25
+R_3_EDGE = R_3
 R_MAX = 31.5
 
 ZONE_DRAW_ORDER = [
@@ -175,7 +171,6 @@ ZONE_DRAW_ORDER = [
     "Top 3", "Left Wing 3", "Right Wing 3", "Corner 3",
     "Rim"
 ]
-
 
 ZONE_FAMILY = {
     # Rim / Paint
@@ -203,9 +198,9 @@ ZONE_FAMILY = {
 
 ZONE_PCT_RANGES = {
     "three": (0.2, 0.50),   # 25% bad → 40% good
-    "short_mid":   (0.3, 0.65),
-    "mid":   (0.2, 0.60),   # 35% bad → 50% good
-    "paint": (0.3, 0.75),   # 50% bad → 70% good
+    "short_mid":  (0.2, 0.65),
+    "mid":   (0.2, 0.6),   # 35% bad → 50% good
+    "paint": (0.35, 0.7),   # 50% bad → 70% good
 }
 
 ANGLE_CORNER = 67     # degrees
@@ -1266,7 +1261,6 @@ def make_zone_chart(dff, title):
         
         x_txt, y_txt = zone_label_xy(r["zone"])
 
-
         # Then add text on top
         if r.att == 0:
             # Show "No shots" for empty zones
@@ -1695,7 +1689,7 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            width = 9 #xs=10, md=10
+                                            xs=8, md=9
                                         ),
                                         dbc.Col(
                                             dbc.Button(
@@ -1705,7 +1699,8 @@ app.layout = dbc.Container(
                                                 className="shadow-button",  # ✅ full width of column
                                                 size='sm'
                                             ),
-                                            width=3,  
+                                            xs=4, md=3,
+                                            className="d-flex align-items-center"
                                             #className="px-3"  # ✅ adds padding on sides
                                         ),
                                         
