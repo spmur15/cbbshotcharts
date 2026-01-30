@@ -155,7 +155,7 @@ team_p5 = [
 
 # ---- Zone geometry (feet, hoop-centered) ----
 R_RIM = 6
-R_PAINT = 15
+R_PAINT = 13
 R_PAINT_EDGE = R_PAINT
 R_3 = 22.25
 R_3_EDGE = R_3
