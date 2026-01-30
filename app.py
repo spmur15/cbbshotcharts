@@ -1964,6 +1964,7 @@ app.layout = dbc.Container(
             options=[
                 {"label": "Zones", "value": "zones"},
                 {"label": "Shots", "value": "shots"},
+                {"label": "Hex", "value": "hex"},
             ],
             value="zones",
             inline=True,
