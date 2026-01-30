@@ -1339,13 +1339,13 @@ def make_hexbin_chart(dff, title):
         x=x_bins[:-1],
         y=y_bins[:-1],
         z=z_values.T,
-        colorscale=[
-            [0.0, "rgba(100, 100, 255, 0.1)"],
-            [0.3, "rgba(100, 200, 255, 0.4)"],
-            [0.5, "rgba(255, 200, 100, 0.6)"],
-            [0.7, "rgba(255, 150, 50, 0.75)"],
-            [1.0, "rgba(255, 50, 50, 0.9)"]
-        ],
+        colorscale='Viridis',#sample_colorscale("peach"),#[
+        #     [0.0, "rgba(100, 100, 255, 0.1)"],
+        #     [0.3, "rgba(100, 200, 255, 0.4)"],
+        #     [0.5, "rgba(255, 200, 100, 0.6)"],
+        #     [0.7, "rgba(255, 150, 50, 0.75)"],
+        #     [1.0, "rgba(255, 50, 50, 0.9)"]
+        # ],
         showscale=False,
         hovertemplate='Shots: %{z:.0f}<extra></extra>',
         opacity=0.8
