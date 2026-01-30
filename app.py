@@ -2622,7 +2622,7 @@ def update_filter_options(team, exclude_non_d1):
     Output("lineup-dd", "value"),
     Output("on-court-dd", "value"),
     Output("off-court-dd", "value"),
-    Output("off-court-dd", "value"),
+    Output("shot-type-dd", "value"),
     Input("reset-button", "n_clicks"),
     prevent_initial_call=True
 )
