@@ -1316,22 +1316,38 @@ def make_hexbin_chart(dff, title):
     # Rotate shot coordinates for display
     all_x, all_y = rotate_for_display(dff["x_plot"], dff["y_plot"])
 
-    # Create hexbin using Plotly's histogram2dcontour for smooth density
-    # OR use histogram2d for discrete hexagons
-    fig.add_trace(go.Histogram2d(
-        x=all_x,
-        y=all_y,
+    # Calculate shot density manually first
+    from scipy.stats import binned_statistic_2d
+
+    # Create bins
+    x_bins = np.linspace(all_x.min(), all_x.max(), 26)
+    y_bins = np.linspace(all_y.min(), all_y.max(), 26)
+
+    # Count shots in each bin
+    ret = binned_statistic_2d(
+        all_x, all_y, 
+        values=None, 
+        statistic='count',
+        bins=[x_bins, y_bins]
+    )
+
+    # Apply log transformation to spread out the values
+    z_values = np.log1p(ret.statistic)  # log(1 + count)
+
+    # Now use heatmap instead
+    fig.add_trace(go.Heatmap(
+        x=x_bins[:-1],
+        y=y_bins[:-1],
+        z=z_values.T,
         colorscale=[
-            [0.0, "rgba(100, 100, 255, 0.1)"],   # Very light blue (few shots)
-            [0.3, "rgba(100, 200, 255, 0.4)"],   # Light blue
-            [0.5, "rgba(255, 200, 100, 0.6)"],   # Yellow/orange
-            [0.7, "rgba(255, 150, 50, 0.75)"],   # Orange
-            [1.0, "rgba(255, 50, 50, 0.9)"]      # Red (many shots)
+            [0.0, "rgba(100, 100, 255, 0.1)"],
+            [0.3, "rgba(100, 200, 255, 0.4)"],
+            [0.5, "rgba(255, 200, 100, 0.6)"],
+            [0.7, "rgba(255, 150, 50, 0.75)"],
+            [1.0, "rgba(255, 50, 50, 0.9)"]
         ],
-        nbinsx=25,  # Adjust for hex size (higher = smaller hexes)
-        nbinsy=25,
-        showscale=False,  # Hide color bar
-        hovertemplate='Shots: %{z}<extra></extra>',
+        showscale=False,
+        hovertemplate='Shots: %{z:.0f}<extra></extra>',
         opacity=0.8
     ))
 
