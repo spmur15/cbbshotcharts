@@ -378,6 +378,48 @@ HALF_COL = "period"
 OPP_COL = "opponent"
 OFF_DEF_COL = "offense_defense"  # "Offense" / "Defense"
 
+
+
+
+# --------------------------------------------------
+# Shot Type mapping for filtering
+# --------------------------------------------------
+SHOT_TYPE_MAPPING = {
+    'Alley-oop': 'alleyoop',
+    'Driving Layup': 'drivinglayup',
+    'Dunk': 'dunk',
+    'Floater': 'floatingjumpshot',
+    'Hook Shot': 'hookshot',
+    'Jump Shot': ['jumpshot', 'pullupjumpshot', 'stepbackjumpshot', 'turnaroundjumpshot'],  # all jumpshot types
+    'Layup': 'layup',
+    'Tip-in': ['tipindunk', 'tipinlayup'],  # combined
+    '2nd Chance': '2ndchance',
+    'Off Turnover': 'fromturnover',
+    'Points in Paint': 'pointsinthepaint',
+    'Fast Break': 'fastbreak',
+    'Blocked': 'blocked'
+}
+
+# Options for dropdown (sorted logically)
+SHOT_TYPE_OPTIONS = [
+    'Alley-oop',
+    'Driving Layup', 
+    'Dunk',
+    'Floater',
+    'Hook Shot',
+    'Jump Shot',
+    'Layup',
+    'Tip-in',
+    '2nd Chance',
+    'Off Turnover',
+    'Points in Paint',
+    'Fast Break',
+    'Blocked'
+]
+
+
+
+
 # --------------------------------------------------
 # COURT DRAWING FUNCTION
 # --------------------------------------------------
@@ -1729,6 +1771,23 @@ app.layout = dbc.Container(
                                             xs=6, md=6
                                         ),
                                         dbc.Col(
+                                            dcc.Dropdown(
+                                                id="shot-type-dd",
+                                                options=[{"label": st, "value": st} for st in SHOT_TYPE_OPTIONS],
+                                                multi=True,
+                                                placeholder="Shot Type",
+                                                style={
+                                                    "fontSize": "14px",
+                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                    "color": THEME["text_primary"],
+                                                    "boxShadow": THEME["shadow_md"],
+                                                    "borderRadius": "10px",
+                                                    "fontWeight": "600",
+                                                },
+                                            ),
+                                            xs=12, md=12  # full width
+                                        ),
+                                        dbc.Col(
                                             html.Div(
                                                 dbc.Checkbox(
                                                     id="exclude-non-d1",
@@ -2071,12 +2130,14 @@ app.layout = dbc.Container(
     Input("lineup-dd", "value"),
     Input("on-court-dd", "value"),
     Input("off-court-dd", "value"),
+    Input("shot-type-dd", "value"),
 )
 
 def update_charts(team, view_mode, players, halves, opps, loc, quad,
                   #show_stats,
                   exclude_non_d1, lineup,
-                  on_players, off_players):
+                  on_players, off_players,
+                  shot_types):
 
     off_title = "Offense"
     def_title = "Defense"
@@ -2232,6 +2293,26 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     
         off_title += f" | Lineup: {lineup_label}"
         def_title += f" | Lineup: {lineup_label}"
+
+    # --------------------------------------------------
+    # SHOT TYPE FILTER
+    # --------------------------------------------------
+    if shot_types:
+        # Build list of event type substrings to match
+        search_terms = []
+        for st in shot_types:
+            mapping = SHOT_TYPE_MAPPING[st]
+            if isinstance(mapping, list):
+                search_terms.extend(mapping)
+            else:
+                search_terms.append(mapping)
+        
+        # Filter shots that contain ANY of the search terms
+        mask = dff['event_type'].str.contains('|'.join(search_terms), case=False, na=False)
+        dff = dff[mask]
+        
+        off_title += f" | Shot Type: {', '.join(shot_types)}"
+        def_title += f" | Shot Type: {', '.join(shot_types)}"
 
     # --------------------------------------------------
     # 🚨 SAFEGUARD: no shots after filtering
@@ -2541,12 +2622,13 @@ def update_filter_options(team, exclude_non_d1):
     Output("lineup-dd", "value"),
     Output("on-court-dd", "value"),
     Output("off-court-dd", "value"),
+    Output("off-court-dd", "value"),
     Input("reset-button", "n_clicks"),
     prevent_initial_call=True
 )
 def reset_filters(n_clicks):
     """Reset all filter dropdowns to empty"""
-    return None, None, None, None, None, None, None, None
+    return None, None, None, None, None, None, None, None, None
 
 
 # --------------------------------------------------
