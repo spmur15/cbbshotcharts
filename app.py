@@ -1306,6 +1306,100 @@ def make_zone_chart(dff, title):
 
     return fig
 
+
+def make_hexbin_chart(dff, title):
+    """
+    Create a hexbin density heatmap of shot locations.
+    """
+    fig = go.Figure(layout=create_half_court_layout())
+
+    # Rotate shot coordinates for display
+    all_x, all_y = rotate_for_display(dff["x_plot"], dff["y_plot"])
+
+    # Create hexbin using Plotly's histogram2dcontour for smooth density
+    # OR use histogram2d for discrete hexagons
+    fig.add_trace(go.Histogram2d(
+        x=all_x,
+        y=all_y,
+        colorscale=[
+            [0.0, "rgba(100, 100, 255, 0.1)"],   # Very light blue (few shots)
+            [0.3, "rgba(100, 200, 255, 0.4)"],   # Light blue
+            [0.5, "rgba(255, 200, 100, 0.6)"],   # Yellow/orange
+            [0.7, "rgba(255, 150, 50, 0.75)"],   # Orange
+            [1.0, "rgba(255, 50, 50, 0.9)"]      # Red (many shots)
+        ],
+        nbinsx=25,  # Adjust for hex size (higher = smaller hexes)
+        nbinsy=25,
+        showscale=False,  # Hide color bar
+        hovertemplate='Shots: %{z}<extra></extra>',
+        opacity=0.8
+    ))
+
+    # Add 3PT arc
+    ax, ay = rotate_for_display(ARC_X, ARC_Y)
+    fig.add_trace(go.Scatter(
+        x=ax, y=ay,
+        mode="lines",
+        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+        hoverinfo="skip",
+        showlegend=False
+    ))
+
+    # Add corner 3PT lines
+    cx1, cy1 = rotate_for_display(
+        np.array([-BASELINE_X, BASELINE_X]),
+        np.array([-ARC_Y.max(), -ARC_Y.max()])
+    )
+    cx2, cy2 = rotate_for_display(
+        np.array([-BASELINE_X, BASELINE_X]),
+        np.array([ARC_Y.max(), ARC_Y.max()])
+    )
+
+    fig.add_trace(go.Scatter(
+        x=cx1, y=cy1,
+        mode="lines",
+        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+        hoverinfo="skip",
+        showlegend=False
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=cx2, y=cy2,
+        mode="lines",
+        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+        hoverinfo="skip",
+        showlegend=False
+    ))
+
+    fig.update_layout(
+        plot_bgcolor=THEME["bg_chart"],
+        paper_bgcolor=THEME["bg_chart"],
+        showlegend=False
+    )
+
+    # Add summary stats
+    dff2 = dff.copy()
+    dff2.loc[:, "dist"] = np.sqrt(dff2["x_plot"]**2 + dff2["y_plot"]**2)
+    dff2.loc[:, "angle"] = np.degrees(np.arctan2(dff2["y_plot"], -dff2["x_plot"]))
+    dff2.loc[:, "zone"] = dff2.apply(assign_zone, axis=1)
+
+    if "shot_range" in dff2.columns:
+        dff2 = reconcile_zone_with_shot_range(dff2)
+
+    summary = shooting_summary(dff2)
+    fg_line = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
+    pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
+    
+    add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
+    add_signature(fig)
+
+    return fig
+
+
+
+
+
+
 def assign_zone(row):
     d = row["dist"]      # distance from hoop (ft)
     a = row["angle"]     # angle in degrees
@@ -2386,7 +2480,10 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     if view_mode == "shots":
         fig_off = make_shot_chart(off_df, chart_title(team, "Offense", team_logo))
         fig_def = make_shot_chart(def_df, chart_title(team, "Defense", team_logo))
-    else:
+    elif view_mode == "hex":
+        fig_off = make_hexbin_chart(off_df, chart_title(team, "Offense", team_logo))
+        fig_def = make_hexbin_chart(def_df, chart_title(team, "Defense", team_logo))
+    else:  # zones
         fig_off = make_zone_chart(off_df, chart_title(team, "Offense", team_logo))
         fig_def = make_zone_chart(def_df, chart_title(team, "Defense", team_logo))
 
