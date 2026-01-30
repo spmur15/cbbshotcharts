@@ -395,26 +395,32 @@ SHOT_TYPE_MAPPING = {
     'Tip-in': ['tipindunk', 'tipinlayup'],  # combined
     '2nd Chance': '2ndchance',
     'Off Turnover': 'fromturnover',
-    'Points in Paint': 'pointsinthepaint',
+    'Paint': 'pointsinthepaint',
     'Fast Break': 'fastbreak',
-    'Blocked': 'blocked'
+    'Shot Blocked': 'blocked',
+    'Pull-up jumper': 'pullup',
+    'Turn-around jumper': 'turnaround',
+    'Stepback jumper': 'stepback'
 }
 
 # Options for dropdown (sorted logically)
 SHOT_TYPE_OPTIONS = [
-    'Alley-oop',
-    'Driving Layup', 
-    'Dunk',
+    'Off Turnover',
+    'Fast Break',
+    '2nd Chance',
+    'Paint',
+    'Pull-up jumper',
+    'Turn-around jumper',
+    'Stepback jumper',
     'Floater',
     'Hook Shot',
     'Jump Shot',
     'Layup',
     'Tip-in',
-    '2nd Chance',
-    'Off Turnover',
-    'Points in Paint',
-    'Fast Break',
-    'Blocked'
+    'Alley-oop',
+    'Dunk',
+    'Driving Layup', 
+    'Shot Blocked'
 ]
 
 
