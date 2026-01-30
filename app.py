@@ -1320,8 +1320,8 @@ def make_hexbin_chart(dff, title):
     from scipy.stats import binned_statistic_2d
 
     # Create bins
-    x_bins = np.linspace(all_x.min(), all_x.max(), 26)
-    y_bins = np.linspace(all_y.min(), all_y.max(), 26)
+    x_bins = np.linspace(all_x.min(), all_x.max(), 16)
+    y_bins = np.linspace(all_y.min(), all_y.max(), 16)
 
     # Count shots in each bin
     ret = binned_statistic_2d(
@@ -1339,7 +1339,7 @@ def make_hexbin_chart(dff, title):
         x=x_bins[:-1],
         y=y_bins[:-1],
         z=z_values.T,
-        colorscale='Viridis',#sample_colorscale("peach"),#[
+        colorscale='Peach',#sample_colorscale("peach"),#[
         #     [0.0, "rgba(100, 100, 255, 0.1)"],
         #     [0.3, "rgba(100, 200, 255, 0.4)"],
         #     [0.5, "rgba(255, 200, 100, 0.6)"],
@@ -1348,7 +1348,7 @@ def make_hexbin_chart(dff, title):
         # ],
         showscale=False,
         hovertemplate='Shots: %{z:.0f}<extra></extra>',
-        opacity=0.8
+        opacity=0.5
     ))
 
     # Add 3PT arc
