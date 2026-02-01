@@ -1440,7 +1440,7 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     # Gaussian smooth → continuous density surface
     # --------------------------------------------------
-    sigma = 2.5  # blur radius in grid cells (higher = smoother blobs)
+    sigma = 4.5  # blur radius in grid cells (higher = smoother blobs)
     H_smooth = gaussian_filter(H, sigma=sigma)
 
     # Log-transform to prevent rim from drowning everything
