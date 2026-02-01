@@ -1549,7 +1549,7 @@ def make_hexbin_chart(dff, title):
     # if "shot_range" in dff2.columns:
     #     dff2 = reconcile_zone_with_shot_range(dff2)
 
-    summary = shooting_summary(dff2)
+    summary = shooting_summary(dff)
     fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
     add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
