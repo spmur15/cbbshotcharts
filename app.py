@@ -1352,7 +1352,7 @@ def make_hexbin_chart(dff, title):
     nx, ny = 80, 80  # grid resolution (higher = smoother but slower)
 
     x_min, x_max = -30, 30
-    y_min, y_max = -6, 31
+    y_min, y_max = -6, 38
 
     x_bins = np.linspace(x_min, x_max, nx + 1)
     y_bins = np.linspace(y_min, y_max, ny + 1)
@@ -1386,7 +1386,7 @@ def make_hexbin_chart(dff, title):
     # corresponds to roughly 5+ shots clustering together.
     # 5 shots / total_shots * 100 gives us our raw % threshold,
     # then we run it through the same log transform to match.
-    min_shots = 2
+    min_shots = 3
     min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
     min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
 
@@ -1406,12 +1406,12 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     colorscale = [
         [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-        [0.1, "rgba(40,  90, 200, 0.85)"],   # faint blue
-        [0.3,  "rgba(60, 160, 220, 0.9)"],   # light blue
-        [0.4,  "rgba(180, 220,  80, 0.95)"],   # yellow-green
-        [0.5,  "rgba(240, 180,  40, 0.75)"],  # orange
-        [0.65, "rgba(230,  80,  40, 0.75)"],  # red-orange
-        [1.0,  "rgba(180,  20,  20, 0.75)"],  # deep red
+        [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
+        [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
+        [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
+        [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
+        [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
     ]
 
     fig.add_trace(go.Heatmap(
