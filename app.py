@@ -1444,7 +1444,6 @@ def make_hexbin_chart(dff, title):
     all_x = np.concatenate([all_x, all_x2, all_x3, all_x3])
     all_y = np.concatenate([all_y, all_y2, all_y3, all_y3])
 
-
     print(dff['is_three'])
 
     print('all_x')
@@ -1480,7 +1479,7 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     # Gaussian smooth → continuous density surface
     # --------------------------------------------------
-    sigma = 5
+    sigma = 3
     H_smooth = gaussian_filter(H_pct, sigma=sigma)
 
     # Log-transform to prevent rim from drowning everything
@@ -1510,12 +1509,12 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     colorscale = [
         [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-        [0.1, "rgba(40,  90, 200, 0.6)"],   # faint blue
-        [0.3,  "rgba(60, 160, 220, 0.65)"],   # light blue
-        [0.4,  "rgba(180, 220,  80, 0.7)"],   # yellow-green
-        [0.5,  "rgba(240, 180,  40, 0.75)"],  # orange
-        [0.65, "rgba(230,  80,  40, 0.85)"],  # red-orange
-        [1.0,  "rgba(180,  20,  20, 0.92)"],  # deep red
+        [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
+        [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
+        [0.5,  "rgba(240, 180,  40, 0.95)"],  # orange
+        [0.65, "rgba(230,  80,  40, 0.95)"],  # red-orange
+        [1.0,  "rgba(180,  20,  20, 0.95)"],  # deep red
     ]
 
     fig.add_trace(go.Heatmap(
