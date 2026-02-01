@@ -1431,6 +1431,12 @@ def make_hexbin_chart(dff, title):
     # Rotate shot coordinates for display
     all_x, all_y = rotate_for_display(dff["x_plot"].values, dff["y_plot"].values)
 
+
+    print(dff['is_three'])
+
+    print('all_x')
+    print(all_x)
+
     # --------------------------------------------------
     # Build a fine grid and bin shots into it
     # --------------------------------------------------
@@ -1446,6 +1452,7 @@ def make_hexbin_chart(dff, title):
     H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
 
     print("H")
+    print(H.shape)
     print(H)
 
     # --------------------------------------------------
@@ -1454,6 +1461,7 @@ def make_hexbin_chart(dff, title):
     total_shots = H.sum()
     H_pct = (H / total_shots) * 100 if total_shots > 0 else H
     print("H_pct")
+    print(H_pct.shape)
     print(H_pct)
 
     # --------------------------------------------------
@@ -1475,6 +1483,7 @@ def make_hexbin_chart(dff, title):
 
     H_masked = np.where(H_log < min_threshold, H_log, H_log)
     print("H_masked")
+    print(H_masked.shape)
     print(H_masked)
 
     print('-----------------\n')
