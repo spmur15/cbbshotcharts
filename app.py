@@ -1307,51 +1307,181 @@ def make_zone_chart(dff, title):
     return fig
 
 
+# def make_hexbin_chart(dff, title):
+#     """
+#     Create a hexbin density heatmap of shot locations.
+#     """
+#     fig = go.Figure(layout=create_half_court_layout())
+
+#     # Rotate shot coordinates for display
+#     all_x, all_y = rotate_for_display(dff["x_plot"], dff["y_plot"])
+
+#     # Calculate shot density manually first
+#     from scipy.stats import binned_statistic_2d
+
+#     # Create bins
+#     x_bins = np.linspace(all_x.min()-4, all_x.max()+5, 24)
+#     y_bins = np.linspace(all_y.min(), all_y.max()+4, 24)
+
+#     # Count shots in each bin
+#     ret = binned_statistic_2d(
+#         all_x, all_y, 
+#         values=None, 
+#         statistic='count',
+#         bins=[x_bins, y_bins]
+#     )
+
+#     # Apply log transformation to spread out the values
+#     z_values = np.log1p(ret.statistic)  # log(1 + count)
+
+#     # Now use heatmap instead
+#     fig.add_trace(go.Heatmap(
+#         x=x_bins[:-1],
+#         y=y_bins[:-1],
+#         z=z_values.T,
+#         colorscale='Turbo',#sample_colorscale("peach"),#[
+#         #     [0.0, "rgba(100, 100, 255, 0.1)"],
+#         #     [0.3, "rgba(100, 200, 255, 0.4)"],
+#         #     [0.5, "rgba(255, 200, 100, 0.6)"],
+#         #     [0.7, "rgba(255, 150, 50, 0.75)"],
+#         #     [1.0, "rgba(255, 50, 50, 0.9)"]
+#         # ],
+#         showscale=False,
+#         hovertemplate='Shots: %{z:.0f}<extra></extra>',
+#         opacity=0.5
+#     ))
+
+#     # Add 3PT arc
+#     ax, ay = rotate_for_display(ARC_X, ARC_Y)
+#     fig.add_trace(go.Scatter(
+#         x=ax, y=ay,
+#         mode="lines",
+#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+#         hoverinfo="skip",
+#         showlegend=False
+#     ))
+
+#     # Add corner 3PT lines
+#     cx1, cy1 = rotate_for_display(
+#         np.array([-BASELINE_X, BASELINE_X]),
+#         np.array([-ARC_Y.max(), -ARC_Y.max()])
+#     )
+#     cx2, cy2 = rotate_for_display(
+#         np.array([-BASELINE_X, BASELINE_X]),
+#         np.array([ARC_Y.max(), ARC_Y.max()])
+#     )
+
+#     fig.add_trace(go.Scatter(
+#         x=cx1, y=cy1,
+#         mode="lines",
+#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+#         hoverinfo="skip",
+#         showlegend=False
+#     ))
+
+#     fig.add_trace(go.Scatter(
+#         x=cx2, y=cy2,
+#         mode="lines",
+#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+#         hoverinfo="skip",
+#         showlegend=False
+#     ))
+
+#     fig.update_layout(
+#         plot_bgcolor=THEME["bg_chart"],
+#         paper_bgcolor=THEME["bg_chart"],
+#         showlegend=False
+#     )
+
+#     # Add summary stats
+#     dff2 = dff.copy()
+#     dff2.loc[:, "dist"] = np.sqrt(dff2["x_plot"]**2 + dff2["y_plot"]**2)
+#     dff2.loc[:, "angle"] = np.degrees(np.arctan2(dff2["y_plot"], -dff2["x_plot"]))
+#     dff2.loc[:, "zone"] = dff2.apply(assign_zone, axis=1)
+
+#     if "shot_range" in dff2.columns:
+#         dff2 = reconcile_zone_with_shot_range(dff2)
+
+#     summary = shooting_summary(dff2)
+#     fg_line = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
+#     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
+    
+#     add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
+#     add_signature(fig)
+
+#     return fig
+
+
 def make_hexbin_chart(dff, title):
     """
-    Create a hexbin density heatmap of shot locations.
+    Continuous KDE-style heatmap of shot density.
     """
+    from scipy.ndimage import gaussian_filter
+
     fig = go.Figure(layout=create_half_court_layout())
 
     # Rotate shot coordinates for display
-    all_x, all_y = rotate_for_display(dff["x_plot"], dff["y_plot"])
+    all_x, all_y = rotate_for_display(dff["x_plot"].values, dff["y_plot"].values)
 
-    # Calculate shot density manually first
-    from scipy.stats import binned_statistic_2d
+    # --------------------------------------------------
+    # Build a fine grid and bin shots into it
+    # --------------------------------------------------
+    nx, ny = 80, 80  # grid resolution (higher = smoother but slower)
 
-    # Create bins
-    x_bins = np.linspace(all_x.min()-4, all_x.max()+5, 24)
-    y_bins = np.linspace(all_y.min(), all_y.max()+4, 24)
+    x_min, x_max = -30, 30
+    y_min, y_max = -3, 31
 
-    # Count shots in each bin
-    ret = binned_statistic_2d(
-        all_x, all_y, 
-        values=None, 
-        statistic='count',
-        bins=[x_bins, y_bins]
-    )
+    x_bins = np.linspace(x_min, x_max, nx + 1)
+    y_bins = np.linspace(y_min, y_max, ny + 1)
 
-    # Apply log transformation to spread out the values
-    z_values = np.log1p(ret.statistic)  # log(1 + count)
+    # 2D histogram (raw counts)
+    H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
 
-    # Now use heatmap instead
+    # --------------------------------------------------
+    # Gaussian smooth → continuous density surface
+    # --------------------------------------------------
+    sigma = 3.5  # blur radius in grid cells (higher = smoother blobs)
+    H_smooth = gaussian_filter(H, sigma=sigma)
+
+    # Log-transform to prevent rim from drowning everything
+    H_log = np.log1p(H_smooth * 10)
+
+    # Mask out zero/near-zero areas so they stay transparent
+    H_masked = np.where(H_log < 0.3, np.nan, H_log)
+
+    # Grid centers for plotting
+    x_centers = (x_bins[:-1] + x_bins[1:]) / 2
+    y_centers = (y_bins[:-1] + y_bins[1:]) / 2
+
+    # --------------------------------------------------
+    # Colorscale: transparent cool → opaque hot
+    # --------------------------------------------------
+    colorscale = [
+        [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
+        [0.15, "rgba(40,  90, 200, 0.25)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.45)"],   # light blue
+        [0.5,  "rgba(180, 220,  80, 0.6)"],   # yellow-green
+        [0.7,  "rgba(240, 180,  40, 0.75)"],  # orange
+        [0.85, "rgba(230,  80,  40, 0.85)"],  # red-orange
+        [1.0,  "rgba(180,  20,  20, 0.92)"],  # deep red
+    ]
+
     fig.add_trace(go.Heatmap(
-        x=x_bins[:-1],
-        y=y_bins[:-1],
-        z=z_values.T,
-        colorscale='Turbo',#sample_colorscale("peach"),#[
-        #     [0.0, "rgba(100, 100, 255, 0.1)"],
-        #     [0.3, "rgba(100, 200, 255, 0.4)"],
-        #     [0.5, "rgba(255, 200, 100, 0.6)"],
-        #     [0.7, "rgba(255, 150, 50, 0.75)"],
-        #     [1.0, "rgba(255, 50, 50, 0.9)"]
-        # ],
+        x=x_centers,
+        y=y_centers,
+        z=H_masked.T,           # transpose: plotly expects z[y][x]
+        colorscale=colorscale,
         showscale=False,
-        hovertemplate='Shots: %{z:.0f}<extra></extra>',
-        opacity=0.5
+        connectgaps=True,       # interpolate across NaN gaps for smoothness
+        zsmooth='best',         # bilinear smoothing on render
+        opacity=0.85,
+        hoverinfo='skip',
     ))
 
-    # Add 3PT arc
+    # --------------------------------------------------
+    # Court lines drawn ON TOP of heatmap
+    # --------------------------------------------------
+    # 3PT arc
     ax, ay = rotate_for_display(ARC_X, ARC_Y)
     fig.add_trace(go.Scatter(
         x=ax, y=ay,
@@ -1361,7 +1491,7 @@ def make_hexbin_chart(dff, title):
         showlegend=False
     ))
 
-    # Add corner 3PT lines
+    # Corner 3PT lines
     cx1, cy1 = rotate_for_display(
         np.array([-BASELINE_X, BASELINE_X]),
         np.array([-ARC_Y.max(), -ARC_Y.max()])
@@ -1370,21 +1500,15 @@ def make_hexbin_chart(dff, title):
         np.array([-BASELINE_X, BASELINE_X]),
         np.array([ARC_Y.max(), ARC_Y.max()])
     )
-
     fig.add_trace(go.Scatter(
-        x=cx1, y=cy1,
-        mode="lines",
+        x=cx1, y=cy1, mode="lines",
         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-        hoverinfo="skip",
-        showlegend=False
+        hoverinfo="skip", showlegend=False
     ))
-
     fig.add_trace(go.Scatter(
-        x=cx2, y=cy2,
-        mode="lines",
+        x=cx2, y=cy2, mode="lines",
         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-        hoverinfo="skip",
-        showlegend=False
+        hoverinfo="skip", showlegend=False
     ))
 
     fig.update_layout(
@@ -1393,26 +1517,23 @@ def make_hexbin_chart(dff, title):
         showlegend=False
     )
 
-    # Add summary stats
+    # --------------------------------------------------
+    # Summary stats
+    # --------------------------------------------------
     dff2 = dff.copy()
-    dff2.loc[:, "dist"] = np.sqrt(dff2["x_plot"]**2 + dff2["y_plot"]**2)
+    dff2.loc[:, "dist"]  = np.sqrt(dff2["x_plot"]**2 + dff2["y_plot"]**2)
     dff2.loc[:, "angle"] = np.degrees(np.arctan2(dff2["y_plot"], -dff2["x_plot"]))
-    dff2.loc[:, "zone"] = dff2.apply(assign_zone, axis=1)
-
+    dff2.loc[:, "zone"]  = dff2.apply(assign_zone, axis=1)
     if "shot_range" in dff2.columns:
         dff2 = reconcile_zone_with_shot_range(dff2)
 
     summary = shooting_summary(dff2)
-    fg_line = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
+    fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
-    
     add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
     add_signature(fig)
 
     return fig
-
-
-
 
 
 
