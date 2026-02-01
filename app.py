@@ -615,7 +615,7 @@ def load_team_data(team):
     dff['shooter'] = dff['shooter'].str.replace('&#39;', "'")
     dff['shooter'] = dff['shooter'].str.replace('&amp;', "&")
 
-    dff.loc[dff['team_name'].str.contains('\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('\('), 'team_name'] + ')'
+    dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] + ')'
 
     dff["offense_defense"] = np.where(
         dff["team_name"] == team, "Offense", "Defense"
@@ -864,7 +864,7 @@ def shot_breakdown_stats(dff):
         range_three = dff["is_three"]
     )
 
-    print(dff["zone"].value_counts())
+    #print(dff["zone"].value_counts())
 
     # Rim / Close = rim + non-rim paint
     rim_close = dff["zone"].isin(["Rim"])
@@ -1445,6 +1445,7 @@ def make_hexbin_chart(dff, title):
     # 2D histogram (raw counts)
     H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
 
+    print("H")
     print(H)
 
     # --------------------------------------------------
@@ -1452,6 +1453,7 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     total_shots = H.sum()
     H_pct = (H / total_shots) * 100 if total_shots > 0 else H
+    print("H_pct")
     print(H_pct)
 
     # --------------------------------------------------
@@ -1472,8 +1474,7 @@ def make_hexbin_chart(dff, title):
     min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
 
     H_masked = np.where(H_log < min_threshold, H_log, H_log)
-
-
+    print("H_masked")
     print(H_masked)
 
     print('-----------------\n')
