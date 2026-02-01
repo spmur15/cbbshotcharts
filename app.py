@@ -1438,16 +1438,29 @@ def make_hexbin_chart(dff, title):
     H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
 
     # --------------------------------------------------
+    # Normalize to % of total shots before smoothing
+    # --------------------------------------------------
+    total_shots = H.sum()
+    H_pct = (H / total_shots) * 100 if total_shots > 0 else H
+
+    # --------------------------------------------------
     # Gaussian smooth → continuous density surface
     # --------------------------------------------------
-    sigma = 4.5  # blur radius in grid cells (higher = smoother blobs)
-    H_smooth = gaussian_filter(H, sigma=sigma)
+    sigma = 5
+    H_smooth = gaussian_filter(H_pct, sigma=sigma)
 
     # Log-transform to prevent rim from drowning everything
-    H_log = np.log1p(H_smooth * 10)
+    H_log = np.log1p(H_smooth * 50)
 
-    # Mask out zero/near-zero areas so they stay transparent
-    H_masked = np.where(H_log < 0.5, np.nan, H_log)
+    # Mask: only show areas where the smoothed density
+    # corresponds to roughly 5+ shots clustering together.
+    # 5 shots / total_shots * 100 gives us our raw % threshold,
+    # then we run it through the same log transform to match.
+    min_shots = 3
+    min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
+    min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
+
+    H_masked = np.where(H_log < min_threshold, np.nan, H_log)
 
     # Grid centers for plotting
     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
@@ -1458,9 +1471,9 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     colorscale = [
         [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-        [0.15, "rgba(40,  90, 200, 0.35)"],   # faint blue
-        [0.3,  "rgba(60, 160, 220, 0.55)"],   # light blue
-        [0.5,  "rgba(180, 220,  80, 0.65)"],   # yellow-green
+        [0.15, "rgba(40,  90, 200, 0.6)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.65)"],   # light blue
+        [0.5,  "rgba(180, 220,  80, 0.7)"],   # yellow-green
         [0.7,  "rgba(240, 180,  40, 0.75)"],  # orange
         [0.85, "rgba(230,  80,  40, 0.85)"],  # red-orange
         [1.0,  "rgba(180,  20,  20, 0.92)"],  # deep red
