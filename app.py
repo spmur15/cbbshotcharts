@@ -1440,7 +1440,7 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     # Gaussian smooth → continuous density surface
     # --------------------------------------------------
-    sigma = 3.5  # blur radius in grid cells (higher = smoother blobs)
+    sigma = 2.5  # blur radius in grid cells (higher = smoother blobs)
     H_smooth = gaussian_filter(H, sigma=sigma)
 
     # Log-transform to prevent rim from drowning everything
@@ -1458,9 +1458,9 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     colorscale = [
         [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-        [0.15, "rgba(40,  90, 200, 0.25)"],   # faint blue
-        [0.3,  "rgba(60, 160, 220, 0.45)"],   # light blue
-        [0.5,  "rgba(180, 220,  80, 0.6)"],   # yellow-green
+        [0.15, "rgba(40,  90, 200, 0.35)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.55)"],   # light blue
+        [0.5,  "rgba(180, 220,  80, 0.65)"],   # yellow-green
         [0.7,  "rgba(240, 180,  40, 0.75)"],  # orange
         [0.85, "rgba(230,  80,  40, 0.85)"],  # red-orange
         [1.0,  "rgba(180,  20,  20, 0.92)"],  # deep red
@@ -2195,7 +2195,7 @@ app.layout = dbc.Container(
             options=[
                 {"label": "Zones", "value": "zones"},
                 {"label": "Shots", "value": "shots"},
-                {"label": "Heatmap", "value": "hex"},
+                {"label": "Heat", "value": "hex"},
             ],
             value="zones",
             inline=True,
