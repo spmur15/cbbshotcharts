@@ -1445,12 +1445,14 @@ def make_hexbin_chart(dff, title):
     # 2D histogram (raw counts)
     H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
 
+    print(H)
+
     # --------------------------------------------------
     # Normalize to % of total shots before smoothing
     # --------------------------------------------------
     total_shots = H.sum()
     H_pct = (H / total_shots) * 100 if total_shots > 0 else H
-    print(total_shots)
+    print(H_pct)
 
     # --------------------------------------------------
     # Gaussian smooth → continuous density surface
@@ -1470,6 +1472,11 @@ def make_hexbin_chart(dff, title):
     min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
 
     H_masked = np.where(H_log < min_threshold, H_log, H_log)
+
+
+    print(H_masked)
+
+    print('-----------------\n')
 
     # Grid centers for plotting
     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
