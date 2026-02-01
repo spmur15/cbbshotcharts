@@ -1422,7 +1422,7 @@ def make_hexbin_chart(dff, title):
     dff.loc[:, "angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
     dff.loc[:, "zone"]  = dff.apply(assign_zone, axis=1)
     if "shot_range" in dff.columns:
-        dff2 = reconcile_zone_with_shot_range(dff2)
+        dff = reconcile_zone_with_shot_range(dff)
 
     from scipy.ndimage import gaussian_filter
 
