@@ -1341,10 +1341,10 @@ def make_hexbin_chart(dff, title):
     all_x = np.concatenate([all_x, all_x3, all_x3])
     all_y = np.concatenate([all_y, all_y3, all_y3])
 
-    print(dff['is_three'])
+    #print(dff['is_three'])
 
-    print('all_x')
-    print(all_x)
+    #print('all_x')
+    #print(all_x)
 
     # --------------------------------------------------
     # Build a fine grid and bin shots into it
@@ -1360,23 +1360,23 @@ def make_hexbin_chart(dff, title):
     # 2D histogram (raw counts)
     H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
 
-    print("H")
-    print(H.shape)
-    print(H)
+    #print("H")
+    #print(H.shape)
+    #print(H)
 
     # --------------------------------------------------
     # Normalize to % of total shots before smoothing
     # --------------------------------------------------
     total_shots = H.sum()
     H_pct = (H / total_shots) * 100 if total_shots > 0 else H
-    print("H_pct")
-    print(H_pct.shape)
-    print(H_pct)
+    #print("H_pct")
+    #print(H_pct.shape)
+    #print(H_pct)
 
     # --------------------------------------------------
     # Gaussian smooth → continuous density surface
     # --------------------------------------------------
-    sigma = 3
+    sigma = 2.5
     H_smooth = gaussian_filter(H_pct, sigma=sigma)
 
     # Log-transform to prevent rim from drowning everything
@@ -1386,16 +1386,16 @@ def make_hexbin_chart(dff, title):
     # corresponds to roughly 5+ shots clustering together.
     # 5 shots / total_shots * 100 gives us our raw % threshold,
     # then we run it through the same log transform to match.
-    min_shots = 1
+    min_shots = 2
     min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
     min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
 
-    H_masked = np.where(H_log < min_threshold, H_log, H_log)
-    print("H_masked")
-    print(H_masked.shape)
-    print(H_masked)
+    H_masked = np.where(H_log < min_threshold, np.nan, H_log)
+    #print("H_masked")
+    #print(H_masked.shape)
+    #print(H_masked)
 
-    print('-----------------\n')
+    #print('-----------------\n')
 
     # Grid centers for plotting
     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
