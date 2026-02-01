@@ -1447,7 +1447,7 @@ def make_hexbin_chart(dff, title):
     H_log = np.log1p(H_smooth * 10)
 
     # Mask out zero/near-zero areas so they stay transparent
-    H_masked = np.where(H_log < 0.3, np.nan, H_log)
+    H_masked = np.where(H_log < 0.5, np.nan, H_log)
 
     # Grid centers for plotting
     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
