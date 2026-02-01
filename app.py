@@ -1306,112 +1306,6 @@ def make_zone_chart(dff, title):
 
     return fig
 
-
-# def make_hexbin_chart(dff, title):
-#     """
-#     Create a hexbin density heatmap of shot locations.
-#     """
-#     fig = go.Figure(layout=create_half_court_layout())
-
-#     # Rotate shot coordinates for display
-#     all_x, all_y = rotate_for_display(dff["x_plot"], dff["y_plot"])
-
-#     # Calculate shot density manually first
-#     from scipy.stats import binned_statistic_2d
-
-#     # Create bins
-#     x_bins = np.linspace(all_x.min()-4, all_x.max()+5, 24)
-#     y_bins = np.linspace(all_y.min(), all_y.max()+4, 24)
-
-#     # Count shots in each bin
-#     ret = binned_statistic_2d(
-#         all_x, all_y, 
-#         values=None, 
-#         statistic='count',
-#         bins=[x_bins, y_bins]
-#     )
-
-#     # Apply log transformation to spread out the values
-#     z_values = np.log1p(ret.statistic)  # log(1 + count)
-
-#     # Now use heatmap instead
-#     fig.add_trace(go.Heatmap(
-#         x=x_bins[:-1],
-#         y=y_bins[:-1],
-#         z=z_values.T,
-#         colorscale='Turbo',#sample_colorscale("peach"),#[
-#         #     [0.0, "rgba(100, 100, 255, 0.1)"],
-#         #     [0.3, "rgba(100, 200, 255, 0.4)"],
-#         #     [0.5, "rgba(255, 200, 100, 0.6)"],
-#         #     [0.7, "rgba(255, 150, 50, 0.75)"],
-#         #     [1.0, "rgba(255, 50, 50, 0.9)"]
-#         # ],
-#         showscale=False,
-#         hovertemplate='Shots: %{z:.0f}<extra></extra>',
-#         opacity=0.5
-#     ))
-
-#     # Add 3PT arc
-#     ax, ay = rotate_for_display(ARC_X, ARC_Y)
-#     fig.add_trace(go.Scatter(
-#         x=ax, y=ay,
-#         mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip",
-#         showlegend=False
-#     ))
-
-#     # Add corner 3PT lines
-#     cx1, cy1 = rotate_for_display(
-#         np.array([-BASELINE_X, BASELINE_X]),
-#         np.array([-ARC_Y.max(), -ARC_Y.max()])
-#     )
-#     cx2, cy2 = rotate_for_display(
-#         np.array([-BASELINE_X, BASELINE_X]),
-#         np.array([ARC_Y.max(), ARC_Y.max()])
-#     )
-
-#     fig.add_trace(go.Scatter(
-#         x=cx1, y=cy1,
-#         mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip",
-#         showlegend=False
-#     ))
-
-#     fig.add_trace(go.Scatter(
-#         x=cx2, y=cy2,
-#         mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip",
-#         showlegend=False
-#     ))
-
-#     fig.update_layout(
-#         plot_bgcolor=THEME["bg_chart"],
-#         paper_bgcolor=THEME["bg_chart"],
-#         showlegend=False
-#     )
-
-#     # Add summary stats
-#     dff2 = dff.copy()
-#     dff2.loc[:, "dist"] = np.sqrt(dff2["x_plot"]**2 + dff2["y_plot"]**2)
-#     dff2.loc[:, "angle"] = np.degrees(np.arctan2(dff2["y_plot"], -dff2["x_plot"]))
-#     dff2.loc[:, "zone"] = dff2.apply(assign_zone, axis=1)
-
-#     if "shot_range" in dff2.columns:
-#         dff2 = reconcile_zone_with_shot_range(dff2)
-
-#     summary = shooting_summary(dff2)
-#     fg_line = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
-#     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
-    
-#     add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
-#     add_signature(fig)
-
-#     return fig
-
-
 def make_hexbin_chart(dff, title):
     """
     Continuous KDE-style heatmap of shot density.
@@ -1509,12 +1403,12 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     colorscale = [
         [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-        [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
-        [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
-        [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
-        [0.5,  "rgba(240, 180,  40, 0.95)"],  # orange
-        [0.65, "rgba(230,  80,  40, 0.95)"],  # red-orange
-        [1.0,  "rgba(180,  20,  20, 0.95)"],  # deep red
+        [0.1, "rgba(40,  90, 200, 0.85)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.9)"],   # light blue
+        [0.4,  "rgba(180, 220,  80, 0.95)"],   # yellow-green
+        [0.5,  "rgba(240, 180,  40, 0.75)"],  # orange
+        [0.65, "rgba(230,  80,  40, 0.75)"],  # red-orange
+        [1.0,  "rgba(180,  20,  20, 0.75)"],  # deep red
     ]
 
     fig.add_trace(go.Heatmap(

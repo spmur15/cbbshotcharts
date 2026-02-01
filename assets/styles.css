@@ -50,10 +50,11 @@ html, body {
 
 
 .view-mode-btn {
-    padding: 4px 14px;
-    font-size: 13px;
+    padding: 6px 16px;
+    font-size: 14px;
     font-weight: 600;
     line-height: 1.6;
+    margin: 0 6px;
 }
 
 
