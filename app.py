@@ -2253,8 +2253,8 @@ app.layout = dbc.Container(
             #button=True,
             className="d-flex justify-content-center mb-2",
             inputClassName="btn-check",
-            labelClassName="btn btn-outline-dark px-4 py-2",
-            labelCheckedClassName="btn btn-dark shadow"
+            labelClassName="btn btn-outline-dark view-mode-btn",
+            labelCheckedClassName="btn btn-dark shadow view-mode-btn"
         ),
 
         html.Hr(style={
