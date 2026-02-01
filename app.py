@@ -1442,84 +1442,34 @@ def make_hexbin_chart(dff, title):
     x_bins = np.linspace(x_min, x_max, nx + 1)
     y_bins = np.linspace(y_min, y_max, ny + 1)
 
-    # # 2D histogram (raw counts)
-    # H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
-
-    # # --------------------------------------------------
-    # # Normalize to % of total shots before smoothing
-    # # --------------------------------------------------
-    # total_shots = H.sum()
-    # H_pct = (H / total_shots) * 100 if total_shots > 0 else H
-    # print(total_shots)
-
-    # # --------------------------------------------------
-    # # Gaussian smooth → continuous density surface
-    # # --------------------------------------------------
-    # sigma = 5
-    # H_smooth = gaussian_filter(H_pct, sigma=sigma)
-
-    # # Log-transform to prevent rim from drowning everything
-    # H_log = np.log1p(H_smooth * 50)
-
-    # # Mask: only show areas where the smoothed density
-    # # corresponds to roughly 5+ shots clustering together.
-    # # 5 shots / total_shots * 100 gives us our raw % threshold,
-    # # then we run it through the same log transform to match.
-    # min_shots = 1
-    # min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
-    # min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
-
-    # H_masked = np.where(H_log < min_threshold, H_log, H_log)
+    # 2D histogram (raw counts)
+    H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
 
     # --------------------------------------------------
-    # Build two grids: shot counts and points scored
-    # Points = 2 for a made 2P, 3 for a made 3P
+    # Normalize to % of total shots before smoothing
     # --------------------------------------------------
-    is_three = dff["is_three"].values
-    made = dff["made"].values
-    points = made * np.where(is_three, 3, 2)  # 0 if miss, 2 or 3 if make
-
-    # Rotate points array same as coordinates
-    # (all_x/all_y already rotated, points is per-shot so no spatial rotation needed)
-
-    H_attempts, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
-    H_points, _, _  = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins], weights=points)
+    total_shots = H.sum()
+    H_pct = (H / total_shots) * 100 if total_shots > 0 else H
+    print(total_shots)
 
     # --------------------------------------------------
-    # PPS per bin = total points / total attempts
+    # Gaussian smooth → continuous density surface
     # --------------------------------------------------
-    with np.errstate(divide='ignore', invalid='ignore'):
-        H_pps = np.where(H_attempts >= 3, H_points / H_attempts, np.nan)
+    sigma = 5
+    H_smooth = gaussian_filter(H_pct, sigma=sigma)
 
-    # --------------------------------------------------
-    # Smooth the PPS surface, but weight by attempt density
-    # so sparse bins don't bleed their noisy PPS into neighbors
-    # --------------------------------------------------
-    sigma = 3.5
+    # Log-transform to prevent rim from drowning everything
+    H_log = np.log1p(H_smooth * 50)
 
-    # Smooth attempts for the density mask
-    H_att_smooth = gaussian_filter(H_attempts.astype(float), sigma=sigma)
-
-    # Smooth points and attempts separately, then divide
-    # This is a weighted average — high-volume areas dominate
-    H_points_smooth  = gaussian_filter(np.nan_to_num(H_points, nan=0.0), sigma=sigma)
-    H_att_smooth_div = gaussian_filter(H_attempts.astype(float), sigma=sigma)
-
-    with np.errstate(divide='ignore', invalid='ignore'):
-        H_pps_smooth = np.where(H_att_smooth_div > 0, H_points_smooth / H_att_smooth_div, np.nan)
-
-    # --------------------------------------------------
-    # Mask: hide areas with fewer than ~5 shots clustering
-    # --------------------------------------------------
-    total_shots = H_attempts.sum()
-    min_shots = 5
+    # Mask: only show areas where the smoothed density
+    # corresponds to roughly 5+ shots clustering together.
+    # 5 shots / total_shots * 100 gives us our raw % threshold,
+    # then we run it through the same log transform to match.
+    min_shots = 1
     min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
-    min_threshold = np.log1p(min_pct * 0.3)
+    min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
 
-    H_att_pct = (H_att_smooth / total_shots) * 100 if total_shots > 0 else H_att_smooth
-    H_att_log = np.log1p(H_att_pct * 50)
-
-    H_masked = np.where(H_att_log < min_threshold, np.nan, H_pps_smooth)
+    H_masked = np.where(H_log < min_threshold, H_log, H_log)
 
     # Grid centers for plotting
     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
@@ -1528,30 +1478,26 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     # Colorscale: transparent cool → opaque hot
     # --------------------------------------------------
-    # PPS colorscale: ~0.6 (bad) → ~1.8 (elite)
-    # Red = high PPS, blue = low PPS
     colorscale = [
-        [0.0,  "rgba( 30,  60, 180, 0.45)"],  # dark blue  ~0.6 PPS
-        [0.2,  "rgba( 60, 140, 220, 0.55)"],  # blue       ~0.8
-        [0.3,  "rgba(100, 200, 200, 0.65)"],  # cyan       ~1.0 (breakeven)
-        [0.5,  "rgba(180, 220,  80, 0.75)"],  # yellow     ~1.2
-        [0.6,  "rgba(240, 150,  40, 0.85)"],  # orange     ~1.5
-        [0.8,  "rgba(200,  30,  30, 0.92)"],  # red        ~1.8+ PPS
+        [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
+        [0.1, "rgba(40,  90, 200, 0.6)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.65)"],   # light blue
+        [0.4,  "rgba(180, 220,  80, 0.7)"],   # yellow-green
+        [0.5,  "rgba(240, 180,  40, 0.75)"],  # orange
+        [0.65, "rgba(230,  80,  40, 0.85)"],  # red-orange
+        [1.0,  "rgba(180,  20,  20, 0.92)"],  # deep red
     ]
 
     fig.add_trace(go.Heatmap(
         x=x_centers,
         y=y_centers,
-        z=H_masked.T,
+        z=H_masked.T,           # transpose: plotly expects z[y][x]
         colorscale=colorscale,
         showscale=False,
-        connectgaps=True,
-        zsmooth='best',
+        connectgaps=True,       # interpolate across NaN gaps for smoothness
+        zsmooth='best',         # bilinear smoothing on render
         opacity=0.85,
         hoverinfo='skip',
-        zauto=False,
-        zmin=0.6,   # floor: ~0.6 PPS (bad shooter)
-        zmax=1.4,   # ceiling: ~1.8 PPS (elite)
     ))
 
     # --------------------------------------------------
@@ -1596,12 +1542,12 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     # Summary stats
     # --------------------------------------------------
-    dff2 = dff.copy()
-    dff2.loc[:, "dist"]  = np.sqrt(dff2["x_plot"]**2 + dff2["y_plot"]**2)
-    dff2.loc[:, "angle"] = np.degrees(np.arctan2(dff2["y_plot"], -dff2["x_plot"]))
-    dff2.loc[:, "zone"]  = dff2.apply(assign_zone, axis=1)
-    if "shot_range" in dff2.columns:
-        dff2 = reconcile_zone_with_shot_range(dff2)
+    # dff2 = dff.copy()
+    # dff2.loc[:, "dist"]  = np.sqrt(dff2["x_plot"]**2 + dff2["y_plot"]**2)
+    # dff2.loc[:, "angle"] = np.degrees(np.arctan2(dff2["y_plot"], -dff2["x_plot"]))
+    # dff2.loc[:, "zone"]  = dff2.apply(assign_zone, axis=1)
+    # if "shot_range" in dff2.columns:
+    #     dff2 = reconcile_zone_with_shot_range(dff2)
 
     summary = shooting_summary(dff2)
     fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
