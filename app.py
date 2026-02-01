@@ -1320,8 +1320,8 @@ def make_hexbin_chart(dff, title):
     from scipy.stats import binned_statistic_2d
 
     # Create bins
-    x_bins = np.linspace(all_x.min()-4, all_x.max()+5, 20)
-    y_bins = np.linspace(all_y.min(), all_y.max()+4, 20)
+    x_bins = np.linspace(all_x.min()-4, all_x.max()+5, 24)
+    y_bins = np.linspace(all_y.min(), all_y.max()+4, 24)
 
     # Count shots in each bin
     ret = binned_statistic_2d(
