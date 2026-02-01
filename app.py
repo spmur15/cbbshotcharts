@@ -1437,7 +1437,7 @@ def make_hexbin_chart(dff, title):
     nx, ny = 80, 80  # grid resolution (higher = smoother but slower)
 
     x_min, x_max = -30, 30
-    y_min, y_max = -3, 31
+    y_min, y_max = -6, 31
 
     x_bins = np.linspace(x_min, x_max, nx + 1)
     y_bins = np.linspace(y_min, y_max, ny + 1)
