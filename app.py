@@ -2023,7 +2023,17 @@ app.layout = dbc.Container(
                                         ),
                                         dbc.Accordion(
                                                     [
-                                                        dbc.AccordionItem(
+                                                        dbc.AccordionItem([
+                                                            html.Div(
+                                                                "Get shots while specific lineups are on the court",
+                                                                style={
+                                                                    "fontSize": "14px",
+                                                                    "fontWeight": 600,
+                                                                    "color": THEME["text_secondary"],
+                                                                    "marginBottom": "8px",
+                                                                    "textAlign": "center"
+                                                                }
+                                                            ),
                                                             dcc.Dropdown(
                                                                 id="lineup-dd",
                                                                 multi=False,
@@ -2038,6 +2048,7 @@ app.layout = dbc.Container(
                                                                 },
                                                                 optionHeight=52,
                                                             ),
+                                                            ],
                                                             title="5-Man Lineups",
                                                         )
                                                     ],
@@ -2063,7 +2074,7 @@ app.layout = dbc.Container(
                                                                     html.Div(
                                                                                 "Get shots while players are ON or OFF the court",
                                                                                 style={
-                                                                                    "fontSize": "13px",
+                                                                                    "fontSize": "14px",
                                                                                     "fontWeight": 600,
                                                                                     "color": THEME["text_secondary"],
                                                                                     "marginBottom": "8px",
