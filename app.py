@@ -1891,7 +1891,8 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            xs=9, md=10
+                                            #xs=9, md=10
+                                            width=9
                                         ),
                                         dbc.Col(
                                             dbc.Button(
@@ -1899,9 +1900,10 @@ app.layout = dbc.Container(
                                                 id="reset-button", 
                                                 color="secondary", 
                                                 className="shadow-button",  # ✅ full width of column
-                                                #size='sm'
+                                                size='sm'
                                             ),
-                                            xs=3, md=2,
+                                            #xs=3, md=2,
+                                            width=3,
                                             className="d-flex align-items-center"
                                             #className="px-3"  # ✅ adds padding on sides
                                         ),
