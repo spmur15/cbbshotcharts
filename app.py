@@ -750,7 +750,7 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
                     html.Div(
                         team,
                         style={
-                            "fontSize": "24px",
+                            "fontSize": "28px",
                             "fontWeight": 700,
                             "color": THEME["text_primary"]
                         }
@@ -758,7 +758,7 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
                     subtitle and html.Div(
                         subtitle,
                         style={
-                            "fontSize": "14px",
+                            "fontSize": "16px",
                             "color": THEME["text_secondary"]
                         }
                     )
