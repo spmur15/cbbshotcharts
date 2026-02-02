@@ -975,7 +975,7 @@ def freq_bar(labels, values, colors=None):
                     ]
                 ],
                 style={
-                    "fontSize": "12px",
+                    "fontSize": "13px",
                     "color": THEME["text_secondary"],
                     "marginTop": "10px",
                     "marginLeft": "5px",
@@ -1899,7 +1899,7 @@ app.layout = dbc.Container(
                                                 id="reset-button", 
                                                 color="secondary", 
                                                 className="shadow-button",  # ✅ full width of column
-                                                size='sm'
+                                                #size='sm'
                                             ),
                                             xs=3, md=2,
                                             className="d-flex align-items-center"
@@ -2097,8 +2097,7 @@ app.layout = dbc.Container(
                                                                                 },
                                                                             ),
                                                                         ],
-                                                                        xs=12,
-                                                                        md=6,
+                                                                        width = 12
                                                                     ),
                                                                     dbc.Col(
                                                                         [
@@ -2116,8 +2115,7 @@ app.layout = dbc.Container(
                                                                                 },
                                                                             ),
                                                                         ],
-                                                                        xs=12,
-                                                                        md=6,
+                                                                        width = 12
                                                                     ),
                                                                 ],
                                                                 className="g-2",
@@ -2150,7 +2148,7 @@ app.layout = dbc.Container(
                         className="filters-accordion",
                         style={# "maxWidth": "300px",   # mobile default
                                 "margin": "0 auto",
-                                "maxWidth": "400px",
+                                #"maxWidth": "400px",
                                 #"borderRadius": "10px",
                                 "boxShadow": "0 6px 18px rgba(0,0,0,0.22)",
                                 "borderRadius": "14px",
@@ -2622,18 +2620,18 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
     show_stats_out_off = [
 
-        html.Div(
-            "Shot Range",
-            style={
-                "textAlign": "center",
-                "fontSize": "13px",
-                "fontWeight": 600,
-                "color": THEME["text_secondary"],
-                "marginBottom": "6px",
-                "letterSpacing": "0.04em",
-                "textTransform": "uppercase"
-            }
-        ),
+        # html.Div(
+        #     "Shot Range",
+        #     style={
+        #         "textAlign": "center",
+        #         "fontSize": "13px",
+        #         "fontWeight": 600,
+        #         "color": THEME["text_secondary"],
+        #         "marginBottom": "6px",
+        #         "letterSpacing": "0.04em",
+        #         "textTransform": "uppercase"
+        #     }
+        # ),
 
         stat_row(
             [
@@ -2663,18 +2661,18 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
     show_stats_out_def = [
 
-        html.Div(
-            "Shot Range",
-            style={
-                "textAlign": "center",
-                "fontSize": "13px",
-                "fontWeight": 600,
-                "color": THEME["text_secondary"],
-                "marginBottom": "6px",
-                "letterSpacing": "0.04em",
-                "textTransform": "uppercase"
-            }
-        ),
+        # html.Div(
+        #     "Shot Range",
+        #     style={
+        #         "textAlign": "center",
+        #         "fontSize": "13px",
+        #         "fontWeight": 600,
+        #         "color": THEME["text_secondary"],
+        #         "marginBottom": "6px",
+        #         "letterSpacing": "0.04em",
+        #         "textTransform": "uppercase"
+        #     }
+        # ),
 
         stat_row(
             [
