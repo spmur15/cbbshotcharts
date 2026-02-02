@@ -2060,9 +2060,7 @@ app.layout = dbc.Container(
                                                         dbc.AccordionItem(
                                                             dbc.Row(
                                                                 [
-                                                                    dbc.Col(
-                                                                        [
-                                                                            html.Div(
+                                                                    html.Div(
                                                                                 "Get shots while players are ON or OFF the court",
                                                                                 style={
                                                                                     "fontSize": "13px",
@@ -2072,6 +2070,8 @@ app.layout = dbc.Container(
                                                                                     "textAlign": "center"
                                                                                 }
                                                                             ),
+                                                                    dbc.Col(
+                                                                        [
                                                                             dcc.Dropdown(
                                                                                 id="on-court-dd",
                                                                                 multi=True,
@@ -2139,6 +2139,7 @@ app.layout = dbc.Container(
                         className="filters-accordion",
                         style={# "maxWidth": "300px",   # mobile default
                                 "margin": "0 auto",
+                                "maxWidth": "400px",
                                 #"borderRadius": "10px",
                                 "boxShadow": "0 6px 18px rgba(0,0,0,0.22)",
                                 "borderRadius": "14px",
