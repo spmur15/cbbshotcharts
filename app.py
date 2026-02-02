@@ -1742,6 +1742,29 @@ def parse_lineup_key(key):
 app = Dash(__name__, 
            title="CBB Shot Charts",
            external_stylesheets=[dbc.themes.BOOTSTRAP])
+# ✅ Add custom meta tags for iOS home screen icon
+app.index_string = '''
+<!DOCTYPE html>
+<html>
+    <head>
+        {%metas%}
+        <title>{%title%}</title>
+        {%favicon%}
+        {%css%}
+        <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    </head>
+    <body>
+        {%app_entry%}
+        <footer>
+            {%config%}
+            {%scripts%}
+            {%renderer%}
+        </footer>
+    </body>
+</html>
+'''
 server = app.server  # for Render
 
 # --------------------------------------------------
