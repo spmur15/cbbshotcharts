@@ -740,8 +740,8 @@ def team_title_with_logo(team, subtitle=None, logo_src=None):
             html.Img(
                 src=logo_src,
                 style={
-                    "height": "60px",
-                    "width": "48px",
+                    "height": "80px",
+                    "width": "64px",
                     "objectFit": "contain"
                 }
             ),
@@ -1794,7 +1794,7 @@ app.layout = dbc.Container(
                 [
                     html.H3(
                         [
-                            "CBB Shot Charts ",
+                            "CBB Shot Charts",
                             html.Span(
                                 "BETA",
                                 style={
