@@ -1977,12 +1977,12 @@ app.layout = dbc.Container(
                                             ),
                                             xs=6, md=6
                                         ),
-                                        dbc.Col(
+                                        dbc.Col([
                                             dcc.Dropdown(
                                                 id="shot-type-dd",
                                                 options=[{"label": st, "value": st} for st in SHOT_TYPE_OPTIONS],
                                                 multi=True,
-                                                placeholder="Shot Type",
+                                                placeholder="Shot Type*",
                                                 style={
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
@@ -1992,6 +1992,17 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
+                                            html.Div(
+                                                    "*Shot types from NCAA PBP tracking are not 100% accurate",
+                                                    style={
+                                                        "fontSize": "11px",
+                                                        "fontWeight": 600,
+                                                        "color": THEME["text_secondary"],
+                                                        "marginBottom": "8px",
+                                                        "marginTop": "1px",
+                                                        "textAlign": "center"
+                                                    }
+                                                            ),],
                                             xs=12, md=12  # full width
                                         ),
                                         dbc.Col(
