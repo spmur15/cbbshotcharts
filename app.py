@@ -1992,6 +1992,7 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
+                                            
                                             html.Div(
                                                     "*Shot types from NCAA PBP tracking are not 100% accurate",
                                                     style={
