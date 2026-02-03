@@ -612,6 +612,8 @@ def load_team_data(team):
     dff['team_name'] = dff['team_name'].str.replace('&#39;', "'")
     dff['team_name'] = dff['team_name'].str.replace('&amp;', "&")
 
+    dff['team_name'] = dff['team_name'].str.replace(r'\(NY$', "(NY)", regex=True)
+
     dff['shooter'] = dff['shooter'].str.replace('&#39;', "'")
     dff['shooter'] = dff['shooter'].str.replace('&amp;', "&")
 
@@ -1034,7 +1036,7 @@ def formatNames(ncaa, col='team_name'):
     ncaa[col] = ncaa[col].str.replace("UIW", "Incarnate Word", regex=True)
     ncaa[col] = ncaa[col].str.replace("Ga.", "Georgia", regex=True)
     ncaa[col] = ncaa[col].str.replace("Fla.", "Florida", regex=True)
-    ncaa[col] = ncaa[col].str.replace("St. John's (NY)", "St. John's", regex=False)
+    #ncaa[col] = ncaa[col].str.replace("St. John's (NY)", "St. John's", regex=False)
     ncaa[col] = ncaa[col].str.replace("UTRGV", "UT Rio Grande Valley", regex=True)
     ncaa[col] = ncaa[col].str.replace("Purdue Fort Wayne", "Purdue FW", regex=True)
     ncaa[col] = ncaa[col].str.replace("Ind.", "Indiana", regex=False)
