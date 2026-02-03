@@ -2193,7 +2193,7 @@ app.layout = dbc.Container(
             options=[
                 {"label": "Zones", "value": "zones"},
                 {"label": "Shots", "value": "shots"},
-                {"label": "Heat", "value": "hex"},
+                {"label": "Heat^", "value": "hex"},
             ],
             value="zones",
             inline=True,
@@ -2202,6 +2202,18 @@ app.layout = dbc.Container(
             inputClassName="btn-check",
             labelClassName="btn btn-outline-dark view-mode-btn",
             labelCheckedClassName="btn btn-dark shadow view-mode-btn"
+        ),
+
+        html.Div(
+            "^In progress",
+            style={
+                "fontSize": "11px",
+                "fontWeight": 600,
+                "color": THEME["text_secondary"],
+                "marginTop": "3px",
+                "marginBottom": "0px",
+                "textAlign": "right"
+            }
         ),
 
         html.Hr(style={
