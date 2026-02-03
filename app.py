@@ -1992,51 +1992,21 @@ app.layout = dbc.Container(
                                                     "fontWeight": "600",
                                                 },
                                             ),
-                                            
+
                                             html.Div(
                                                     "*Shot types from NCAA PBP tracking are not 100% accurate",
                                                     style={
                                                         "fontSize": "11px",
                                                         "fontWeight": 600,
                                                         "color": THEME["text_secondary"],
-                                                        "marginBottom": "8px",
-                                                        "marginTop": "1px",
-                                                        "textAlign": "center"
+                                                        "marginBottom": "12px",
+                                                        "marginTop": "3px",
+                                                        "textAlign": "left"
                                                     }
                                                             ),],
                                             xs=12, md=12  # full width
                                         ),
-                                        dbc.Col(
-                                            html.Div(
-                                                dbc.Checkbox(
-                                                    id="exclude-non-d1",
-                                                    label="Exclude games vs non-D1",
-                                                    inputStyle={
-                                                        "marginRight": "8px",
-                                                        
-                                                        "transform": "scale(1.25)",   # 🔹 increase checkbox size
-                                                        "cursor": "pointer",
-                                                        "color":'black'
-                                                    },
-                                                    labelStyle={
-                                                        "cursor": "pointer"
-                                                    },
-                                                    value=True,   # ✅ default checked
-                                                    #inputStyle={"marginRight": "8px"},
-                                                ),
-                                                style={
-                                                    "display": "flex",
-                                                    "alignItems": "center",
-                                                    "justifyContent": "center",
-                                                    "gap": "6px",
-                                                    "fontSize": "14px",
-                                                    "color": THEME["text_secondary"],
-                                                    "marginBottom": "5px",
-                                                    "marginTop": "10px",
-                                                }
-                                            ),
-                                            xs=12
-                                        ),
+                                        
                                         dbc.Accordion(
                                                     [
                                                         dbc.AccordionItem([
@@ -2151,6 +2121,37 @@ app.layout = dbc.Container(
                                                         #"borderRadius": "10px",
                                                         "fontWeight": "600",
                                                     }
+                                                ),
+                                                dbc.Col(
+                                                    html.Div(
+                                                        dbc.Checkbox(
+                                                            id="exclude-non-d1",
+                                                            label="Exclude games vs non-D1",
+                                                            inputStyle={
+                                                                "marginRight": "8px",
+                                                                
+                                                                "transform": "scale(1.25)",   # 🔹 increase checkbox size
+                                                                "cursor": "pointer",
+                                                                "color":'black'
+                                                            },
+                                                            labelStyle={
+                                                                "cursor": "pointer"
+                                                            },
+                                                            value=True,   # ✅ default checked
+                                                            #inputStyle={"marginRight": "8px"},
+                                                        ),
+                                                        style={
+                                                            "display": "flex",
+                                                            "alignItems": "center",
+                                                            "justifyContent": "center",
+                                                            "gap": "6px",
+                                                            "fontSize": "14px",
+                                                            "color": THEME["text_secondary"],
+                                                            "marginBottom": "5px",
+                                                            "marginTop": "10px",
+                                                        }
+                                                    ),
+                                                    xs=12
                                                 ),
                                         html.Br(),
                                     ],
