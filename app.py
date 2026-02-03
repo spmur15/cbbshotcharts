@@ -2000,7 +2000,7 @@ app.layout = dbc.Container(
                                                         "fontWeight": 600,
                                                         "color": THEME["text_secondary"],
                                                         "marginBottom": "12px",
-                                                        "marginTop": "3px",
+                                                        "marginTop": "5px",
                                                         "textAlign": "left"
                                                     }
                                                             ),],
@@ -2193,7 +2193,7 @@ app.layout = dbc.Container(
             options=[
                 {"label": "Zones", "value": "zones"},
                 {"label": "Shots", "value": "shots"},
-                {"label": "Heat^", "value": "hex"},
+                {"label": "Heat*", "value": "hex"},
             ],
             value="zones",
             inline=True,
@@ -2205,14 +2205,14 @@ app.layout = dbc.Container(
         ),
 
         html.Div(
-            "^In progress",
+            "*Beta",
             style={
                 "fontSize": "11px",
                 "fontWeight": 600,
                 "color": THEME["text_secondary"],
-                "marginTop": "3px",
+                "marginTop": "2px",
                 "marginBottom": "0px",
-                "textAlign": "right"
+                "textAlign": "center"
             }
         ),
 
