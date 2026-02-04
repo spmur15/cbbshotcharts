@@ -2067,9 +2067,9 @@ app.layout = dbc.Container(
                                                     }
                                                 ),
 
-                                                # dbc.Accordion(
-                                                #     [
-                                                #         dbc.AccordionItem(
+                                                dbc.Accordion(
+                                                    [
+                                                        dbc.AccordionItem(
                                                             dbc.Row(
                                                                 [
                                                                     html.Div(
@@ -2121,23 +2121,23 @@ app.layout = dbc.Container(
                                                                 ],
                                                                 className="g-2",
                                                             ),
-                                                            #title="On / Off",
-                                                        #)
-                                                    #],
-                                                #     start_collapsed=True,
-                                                #     flush=True,
-                                                #     style={
-                                                #         "overflow": "visible",
-                                                #         "marginTop": "12px",
-                                                #         #"overflow": "visible",
-                                                #         "backgroundColor": THEME["bg_dropdown"],
-                                                #         "color": THEME["text_secondary"],
-                                                #         "boxShadow": THEME["shadow_md"],
-                                                #         #"borderRadius": "10px",
-                                                #         "fontWeight": "600",
-                                                #     },
-                                                #     className="filters-accordion",
-                                                # ),
+                                                            title="On / Off",
+                                                        )
+                                                    ],
+                                                    start_collapsed=True,
+                                                    flush=True,
+                                                    style={
+                                                        #"overflow": "visible",
+                                                        "marginTop": "12px",
+                                                        #"overflow": "visible",
+                                                        "backgroundColor": THEME["bg_dropdown"],
+                                                        "color": THEME["text_secondary"],
+                                                        "boxShadow": THEME["shadow_sm"],
+                                                        #"borderRadius": "10px",
+                                                        "fontWeight": "600",
+                                                    },
+                                                    className="filters-accordion",
+                                                ),
                                                 dbc.Col(
                                                     html.Div(
                                                         dbc.Checkbox(
