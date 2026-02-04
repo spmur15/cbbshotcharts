@@ -1329,7 +1329,9 @@ def make_hexbin_chart(dff, title):
 
     # get two dataframes of just 3P makes and 2P makes
     dff_three = dff.loc[dff['is_three'] & (dff['result']=='made')]
-    dff_two = dff.loc[(~dff['is_three']) & (dff['result']=='made')]
+    dff_two = dff.loc[(dff['zone'].str.contains('Mid')) & (dff['result']=='made')]
+
+    print(dff_two)
 
     # create new numpy arrays for these makes
     all_x2, all_y2 = rotate_for_display(dff_two["x_plot"].values, dff_two["y_plot"].values)
@@ -1340,8 +1342,8 @@ def make_hexbin_chart(dff, title):
     #all_x = np.concatenate([all_x, all_x2, all_x3, all_x3])
     #all_y = np.concatenate([all_y, all_y2, all_y3, all_y3])
 
-    all_x = np.concatenate([all_x, all_x3])
-    all_y = np.concatenate([all_y, all_y3])
+    all_x = np.concatenate([all_x, all_x2, all_x3])
+    all_y = np.concatenate([all_y, all_y2, all_y3])
 
     #print(dff['is_three'])
 
