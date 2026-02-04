@@ -1874,7 +1874,7 @@ app.layout = dbc.Container(
                         "fontWeight": 600,
                         "color": THEME["text_secondary"],
                         "marginBottom": "8px",
-                        "marginTop": "3px",
+                        "marginTop": "5px",
                         "textAlign": "center",
                         "maxWidth": "360px",  # ✅ match dropdown width
                         "margin": "3px auto 0 auto",  # ✅ center it
