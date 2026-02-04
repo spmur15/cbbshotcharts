@@ -214,3 +214,9 @@ div[class*="placeholder"] {
 }
 
 
+/* Override ALL text inside dropdown inputs */
+*[class*="mantine-Input"] *,
+*[class*="mantine-Select"] *,
+*[class*="mantine-MultiSelect"] * {
+    color: #b0b0b0 !important;
+}
