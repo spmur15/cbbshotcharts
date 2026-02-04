@@ -1850,7 +1850,7 @@ app.layout = dbc.Container(
             style={"margin": "0"}
         )),
 
-        dbc.Row(
+        dbc.Row([
             dbc.Col(
                 dcc.Dropdown(
                     id="team-dd",
@@ -1883,7 +1883,7 @@ app.layout = dbc.Container(
                         "textAlign": "center"
                     }
                 ),
-            ),
+            )],
             className="mb-4"
         ),
 
@@ -2408,7 +2408,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     dff = load_team_data(team)
 
     if team == 'Vanderbilt':
-        vandy_text = '*Shots at home for Vanderbilt are not fully accurate; the extra hardwood around the court obstructs the shot tracking.'
+        vandy_text = '*Shots at home for Vanderbilt are not fully accurate;<br>the extra hardwood around the court obstructs the shot tracking.'
     else:
         vandy_text = ''
 
