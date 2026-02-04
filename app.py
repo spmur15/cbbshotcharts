@@ -2043,7 +2043,7 @@ app.layout = dbc.Container(
                                                                     "fontSize": "14px",
                                                                     "backgroundColor": THEME["bg_dropdown"],
                                                                     "color": THEME["text_secondary"],
-                                                                    "boxShadow": THEME["shadow_sm"],
+                                                                    #"boxShadow": THEME["shadow_sm"],
                                                                     "borderRadius": "10px",
                                                                     "fontWeight": "600",
                                                                 },
@@ -2135,7 +2135,8 @@ app.layout = dbc.Container(
                                                         "boxShadow": THEME["shadow_md"],
                                                         #"borderRadius": "10px",
                                                         "fontWeight": "600",
-                                                    }
+                                                    },
+                                                    className="filters-accordion",
                                                 ),
                                                 dbc.Col(
                                                     html.Div(

@@ -266,3 +266,49 @@ div[class*="MultiSelect"] input {
 .dash-dropdown-value-count {
     color: #b0b0b0 !important;
 }
+
+
+/* Dropdown popup background */
+.dash-dropdown-content {
+    background-color: #1f2328 !important;
+    border-color: #2a2a2a !important;
+}
+
+/* Search input inside dropdown */
+.dash-dropdown-search {
+    background-color: #1f2328 !important;
+    color: #eaeaea !important;
+    border-color: #2a2a2a !important;
+}
+
+/* Search placeholder */
+.dash-dropdown-search::placeholder {
+    color: #b0b0b0 !important;
+}
+
+/* Options list */
+.dash-options-list,
+.dash-dropdown-options {
+    background-color: #1f2328 !important;
+}
+
+/* Individual option items */
+.dash-dropdown-option {
+    background-color: #1f2328 !important;
+    color: #eaeaea !important;
+}
+
+/* Option hover state */
+.dash-dropdown-option:hover {
+    background-color: #2a2d32 !important;
+}
+
+/* Selected option */
+.dash-dropdown-option.selected {
+    background-color: #3a3d42 !important;
+}
+
+/* Option text */
+.dash-options-list-option-text {
+    color: #eaeaea !important;
+}
