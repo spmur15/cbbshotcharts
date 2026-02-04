@@ -1773,7 +1773,7 @@ server = app.server  # for Render
 # DROPDOWN OPTIONS
 # --------------------------------------------------
 team_options = [
-    {"label": t, "value": t}
+    {"label": re.sub('Vanderbilt', 'Vanderbilt*', t), "value": t}
     for t in sorted(team_p5)
 ]
 
@@ -1869,6 +1869,19 @@ app.layout = dbc.Container(
                 width=12
             ),
             className="mb-4"
+        ),
+
+        html.Div(
+            "",
+            id='vanderbilt-asterisk',
+            style={
+                "fontSize": "11px",
+                "fontWeight": 600,
+                "color": THEME["text_secondary"],
+                "marginBottom": "3px",
+                "marginTop": "3px",
+                "textAlign": "center"
+            }
         ),
 
         dbc.Row([
@@ -2360,6 +2373,7 @@ app.layout = dbc.Container(
     Output("defense-title", "children"),
     Output("offense-shot-stats", "children"),
     Output("defense-shot-stats", "children"),
+    Output("vanderbilt-asterisk", "children"),
     
     Input("team-dd", "value"),
     Input("view-mode", "value"),
@@ -2387,6 +2401,11 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
 
     # Load correct team file
     dff = load_team_data(team)
+
+    if team == 'Vanderbilt':
+        vandy_text = '*Shots at home for Vanderbilt are not fully accurate; the extra hardwood around the court obstructs the shot tracking.'
+    else:
+        vandy_text = ''
 
     # exclude non-D1 opponents if checked
     if exclude_non_d1:
@@ -2570,7 +2589,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
             chart_header(team, "Offense", team_logo),
             chart_header(team, "Defense", team_logo),
             [],   # no offense stats
-            []    # no defense stats
+            [],    # no defense stats
+            vandy_text
         )
 
     dff = standardize_to_right_basket(dff, x_col="x", y_col="y")
@@ -2607,7 +2627,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
                 chart_header(team, "Offense", team_logo),
                 chart_header(team, "Defense", team_logo),
                 [],
-                []
+                [],
+                vandy_text
             )
         
         if off_df.empty:
@@ -2732,7 +2753,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         chart_header(team, off_title, team_logo),
         chart_header(team, def_title, team_logo),
         show_stats_out_off,
-        show_stats_out_def
+        show_stats_out_def,
+        vandy_text
         )
 
 
