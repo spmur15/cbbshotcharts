@@ -193,3 +193,24 @@ div[class*="mantine"][class*="input"] {
 *[class*="mantine-MultiSelect-placeholder"] {
     color: #b0b0b0 !important;
 }
+
+
+
+/* Force placeholder text color - more specific selectors */
+input[class*="mantine"]::placeholder,
+div[class*="mantine"] input::placeholder {
+    color: #b0b0b0 !important;
+    opacity: 1 !important;
+}
+
+/* Target the section that shows the placeholder */
+*[class*="Placeholder"] {
+    color: #b0b0b0 !important;
+}
+
+/* Sometimes Mantine renders placeholder as a separate div */
+div[class*="placeholder"] {
+    color: #b0b0b0 !important;
+}
+
+
