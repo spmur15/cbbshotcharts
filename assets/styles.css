@@ -177,3 +177,19 @@ div[class*="mantine"][class*="input"] {
     background-color: #1f2328 !important;
     border-color: #2a2a2a !important;
 }
+
+
+/* Placeholder text color */
+*[class*="mantine-Input-input"]::placeholder,
+*[class*="mantine-Select-input"]::placeholder,
+*[class*="mantine-MultiSelect-input"]::placeholder {
+    color: #b0b0b0 !important;  /* text_secondary */
+    opacity: 1 !important;
+}
+
+/* Also target the actual placeholder wrapper that Mantine uses */
+*[class*="mantine-Input-placeholder"],
+*[class*="mantine-Select-placeholder"],
+*[class*="mantine-MultiSelect-placeholder"] {
+    color: #b0b0b0 !important;
+}
