@@ -2055,15 +2055,16 @@ app.layout = dbc.Container(
                                                     ],
                                                     start_collapsed=True,
                                                     flush=True,
+                                                    className="filters-accordion",
                                                     style={
-                                                        "overflow": "visible",
+                                                        #"overflow": "visible",
                                                         "marginTop": "6px",
                                                         #"overflow": "visible",
                                                         "backgroundColor": THEME["bg_dropdown"],
                                                         "color": THEME["text_secondary"],
                                                         "boxShadow": THEME["shadow_sm"],
                                                         #"borderRadius": "10px",
-                                                        "fontWeight": "600",
+                                                        #"fontWeight": "600",
                                                     }
                                                 ),
 
@@ -2126,6 +2127,7 @@ app.layout = dbc.Container(
                                                     ],
                                                     start_collapsed=True,
                                                     flush=True,
+                                                    className="filters-accordion",
                                                     style={
                                                         #"overflow": "visible",
                                                         "marginTop": "12px",
@@ -2134,9 +2136,9 @@ app.layout = dbc.Container(
                                                         "color": THEME["text_secondary"],
                                                         "boxShadow": THEME["shadow_sm"],
                                                         #"borderRadius": "10px",
-                                                        "fontWeight": "600",
+                                                        #"fontWeight": "600",
                                                     },
-                                                    className="filters-accordion",
+                                                    
                                                 ),
                                                 dbc.Col(
                                                     html.Div(
