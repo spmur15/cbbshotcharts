@@ -1903,7 +1903,7 @@ app.layout = dbc.Container(
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
                                                     "color": THEME["text_primary"],
-                                                    #"boxShadow": THEME["shadow_md"],
+                                                    "boxShadow": THEME["shadow_sm"],
                                                     "borderRadius": "10px",
                                                     "fontWeight": "600",
                                                 },
@@ -2144,7 +2144,6 @@ app.layout = dbc.Container(
                                                             label="Exclude games vs non-D1",
                                                             inputStyle={
                                                                 "marginRight": "8px",
-                                                                
                                                                 "transform": "scale(1.25)",   # 🔹 increase checkbox size
                                                                 "cursor": "pointer",
                                                                 "color":'black'
@@ -2182,7 +2181,7 @@ app.layout = dbc.Container(
                                 "margin": "0 auto",
                                 #"maxWidth": "400px",
                                 #"borderRadius": "10px",
-                                "boxShadow": "0 6px 18px rgba(0,0,0,0.22)",
+                                "boxShadow": "0 6px 16px rgba(0,0,0,0.7)",
                                 "borderRadius": "14px",
                                 "backgroundColor": THEME['bg_panel'],}
                     ),

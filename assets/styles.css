@@ -262,4 +262,7 @@ div[class*="MultiSelect"] input {
 }
 
 
-
+/* Fix the "X selected" text color */
+.dash-dropdown-value-count {
+    color: #b0b0b0 !important;
+}
