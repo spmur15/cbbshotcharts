@@ -220,3 +220,26 @@ div[class*="placeholder"] {
 *[class*="mantine-MultiSelect"] * {
     color: #b0b0b0 !important;
 }
+
+
+
+/* Multi-select placeholder specifically */
+div[class*="MultiSelect-input"]::placeholder {
+    color: #b0b0b0 !important;
+    opacity: 1 !important;
+}
+
+/* The placeholder text when nothing is selected */
+div[class*="MultiSelect"] input[placeholder]::placeholder {
+    color: #b0b0b0 !important;
+}
+
+/* Sometimes the placeholder is rendered as a span */
+span[class*="placeholder"] {
+    color: #b0b0b0 !important;
+}
+
+/* Nuclear option for MultiSelect */
+div[class*="MultiSelect"] * {
+    color: #b0b0b0 !important;
+}
