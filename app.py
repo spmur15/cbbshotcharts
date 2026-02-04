@@ -1773,9 +1773,7 @@ server = app.server  # for Render
 # DROPDOWN OPTIONS
 # --------------------------------------------------
 team_options = [
-    # {"label": re.sub('Vanderbilt', 'Vanderbilt*', t), "value": t}
-    # for t in sorted(team_p5)
-    {"label": t, "value": t}
+    {"label": re.sub('Vanderbilt', 'Vanderbilt*', t), "value": t}
     for t in sorted(team_p5)
 ]
 
@@ -1850,8 +1848,8 @@ app.layout = dbc.Container(
             style={"margin": "0"}
         )),
 
-        dbc.Row([
-            dbc.Col(
+        dbc.Row(
+            dbc.Col([
                 dcc.Dropdown(
                     id="team-dd",
                     options=team_options,
@@ -1866,24 +1864,23 @@ app.layout = dbc.Container(
                         "boxShadow": THEME["shadow_md"],
                         "borderRadius": "10px",
                         "fontWeight": "600",
-                                            }
+                    }
                 ),
-                width=12
-            ),
-            dbc.Col(
                 html.Div(
                     "",
                     id='vanderbilt-asterisk',
                     style={
-                        "fontSize": "13px",
+                        "fontSize": "14px",
                         "fontWeight": 600,
                         "color": THEME["text_secondary"],
-                        "marginBottom": "3px",
+                        "marginBottom": "8px",
                         "marginTop": "3px",
-                        "textAlign": "center"
+                        "textAlign": "center",
+                        "maxWidth": "360px",  # ✅ match dropdown width
+                        "margin": "3px auto 0 auto",  # ✅ center it
                     }
                 ),
-            )],
+            ], width=12),
             className="mb-4"
         ),
 
@@ -2408,7 +2405,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     dff = load_team_data(team)
 
     if team == 'Vanderbilt':
-        vandy_text = '*Shots at home for Vanderbilt are not fully accurate;<br>the extra hardwood around the court obstructs the shot tracking.'
+        vandy_text = '*Shots at home for Vanderbilt are not fully accurate; the extra hardwood around the court obstructs the shot tracking.'
     else:
         vandy_text = ''
 
