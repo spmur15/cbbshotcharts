@@ -1773,7 +1773,9 @@ server = app.server  # for Render
 # DROPDOWN OPTIONS
 # --------------------------------------------------
 team_options = [
-    {"label": re.sub('Vanderbilt', 'Vanderbilt*', t), "value": t}
+    # {"label": re.sub('Vanderbilt', 'Vanderbilt*', t), "value": t}
+    # for t in sorted(team_p5)
+    {"label": t, "value": t}
     for t in sorted(team_p5)
 ]
 
@@ -1868,21 +1870,24 @@ app.layout = dbc.Container(
                 ),
                 width=12
             ),
+            dbc.Col(
+                html.Div(
+                    "",
+                    id='vanderbilt-asterisk',
+                    style={
+                        "fontSize": "13px",
+                        "fontWeight": 600,
+                        "color": THEME["text_secondary"],
+                        "marginBottom": "3px",
+                        "marginTop": "3px",
+                        "textAlign": "center"
+                    }
+                ),
+            ),
             className="mb-4"
         ),
 
-        html.Div(
-            "",
-            id='vanderbilt-asterisk',
-            style={
-                "fontSize": "11px",
-                "fontWeight": 600,
-                "color": THEME["text_secondary"],
-                "marginBottom": "3px",
-                "marginTop": "3px",
-                "textAlign": "center"
-            }
-        ),
+        
 
         dbc.Row([
             dbc.Col(
