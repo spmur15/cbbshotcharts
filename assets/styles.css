@@ -157,3 +157,23 @@ div[class*="mantine"][class*="input"] {
     background-color: #1f2328 !important;
     color: #eaeaea !important;
 }
+
+/* Nuclear option - override ALL Mantine inputs */
+*[class*="mantine-Input-input"],
+* [class*="mantine-Select-input"],
+* [class*="mantine-MultiSelect-input"] {
+    background-color: #1f2328 !important;
+    color: #eaeaea !important;
+    border-color: #2a2a2a !important;
+}
+
+/* The wrapper too */
+* [class*="mantine-Input-wrapper"] {
+    background-color: #1f2328 !important;
+}
+
+/* Dropdown options menu */
+* [class*="mantine-Popover-dropdown"] {
+    background-color: #1f2328 !important;
+    border-color: #2a2a2a !important;
+}
