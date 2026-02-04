@@ -243,3 +243,19 @@ span[class*="placeholder"] {
 div[class*="MultiSelect"] * {
     color: #b0b0b0 !important;
 }
+
+
+/* Selected values text (e.g., "3 selected") */
+div[class*="MultiSelect-value"],
+div[class*="MultiSelect-valueLabel"],
+span[class*="MultiSelect-value"] {
+    color: #b0b0b0 !important;
+}
+
+/* Also target the pill/badge background if needed */
+div[class*="MultiSelect-value"] {
+    background-color: #2a2d32 !important;
+}
+
+
+
