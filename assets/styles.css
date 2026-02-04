@@ -57,4 +57,77 @@ html, body {
     margin: 0 -10px;
 }
 
+/* ===================================
+   NEW DASH DROPDOWN STYLING (Mantine)
+   =================================== */
 
+/* Main dropdown input */
+.mantine-MultiSelect-input,
+.mantine-Select-input {
+    background-color: #1f2328 !important;
+    border-color: #2a2a2a !important;
+    color: #eaeaea !important;
+}
+
+/* Placeholder text */
+.mantine-MultiSelect-input::placeholder,
+.mantine-Select-input::placeholder {
+    color: #888888 !important;
+}
+
+/* Dropdown menu */
+.mantine-MultiSelect-dropdown,
+.mantine-Select-dropdown {
+    background-color: #1f2328 !important;
+    border-color: #2a2a2a !important;
+}
+
+/* Search input inside dropdown */
+.mantine-MultiSelect-searchInput {
+    background-color: #1f2328 !important;
+    color: #eaeaea !important;
+    border-color: #2a2a2a !important;
+}
+
+/* Individual options */
+.mantine-MultiSelect-item,
+.mantine-Select-item {
+    background-color: #1f2328 !important;
+    color: #eaeaea !important;
+}
+
+/* Hover state */
+.mantine-MultiSelect-item:hover,
+.mantine-Select-item:hover {
+    background-color: #2a2d32 !important;
+}
+
+/* Selected items */
+.mantine-MultiSelect-item[data-selected="true"],
+.mantine-Select-item[data-selected="true"] {
+    background-color: #3a3d42 !important;
+}
+
+/* Selected value pills/chips */
+.mantine-MultiSelect-value {
+    background-color: #2a2d32 !important;
+    color: #eaeaea !important;
+}
+
+/* Select All / Deselect All buttons */
+.mantine-MultiSelect-selectAll,
+.mantine-MultiSelect-deselectAll {
+    color: #b0b0b0 !important;
+}
+
+.mantine-MultiSelect-selectAll:hover,
+.mantine-MultiSelect-deselectAll:hover {
+    color: #eaeaea !important;
+    background-color: #2a2d32 !important;
+}
+
+/* Dropdown arrow icon */
+.mantine-Select-rightSection,
+.mantine-MultiSelect-rightSection {
+    color: #eaeaea !important;
+}
