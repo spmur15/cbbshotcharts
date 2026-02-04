@@ -131,3 +131,29 @@ html, body {
 .mantine-MultiSelect-rightSection {
     color: #eaeaea !important;
 }
+
+/* Target the ACTUAL input wrapper that's visible */
+div[class*="mantine-Input-wrapper"] {
+    background-color: #1f2328 !important;
+}
+
+/* Target the input field itself */
+div[class*="mantine-Input-input"] {
+    background-color: #1f2328 !important;
+    border-color: #2a2a2a !important;
+    color: #eaeaea !important;
+}
+
+/* More specific targeting for Select components */
+.dash-dropdown,
+.dash-dropdown .Select-control {
+    background-color: #1f2328 !important;
+    border-color: #2a2a2a !important;
+}
+
+/* Nuclear option - target ANY input that Dash creates */
+input[class*="mantine"],
+div[class*="mantine"][class*="input"] {
+    background-color: #1f2328 !important;
+    color: #eaeaea !important;
+}
