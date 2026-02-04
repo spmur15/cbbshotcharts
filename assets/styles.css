@@ -312,3 +312,29 @@ div[class*="MultiSelect"] input {
 .dash-options-list-option-text {
     color: #eaeaea !important;
 }
+
+
+
+/* Select All / Deselect All buttons */
+.dash-dropdown-action-button {
+    color: #b0b0b0 !important;
+    background-color: transparent !important;
+}
+
+.dash-dropdown-action-button:hover {
+    color: #eaeaea !important;
+    background-color: #2a2d32 !important;
+}
+
+/* Search container background */
+.dash-dropdown-search-container {
+    background-color: #1f2328 !important;
+}
+
+/* Search icon color */
+.dash-dropdown-search-icon {
+    color: #b0b0b0 !important;
+}
+
+
+
