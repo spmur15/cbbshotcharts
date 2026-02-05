@@ -1032,7 +1032,7 @@ def formatNames(ncaa, col='team_name'):
     ncaa[col] = ncaa[col].str.replace("Ark.-Pine Bluff", "Arkansas Pine Bluff")
     ncaa[col] = ncaa[col].str.replace("Ky.", "Kentucky", regex=True)
     ncaa[col] = ncaa[col].str.replace("VMI", "Virginia Military", regex=True)
-    ncaa[col] = ncaa[col].str.replace("Saint Mary's (CA)", "Saint Mary's", regex=False)
+    #ncaa[col] = ncaa[col].str.replace("Saint Mary's (CA)", "Saint Mary's", regex=False)
     ncaa[col] = ncaa[col].str.replace("UIW", "Incarnate Word", regex=True)
     ncaa[col] = ncaa[col].str.replace("Ga.", "Georgia", regex=True)
     ncaa[col] = ncaa[col].str.replace("Fla.", "Florida", regex=True)
@@ -2050,7 +2050,7 @@ app.layout = dbc.Container(
                                                     flush=True,
                                                     className="filters-accordion",
                                                     style={
-                                                        #"overflow": "visible",
+                                                        "overflow": "visible",
                                                         "marginTop": "6px",
                                                         #"overflow": "visible",
                                                         "backgroundColor": THEME["bg_dropdown"],
@@ -2122,7 +2122,7 @@ app.layout = dbc.Container(
                                                     flush=True,
                                                     className="filters-accordion",
                                                     style={
-                                                        #"overflow": "visible",
+                                                        "overflow": "visible",
                                                         "marginTop": "12px",
                                                         #"overflow": "visible",
                                                         "backgroundColor": THEME["bg_dropdown"],

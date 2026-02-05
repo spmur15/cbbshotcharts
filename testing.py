@@ -1312,6 +1312,175 @@ def make_zone_chart(dff, title):
 
 
 
+# def make_hexbin_chart(dff, title):
+#     """
+#     Continuous KDE-style heatmap of shot density.
+#     """
+
+#     dff = dff.copy()
+#     dff.loc[:, "dist"]  = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
+#     dff.loc[:, "angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
+#     dff.loc[:, "zone"]  = dff.apply(assign_zone, axis=1)
+#     if "shot_range" in dff.columns:
+#         dff = reconcile_zone_with_shot_range(dff)
+
+#     from scipy.ndimage import gaussian_filter
+
+#     fig = go.Figure(layout=create_half_court_layout())
+
+#     # Rotate shot coordinates for display
+#     all_x, all_y = rotate_for_display(dff["x_plot"].values, dff["y_plot"].values)
+
+#     # get two dataframes of just 3P makes and 2P makes
+#     dff_made = dff.loc[(dff['result']=='made')]
+#     dff_three = dff.loc[dff['is_three'] & (dff['result']=='made')]
+#     dff_two = dff.loc[(dff['zone'].str.contains('Mid')) & (dff['result']=='made')]
+
+#     # create new numpy arrays for these makes
+#     all_x2, all_y2 = rotate_for_display(dff_two["x_plot"].values, dff_two["y_plot"].values)
+#     all_x3, all_y3 = rotate_for_display(dff_three["x_plot"].values, dff_three["y_plot"].values)
+#     made_x, made_y = rotate_for_display(dff_made["x_plot"].values, dff_made["y_plot"].values)
+
+#     # get all makes
+#     all_x = np.concatenate([made_x, all_x3])
+#     all_y = np.concatenate([made_y, all_y3])
+
+#     #print(dff['is_three'])
+
+#     #print('all_x')
+#     #print(all_x)
+
+#     # --------------------------------------------------
+#     # Build a fine grid and bin shots into it
+#     # --------------------------------------------------
+#     nx, ny = 80, 80  # grid resolution (higher = smoother but slower)
+
+#     x_min, x_max = -30, 30
+#     y_min, y_max = -6, 38
+
+#     x_bins = np.linspace(x_min, x_max, nx + 1)
+#     y_bins = np.linspace(y_min, y_max, ny + 1)
+
+#     # 2D histogram (raw counts)
+#     H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
+
+#     #print("H")
+#     #print(H.shape)
+#     #print(H)
+
+#     # --------------------------------------------------
+#     # Normalize to % of total shots before smoothing
+#     # --------------------------------------------------
+#     total_shots = H.sum()
+#     H_pct = (H / total_shots) * 100 if total_shots > 0 else H
+#     #print("H_pct")
+#     #print(H_pct.shape)
+#     #print(H_pct)
+
+#     # --------------------------------------------------
+#     # Gaussian smooth → continuous density surface
+#     # --------------------------------------------------
+#     sigma = 2.5
+#     H_smooth = gaussian_filter(H_pct, sigma=sigma)
+
+#     # Log-transform to prevent rim from drowning everything
+#     H_log = np.log1p(H_smooth * 50)
+
+#     # Mask: only show areas where the smoothed density
+#     # corresponds to roughly 5+ shots clustering together.
+#     # 5 shots / total_shots * 100 gives us our raw % threshold,
+#     # then we run it through the same log transform to match.
+#     min_shots = 3
+#     min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
+#     min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
+
+#     H_masked = np.where(H_log < min_threshold, np.nan, H_log)
+#     #print("H_masked")
+#     #print(H_masked.shape)
+#     #print(H_masked)
+
+#     #print('-----------------\n')
+
+#     # Grid centers for plotting
+#     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
+#     y_centers = (y_bins[:-1] + y_bins[1:]) / 2
+
+#     # --------------------------------------------------
+#     # Colorscale: transparent cool → opaque hot
+#     # --------------------------------------------------
+#     colorscale = [
+#         [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
+#         [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
+#         [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
+#         [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
+#         [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
+#         [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
+#         [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
+#     ]
+
+#     fig.add_trace(go.Heatmap(
+#         x=x_centers,
+#         y=y_centers,
+#         z=H_masked.T,           # transpose: plotly expects z[y][x]
+#         colorscale=colorscale,
+#         showscale=False,
+#         connectgaps=True,       # interpolate across NaN gaps for smoothness
+#         zsmooth='best',         # bilinear smoothing on render
+#         opacity=0.85,
+#         hoverinfo='skip',
+#     ))
+
+#     # --------------------------------------------------
+#     # Court lines drawn ON TOP of heatmap
+#     # --------------------------------------------------
+#     # 3PT arc
+#     ax, ay = rotate_for_display(ARC_X, ARC_Y)
+#     fig.add_trace(go.Scatter(
+#         x=ax, y=ay,
+#         mode="lines",
+#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+#         hoverinfo="skip",
+#         showlegend=False
+#     ))
+
+#     # Corner 3PT lines
+#     cx1, cy1 = rotate_for_display(
+#         np.array([-BASELINE_X, BASELINE_X]),
+#         np.array([-ARC_Y.max(), -ARC_Y.max()])
+#     )
+#     cx2, cy2 = rotate_for_display(
+#         np.array([-BASELINE_X, BASELINE_X]),
+#         np.array([ARC_Y.max(), ARC_Y.max()])
+#     )
+#     fig.add_trace(go.Scatter(
+#         x=cx1, y=cy1, mode="lines",
+#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+#         hoverinfo="skip", showlegend=False
+#     ))
+#     fig.add_trace(go.Scatter(
+#         x=cx2, y=cy2, mode="lines",
+#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+#         hoverinfo="skip", showlegend=False
+#     ))
+
+#     fig.update_layout(
+#         plot_bgcolor=THEME["bg_chart"],
+#         paper_bgcolor=THEME["bg_chart"],
+#         showlegend=False
+#     )
+
+#     # --------------------------------------------------
+#     # Summary stats
+#     # --------------------------------------------------
+#     summary = shooting_summary(dff)
+#     fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
+#     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
+#     add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
+#     add_signature(fig)
+
+#     return fig
+
+
 def make_hexbin_chart(dff, title):
     """
     Continuous KDE-style heatmap of shot density.
@@ -1331,40 +1500,18 @@ def make_hexbin_chart(dff, title):
     # Rotate shot coordinates for display
     all_x, all_y = rotate_for_display(dff["x_plot"].values, dff["y_plot"].values)
 
-    # get two dataframes of just 3P makes and 2P makes
-    dff_made = dff.loc[(dff['result']=='made')]
-    dff_three = dff.loc[dff['is_three'] & (dff['result']=='made')]
-    dff_two = dff.loc[(dff['zone'].str.contains('Mid')) & (dff['result']=='made')]
-
-    print(dff_two)
-
-    # create new numpy arrays for these makes
-    all_x2, all_y2 = rotate_for_display(dff_two["x_plot"].values, dff_two["y_plot"].values)
-    all_x3, all_y3 = rotate_for_display(dff_three["x_plot"].values, dff_three["y_plot"].values)
-    made_x, made_y = rotate_for_display(dff_made["x_plot"].values, dff_made["y_plot"].values)
+    # Create signed weights: 3P makes=+1.5, 2P makes=+1, all misses=-1
+    is_three = dff["is_three"].values
+    made = dff["made"].values
     
-    # take all of the shots normally, add the two point makes once and three point makes twice
-    # so there are two instances of each 2PM and three instances of each 3PM
-    #all_x = np.concatenate([all_x, all_x2, all_x3, all_x3])
-    #all_y = np.concatenate([all_y, all_y2, all_y3, all_y3])
-
-    # all_x = np.concatenate([made_x, all_x3])
-    # all_y = np.concatenate([made_y, all_y3])
-
-
-    # get all makes
-    all_x = np.concatenate([made_x, all_x3])
-    all_y = np.concatenate([made_y, all_y3])
-
-    #print(dff['is_three'])
-
-    #print('all_x')
-    #print(all_x)
+    weights = np.where(made == 1,
+                       np.where(is_three, 1.5, 1.0),
+                       -1.0)
 
     # --------------------------------------------------
     # Build a fine grid and bin shots into it
     # --------------------------------------------------
-    nx, ny = 80, 80  # grid resolution (higher = smoother but slower)
+    nx, ny = 80, 80
 
     x_min, x_max = -30, 30
     y_min, y_max = -6, 38
@@ -1372,79 +1519,71 @@ def make_hexbin_chart(dff, title):
     x_bins = np.linspace(x_min, x_max, nx + 1)
     y_bins = np.linspace(y_min, y_max, ny + 1)
 
-    # 2D histogram (raw counts)
-    H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
+    # 2D histogram with signed weights
+    H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins], weights=weights)
 
-    #print("H")
-    #print(H.shape)
-    #print(H)
-
-    # --------------------------------------------------
-    # Normalize to % of total shots before smoothing
-    # --------------------------------------------------
-    total_shots = H.sum()
-    H_pct = (H / total_shots) * 100 if total_shots > 0 else H
-    #print("H_pct")
-    #print(H_pct.shape)
-    #print(H_pct)
+    # Track volume for masking
+    H_volume, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
 
     # --------------------------------------------------
     # Gaussian smooth → continuous density surface
     # --------------------------------------------------
     sigma = 2.5
-    H_smooth = gaussian_filter(H_pct, sigma=sigma)
+    H_smooth = gaussian_filter(H, sigma=sigma)
+    H_volume_smooth = gaussian_filter(H_volume, sigma=sigma)
 
-    # Log-transform to prevent rim from drowning everything
-    H_log = np.log1p(H_smooth * 50)
-
-    # Mask: only show areas where the smoothed density
-    # corresponds to roughly 5+ shots clustering together.
-    # 5 shots / total_shots * 100 gives us our raw % threshold,
-    # then we run it through the same log transform to match.
+    # Mask low-volume areas - ONLY SHOW WHERE THERE ARE ACTUAL SHOTS
+    total_shots = len(all_x)
     min_shots = 3
     min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
-    min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
+    
+    H_volume_pct = (H_volume_smooth / total_shots) * 100 if total_shots > 0 else H_volume_smooth
+    H_volume_log = np.log1p(H_volume_pct * 50)
+    min_threshold = np.log1p(min_pct * 0.3)
 
-    H_masked = np.where(H_log < min_threshold, np.nan, H_log)
-    #print("H_masked")
-    #print(H_masked.shape)
-    #print(H_masked)
-
-    #print('-----------------\n')
+    H_masked = np.where(H_volume_log < min_threshold, np.nan, H_smooth)
 
     # Grid centers for plotting
     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
     y_centers = (y_bins[:-1] + y_bins[1:]) / 2
 
     # --------------------------------------------------
-    # Colorscale: transparent cool → opaque hot
+    # Colorscale: blue/purple (cold) → red (hot)
+    # NO transparent middle - just blue to red
     # --------------------------------------------------
     colorscale = [
-        [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-        [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
-        [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
-        [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
-        [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
-        [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
-        [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
+        [0.0,  "rgba(50,  30, 120, 0.85)"],   # deep purple (heavy misses)
+        [0.2,  "rgba(60,  80, 180, 0.8)"],    # dark blue
+        [0.35, "rgba(80, 130, 220, 0.75)"],   # medium blue
+        [0.5,  "rgba(120, 180, 240, 0.65)"],  # light blue (neutral)
+        [0.65, "rgba(240, 180,  40, 0.75)"],  # orange
+        [0.8,  "rgba(230,  80,  40, 0.8)"],   # red-orange
+        [1.0,  "rgba(180,  20,  20, 0.85)"],  # deep red (heavy makes)
     ]
+
+    # Set symmetric range around 0
+    max_abs = np.nanmax(np.abs(H_masked))
+    if np.isnan(max_abs) or max_abs == 0:
+        max_abs = 1.0
 
     fig.add_trace(go.Heatmap(
         x=x_centers,
         y=y_centers,
-        z=H_masked.T,           # transpose: plotly expects z[y][x]
+        z=H_masked.T,
         colorscale=colorscale,
         showscale=False,
-        connectgaps=True,       # interpolate across NaN gaps for smoothness
-        zsmooth='best',         # bilinear smoothing on render
+        connectgaps=False,  # DON'T interpolate across NaN
+        zsmooth='best',
         opacity=0.85,
         hoverinfo='skip',
+        zauto=False,
+        zmin=-max_abs,
+        zmax=max_abs,
     ))
 
     # --------------------------------------------------
     # Court lines drawn ON TOP of heatmap
     # --------------------------------------------------
-    # 3PT arc
     ax, ay = rotate_for_display(ARC_X, ARC_Y)
     fig.add_trace(go.Scatter(
         x=ax, y=ay,
@@ -1454,7 +1593,6 @@ def make_hexbin_chart(dff, title):
         showlegend=False
     ))
 
-    # Corner 3PT lines
     cx1, cy1 = rotate_for_display(
         np.array([-BASELINE_X, BASELINE_X]),
         np.array([-ARC_Y.max(), -ARC_Y.max()])
@@ -1480,9 +1618,6 @@ def make_hexbin_chart(dff, title):
         showlegend=False
     )
 
-    # --------------------------------------------------
-    # Summary stats
-    # --------------------------------------------------
     summary = shooting_summary(dff)
     fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
@@ -1490,9 +1625,6 @@ def make_hexbin_chart(dff, title):
     add_signature(fig)
 
     return fig
-
-
-
 
 
 
