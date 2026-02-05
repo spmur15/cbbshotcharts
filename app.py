@@ -1478,7 +1478,7 @@ def make_hexbin_chart(dff, title):
     add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
     add_signature(fig)
 
-#     return fig
+    return fig
 
 # def make_hexbin_chart(dff, title):
 #     """
