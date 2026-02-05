@@ -619,6 +619,9 @@ def load_team_data(team):
 
     dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] + ')'
 
+
+    print(dff.loc[dff['team_name'].str.contains('Mary'), 'team_name'])
+
     dff["offense_defense"] = np.where(
         dff["team_name"] == team, "Offense", "Defense"
     )
@@ -1032,7 +1035,7 @@ def formatNames(ncaa, col='team_name'):
     ncaa[col] = ncaa[col].str.replace("Ark.-Pine Bluff", "Arkansas Pine Bluff")
     ncaa[col] = ncaa[col].str.replace("Ky.", "Kentucky", regex=True)
     ncaa[col] = ncaa[col].str.replace("VMI", "Virginia Military", regex=True)
-    #ncaa[col] = ncaa[col].str.replace("Saint Mary's (CA)", "Saint Mary's", regex=False)
+    ncaa[col] = ncaa[col].str.replace("Saint Mary's (CA)", "Saint Mary's", regex=False)
     ncaa[col] = ncaa[col].str.replace("UIW", "Incarnate Word", regex=True)
     ncaa[col] = ncaa[col].str.replace("Ga.", "Georgia", regex=True)
     ncaa[col] = ncaa[col].str.replace("Fla.", "Florida", regex=True)
