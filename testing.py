@@ -1310,6 +1310,8 @@ def make_zone_chart(dff, title):
 
 
 
+
+
 def make_hexbin_chart(dff, title):
     """
     Continuous KDE-style heatmap of shot density.
@@ -1334,10 +1336,21 @@ def make_hexbin_chart(dff, title):
     dff_three = dff.loc[dff['is_three'] & (dff['result']=='made')]
     dff_two = dff.loc[(dff['zone'].str.contains('Mid')) & (dff['result']=='made')]
 
+    print(dff_two)
+
     # create new numpy arrays for these makes
     all_x2, all_y2 = rotate_for_display(dff_two["x_plot"].values, dff_two["y_plot"].values)
     all_x3, all_y3 = rotate_for_display(dff_three["x_plot"].values, dff_three["y_plot"].values)
     made_x, made_y = rotate_for_display(dff_made["x_plot"].values, dff_made["y_plot"].values)
+    
+    # take all of the shots normally, add the two point makes once and three point makes twice
+    # so there are two instances of each 2PM and three instances of each 3PM
+    #all_x = np.concatenate([all_x, all_x2, all_x3, all_x3])
+    #all_y = np.concatenate([all_y, all_y2, all_y3, all_y3])
+
+    # all_x = np.concatenate([made_x, all_x3])
+    # all_y = np.concatenate([made_y, all_y3])
+
 
     # get all makes
     all_x = np.concatenate([made_x, all_x3])
@@ -1477,6 +1490,9 @@ def make_hexbin_chart(dff, title):
     add_signature(fig)
 
     return fig
+
+
+
 
 
 
