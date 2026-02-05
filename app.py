@@ -1494,19 +1494,21 @@ def make_hexbin_chart(dff, title):
         dff = reconcile_zone_with_shot_range(dff)
 
     from scipy.ndimage import gaussian_filter
+    import matplotlib.pyplot as plt
+    from matplotlib.colors import LinearSegmentedColormap
+    import io
+    import base64
 
     fig = go.Figure(layout=create_half_court_layout())
 
     # Rotate shot coordinates for display
     all_x, all_y = rotate_for_display(dff["x_plot"].values, dff["y_plot"].values)
-    
-    # Get made/miss arrays
     made = dff["made"].values
 
     # --------------------------------------------------
-    # Build a fine grid
+    # Build grid
     # --------------------------------------------------
-    nx, ny = 80, 80
+    nx, ny = 120, 120  # higher resolution for smoother image
     x_min, x_max = -30, 30
     y_min, y_max = -6, 38
 
@@ -1514,111 +1516,85 @@ def make_hexbin_chart(dff, title):
     y_bins = np.linspace(y_min, y_max, ny + 1)
 
     # --------------------------------------------------
-    # Create two histograms: total attempts and makes
+    # Create histograms
     # --------------------------------------------------
     H_attempts, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
     H_makes, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins], weights=made)
 
     # --------------------------------------------------
-    # Smooth both surfaces
+    # Smooth both
     # --------------------------------------------------
-    sigma = 2.5
+    sigma = 3.0
     H_attempts_smooth = gaussian_filter(H_attempts, sigma=sigma)
     H_makes_smooth = gaussian_filter(H_makes, sigma=sigma)
 
     # --------------------------------------------------
-    # Calculate shooting percentage per bin
+    # Calculate FG% and frequency
     # --------------------------------------------------
     with np.errstate(divide='ignore', invalid='ignore'):
-        H_pct = np.where(H_attempts_smooth >= 1, H_makes_smooth / H_attempts_smooth, np.nan)
+        H_pct = np.where(H_attempts_smooth >= 0.5, H_makes_smooth / H_attempts_smooth, 0.5)
 
-    # --------------------------------------------------
-    # Normalize frequency to [0, 1] for opacity
-    # --------------------------------------------------
+    # Frequency for opacity
     total_shots = H_attempts.sum()
     H_freq_pct = (H_attempts_smooth / total_shots) * 100 if total_shots > 0 else H_attempts_smooth
     
-    # Apply log transform to spread frequency values
+    # Normalize frequency to [0, 1]
     H_freq_log = np.log1p(H_freq_pct * 50)
     
-    # Normalize to 0-1 range for opacity
-    freq_min = np.nanmin(H_freq_log)
+    # Set minimum threshold
+    min_shots = 3
+    min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
+    min_threshold = np.log1p(min_pct * 0.5)
+    
+    # Normalize opacity
+    freq_min = min_threshold
     freq_max = np.nanmax(H_freq_log)
     
     with np.errstate(divide='ignore', invalid='ignore'):
-        H_opacity = (H_freq_log - freq_min) / (freq_max - freq_min)
+        H_opacity = np.clip((H_freq_log - freq_min) / (freq_max - freq_min), 0, 1)
     
     # Mask low-frequency areas
-    min_shots = 3
-    min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
-    min_threshold = np.log1p(min_pct * 0.3)
-    
     H_opacity = np.where(H_freq_log < min_threshold, 0, H_opacity)
-    H_pct_masked = np.where(H_freq_log < min_threshold, np.nan, H_pct)
 
     # --------------------------------------------------
-    # Create custom colorscale: Purple → White → Red
-    # Purple = bad (0%), White = average (50%), Red = good (100%)
+    # Create RGBA image using matplotlib
     # --------------------------------------------------
-    colorscale = [
-        [0.0,  "rgb(120,  40, 150)"],   # deep purple (terrible)
-        [0.25, "rgb(160,  80, 180)"],   # medium purple
-        [0.4,  "rgb(200, 150, 210)"],   # light purple
-        [0.5,  "rgb(240, 240, 240)"],   # white (50% = average)
-        [0.6,  "rgb(255, 200, 150)"],   # light orange
-        [0.75, "rgb(255, 120,  60)"],   # medium orange
-        [1.0,  "rgb(200,  30,  30)"],   # deep red (elite)
-    ]
-
-    # Grid centers for plotting
-    x_centers = (x_bins[:-1] + x_bins[1:]) / 2
-    y_centers = (y_bins[:-1] + y_bins[1:]) / 2
-
-    # --------------------------------------------------
-    # Create the heatmap
-    # --------------------------------------------------
-    fig.add_trace(go.Heatmap(
-        x=x_centers,
-        y=y_centers,
-        z=H_pct_masked.T,       # shooting percentage determines COLOR
-        colorscale=colorscale,
-        showscale=False,
-        connectgaps=True,
-        zsmooth='best',
-        hoverinfo='skip',
-        zauto=False,
-        zmin=0.0,    # 0% FG
-        zmax=1.0,    # 100% FG
-    ))
-
-    # --------------------------------------------------
-    # Add opacity layer (frequency-based transparency)
-    # --------------------------------------------------
-    # Create a second heatmap with black→transparent to control opacity
-    opacity_colorscale = [
-        [0.0, "rgba(0, 0, 0, 0.0)"],    # fully transparent (rare shots)
-        [1.0, "rgba(0, 0, 0, 0.0)"],    # stays transparent (we control via opacity param)
+    # Define colormap: Purple → White → Red
+    colors = [
+        (0.0, (0.47, 0.16, 0.59, 1.0)),  # deep purple
+        (0.25, (0.63, 0.31, 0.71, 1.0)), # medium purple
+        (0.40, (0.78, 0.59, 0.82, 1.0)), # light purple
+        (0.50, (0.94, 0.94, 0.94, 1.0)), # white
+        (0.60, (1.00, 0.78, 0.59, 1.0)), # light orange
+        (0.75, (1.00, 0.47, 0.24, 1.0)), # medium orange/red
+        (1.0, (0.78, 0.12, 0.12, 1.0)),  # deep red
     ]
     
-    fig.add_trace(go.Heatmap(
-        x=x_centers,
-        y=y_centers,
-        z=H_opacity.T,
-        colorscale=opacity_colorscale,
-        showscale=False,
-        hoverinfo='skip',
-        opacity=0,  # This trace is just for blending
-    ))
-
-    # Actually, better approach: use customdata to vary opacity
-    # Unfortunately Plotly doesn't support per-pixel opacity in Heatmap
-    # So we'll use a workaround: overlay semi-transparent layer
-
-    # Remove the second heatmap and instead apply opacity directly
-    fig.data[0].update(opacity=0.85)
+    cmap = LinearSegmentedColormap.from_list('shooting', colors)
+    
+    # Create RGBA array
+    rgba = cmap(H_pct.T)  # shape: (ny, nx, 4)
+    
+    # Apply opacity based on frequency
+    rgba[:, :, 3] = H_opacity.T * 0.85  # alpha channel
+    
+    # Convert to uint8
+    rgba_uint8 = (rgba * 255).astype(np.uint8)
 
     # --------------------------------------------------
-    # Court lines drawn ON TOP of heatmap
+    # Add image to plot
+    # --------------------------------------------------
+    fig.add_trace(go.Image(
+        z=rgba_uint8,
+        x0=x_min,
+        y0=y_min,
+        dx=(x_max - x_min) / nx,
+        dy=(y_max - y_min) / ny,
+        hoverinfo='skip'
+    ))
+
+    # --------------------------------------------------
+    # Court lines on top
     # --------------------------------------------------
     ax, ay = rotate_for_display(ARC_X, ARC_Y)
     fig.add_trace(go.Scatter(
@@ -1661,6 +1637,9 @@ def make_hexbin_chart(dff, title):
     add_signature(fig)
 
     return fig
+
+
+
 
 def assign_zone(row):
     d = row["dist"]      # distance from hoop (ft)
