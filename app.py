@@ -613,6 +613,11 @@ def load_team_data(team):
     dff['team_name'] = dff['team_name'].str.replace('&amp;', "&")
 
     dff['team_name'] = dff['team_name'].str.replace(r'\(NY$', "(NY)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(CA$', "(CA)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(MN$', "(MN)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(NC$', "(NC)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(FL$', "(FL)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(OH$', "(OH)", regex=True)
 
     dff['shooter'] = dff['shooter'].str.replace('&#39;', "'")
     dff['shooter'] = dff['shooter'].str.replace('&amp;', "&")
