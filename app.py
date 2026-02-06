@@ -1366,6 +1366,7 @@ def make_hexbin_chart(dff, title):
 
     x_min, x_max = -30, 30
     y_min, y_max = -6, 38
+    
 
     x_bins = np.linspace(x_min, x_max, nx + 1)
     y_bins = np.linspace(y_min, y_max, ny + 1)
