@@ -1366,7 +1366,7 @@ def make_hexbin_chart(dff, title):
 
     x_min, x_max = -30, 30
     y_min, y_max = -6, 38
-    
+
 
     x_bins = np.linspace(x_min, x_max, nx + 1)
     y_bins = np.linspace(y_min, y_max, ny + 1)
@@ -1418,26 +1418,26 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     # Colorscale: transparent cool → opaque hot
     # --------------------------------------------------
-    # colorscale = [
-    #     [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-    #     [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
-    #     [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
-    #     [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
-    #     [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
-    #     [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
-    #     [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
-    # ]
+    colorscale = [
+        [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
+        [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
+        [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
+        [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
+        [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
+        [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
+    ]
 
     # --------------------------------------------------
     # Expanded colorscale with more granular thresholds
     # Deep red reserved for elite shooting (60%+)
     # --------------------------------------------------
     colorscale = [
-        [0.0,  "rgba(50,  30, 120, 0.9)"],    # deep purple (terrible, <25% FG)
-        [0.15, "rgba(60,  60, 160, 0.85)"],   # dark purple
-        [0.25, "rgba(70,  90, 200, 0.8)"],    # dark blue (~30-35% FG)
-        [0.35, "rgba(90, 130, 230, 0.75)"],   # medium blue (~35-40% FG)
-        [0.45, "rgba(120, 170, 240, 0.65)"],  # light blue (~40-45% FG)
+        [0.0,  "rgba(50,  30, 120, 0.0)"],    # deep purple (terrible, <25% FG)
+        [0.15, "rgba(60,  60, 160, 0.25)"],   # dark purple
+        [0.25, "rgba(70,  90, 200, 0.5)"],    # dark blue (~30-35% FG)
+        [0.35, "rgba(90, 130, 230, 0.5)"],   # medium blue (~35-40% FG)
+        [0.45, "rgba(120, 170, 240, 0.5)"],  # light blue (~40-45% FG)
         [0.5,  "rgba(160, 200, 220, 0.5)"],   # very light blue (~47-50% FG - neutral)
         [0.55, "rgba(200, 220, 140, 0.5)"],   # yellow-green (~50-53% FG)
         [0.6,  "rgba(240, 200,  80, 0.6)"],   # yellow (~53-56% FG)
