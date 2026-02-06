@@ -1348,8 +1348,11 @@ def make_hexbin_chart(dff, title):
     made_x, made_y = rotate_for_display(dff_made["x_plot"].values, dff_made["y_plot"].values)
 
     # get all makes
-    all_x = np.concatenate([made_x, all_x3])
-    all_y = np.concatenate([made_y, all_y3])
+    all_x = np.concatenate([all_x, all_x3])
+    all_y = np.concatenate([all_y, all_y3])
+
+    #all_x = np.concatenate([all_x, all_x2, all_x3, all_x3])
+    #all_y = np.concatenate([all_y, all_y2, all_y3, all_y3])
 
     #print(dff['is_three'])
 
@@ -1414,14 +1417,33 @@ def make_hexbin_chart(dff, title):
     # --------------------------------------------------
     # Colorscale: transparent cool → opaque hot
     # --------------------------------------------------
+    # colorscale = [
+    #     [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
+    #     [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
+    #     [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
+    #     [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
+    #     [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
+    #     [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
+    #     [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
+    # ]
+
+    # --------------------------------------------------
+    # Expanded colorscale with more granular thresholds
+    # Deep red reserved for elite shooting (60%+)
+    # --------------------------------------------------
     colorscale = [
-        [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-        [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
-        [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
-        [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
-        [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
-        [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
-        [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
+        [0.0,  "rgba(50,  30, 120, 0.9)"],    # deep purple (terrible, <25% FG)
+        [0.15, "rgba(60,  60, 160, 0.85)"],   # dark purple
+        [0.25, "rgba(70,  90, 200, 0.8)"],    # dark blue (~30-35% FG)
+        [0.35, "rgba(90, 130, 230, 0.75)"],   # medium blue (~35-40% FG)
+        [0.45, "rgba(120, 170, 240, 0.65)"],  # light blue (~40-45% FG)
+        [0.5,  "rgba(160, 200, 220, 0.5)"],   # very light blue (~47-50% FG - neutral)
+        [0.55, "rgba(200, 220, 140, 0.5)"],   # yellow-green (~50-53% FG)
+        [0.6,  "rgba(240, 200,  80, 0.6)"],   # yellow (~53-56% FG)
+        [0.65, "rgba(255, 170,  60, 0.7)"],   # light orange (~56-59% FG)
+        [0.75, "rgba(250, 120,  50, 0.8)"],   # orange (~59-65% FG)
+        [0.85, "rgba(230,  70,  40, 0.85)"],  # red-orange (~65-70% FG)
+        [1.0,  "rgba(200,  30,  30, 0.9)"],   # deep red (elite 70%+ FG)
     ]
 
     fig.add_trace(go.Heatmap(
