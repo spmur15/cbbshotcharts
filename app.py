@@ -1348,8 +1348,8 @@ def make_hexbin_chart(dff, title):
     made_x, made_y = rotate_for_display(dff_made["x_plot"].values, dff_made["y_plot"].values)
 
     # get all makes
-    all_x = np.concatenate([all_x, all_x3])
-    all_y = np.concatenate([all_y, all_y3])
+    all_x = np.concatenate([made_x, all_x3])
+    all_y = np.concatenate([made_y, all_y3])
 
     #all_x = np.concatenate([all_x, all_x2, all_x3, all_x3])
     #all_y = np.concatenate([all_y, all_y2, all_y3, all_y3])
