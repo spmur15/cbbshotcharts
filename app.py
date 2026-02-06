@@ -1438,12 +1438,12 @@ def make_hexbin_chart(dff, title):
         [0.25, "rgba(70,  90, 200, 0.5)"],    # dark blue (~30-35% FG)
         [0.35, "rgba(90, 130, 230, 0.5)"],   # medium blue (~35-40% FG)
         [0.45, "rgba(120, 170, 240, 0.5)"],  # light blue (~40-45% FG)
-        [0.5,  "rgba(160, 200, 220, 0.5)"],   # very light blue (~47-50% FG - neutral)
-        [0.55, "rgba(200, 220, 140, 0.5)"],   # yellow-green (~50-53% FG)
-        [0.6,  "rgba(240, 200,  80, 0.6)"],   # yellow (~53-56% FG)
-        [0.65, "rgba(255, 170,  60, 0.7)"],   # light orange (~56-59% FG)
-        [0.75, "rgba(250, 120,  50, 0.8)"],   # orange (~59-65% FG)
-        [0.85, "rgba(230,  70,  40, 0.85)"],  # red-orange (~65-70% FG)
+        [0.65,  "rgba(160, 200, 220, 0.5)"],   # very light blue (~47-50% FG - neutral)
+        [0.75, "rgba(200, 220, 140, 0.5)"],   # yellow-green (~50-53% FG)
+        [0.8,  "rgba(240, 200,  80, 0.6)"],   # yellow (~53-56% FG)
+        [0.85, "rgba(255, 170,  60, 0.7)"],   # light orange (~56-59% FG)
+        [0.9, "rgba(250, 120,  50, 0.8)"],   # orange (~59-65% FG)
+        [0.95, "rgba(230,  70,  40, 0.85)"],  # red-orange (~65-70% FG)
         [1.0,  "rgba(200,  30,  30, 0.9)"],   # deep red (elite 70%+ FG)
     ]
 
