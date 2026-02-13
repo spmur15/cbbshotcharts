@@ -197,10 +197,10 @@ ZONE_FAMILY = {
 }
 
 ZONE_PCT_RANGES = {
-    "three": (0.2, 0.50),   # 25% bad → 40% good
+    "three": (0.2, 0.50),   # 25% bad â†’ 40% good
     "short_mid":  (0.2, 0.65),
-    "mid":   (0.2, 0.6),   # 35% bad → 50% good
-    "paint": (0.35, 0.7),   # 50% bad → 70% good
+    "mid":   (0.2, 0.6),   # 35% bad â†’ 50% good
+    "paint": (0.35, 0.7),   # 50% bad â†’ 70% good
 }
 
 ANGLE_CORNER = 67     # degrees
@@ -290,12 +290,12 @@ ZONE_SHAPES = {
         path=polar_wedge(R_PAINT, R_3, -ANGLE_CORNER, -ANGLE_WING),
         line=dict(width=0)
     ),
-    "Left Mid Low": dict(  # ✅ FIXED
+    "Left Mid Low": dict(  # âœ… FIXED
         type="path",
         path=polar_wedge(R_PAINT, R_3, ANGLE_CORNER, 180),
         line=dict(width=0)
     ),
-    "Right Mid Low": dict(  # ✅ FIXED
+    "Right Mid Low": dict(  # âœ… FIXED
         type="path",
         path=polar_wedge(R_PAINT, R_3, -180, -ANGLE_CORNER),
         line=dict(width=0)
@@ -317,12 +317,12 @@ ZONE_SHAPES = {
         path=polar_wedge(R_3, R_MAX, -ANGLE_CORNER, -ANGLE_WING),
         line=dict(width=0)
     ),
-    "Left Corner 3": dict(  # ✅ FIXED
+    "Left Corner 3": dict(  # âœ… FIXED
         type="path",
         path=polar_wedge(R_3, R_MAX, ANGLE_CORNER, 180),
         line=dict(width=0)
     ),
-    "Right Corner 3": dict(  # ✅ FIXED
+    "Right Corner 3": dict(  # âœ… FIXED
         type="path",
         path=polar_wedge(R_3, R_MAX, -180, -ANGLE_CORNER),
         line=dict(width=0)
@@ -348,6 +348,184 @@ ZONE_LABEL_POS = {
     "Right Wing 3": (-16, ),
     "Corner 3": (22, 8),
 }
+
+
+# NCAA D1 average FG% by distance band (approximate 2024-25 season)
+# Update with real numbers when available
+NCAA_AVG_BY_BAND = [
+    # (min_dist_ft, max_dist_ft, avg_fg_pct)
+    (0,     6,    0.6),   # Rim / at-rim
+    (6,    13,    0.38),   # Short paint (non-rim)
+    (13,   22.25, 0.35),   # Long midrange
+    (22.1, 50,   0.32),   # Three-point range
+]
+
+
+def ncaa_expected_fg(dist):
+    """Return the NCAA D1 average FG% for a given distance from hoop (ft)."""
+    for lo, hi, avg in NCAA_AVG_BY_BAND:
+        if lo <= dist < hi:
+            return avg
+    return 0.34
+
+
+def _interp_diverging_color(t):
+    """
+    Interpolate a blue → white → red diverging colorscale.
+    t ∈ [0, 1]  where 0 = full blue, 0.5 = white, 1.0 = full red.
+    """
+    colorscale = [
+        (0.00, (30,   80, 180)),   # strong blue
+        (0.20, (70,  130, 210)),   # medium blue
+        (0.35, (140, 180, 230)),   # light blue
+        (0.50, (240, 235, 230)),   # near-white / warm neutral
+        (0.65, (230, 170, 140)),   # light salmon
+        (0.80, (210, 100,  70)),   # medium red
+        (1.00, (180,  30,  30)),   # strong red
+    ]
+    t = np.clip(t, 0.0, 1.0)
+    for i in range(len(colorscale) - 1):
+        t0, rgb0 = colorscale[i]
+        t1, rgb1 = colorscale[i + 1]
+        if t0 <= t <= t1:
+            frac = (t - t0) / (t1 - t0) if t1 != t0 else 0
+            r = rgb0[0] + frac * (rgb1[0] - rgb0[0])
+            g = rgb0[1] + frac * (rgb1[1] - rgb0[1])
+            b = rgb0[2] + frac * (rgb1[2] - rgb0[2])
+            return f"rgba({int(r)},{int(g)},{int(b)},0.88)"
+    last = colorscale[-1][1]
+    return f"rgba({last[0]},{last[1]},{last[2]},0.88)"
+
+
+def hex_color_from_diff(diff, max_diff=0.2):
+    """
+    Map FG% difference (team − NCAA avg) to blue→white→red.
+      diff > 0 → above average → red
+      diff < 0 → below average → blue
+      diff == 0 → average       → white
+    max_diff: saturation cap (±15 percentage points by default).
+    """
+    t = np.clip(diff / max_diff, -1.0, 1.0)
+    t_01 = (t + 1.0) / 2.0   # rescale to [0, 1]
+    return _interp_diverging_color(t_01)
+
+
+def make_hex_grid(hex_size=1.8,
+                  x_min=-30, x_max=5.25,
+                  y_min=-25, y_max=25):
+    """
+    Generate pointy-top hexagonal grid centers in hoop-centered feet
+    (PRE-rotation coordinate space) that tile perfectly as a honeycomb.
+    
+    For pointy-top hexagons:
+      - row spacing (vertical):   hex_size * sqrt(3)
+      - col spacing (horizontal): hex_size * 1.5
+      - odd columns offset vertically by hex_size * sqrt(3) / 2
+    """
+    col_step = hex_size * 1.5
+    row_step = hex_size * np.sqrt(3)
+    half_row = row_step / 2.0
+
+    centers = []
+    col = 0
+    x = x_min
+    while x <= x_max + hex_size:
+        # Odd columns shift up by half a row
+        y_start = y_min + (half_row if (col % 2 == 1) else 0)
+        y = y_start
+        while y <= y_max + hex_size:
+            centers.append((x, y))
+            y += row_step
+        x += col_step
+        col += 1
+
+    return np.array(centers)
+
+
+def hexagon_path(cx, cy, size):
+    """
+    SVG path for a POINTY-TOP hexagon centered at (cx, cy).
+    Pointy-top means vertices at 90°, 150°, 210°, 270°, 330°, 30°
+    (i.e. rotated 30° from flat-top).
+    
+    This orientation tiles correctly with the column/row spacing
+    in make_hex_grid.
+    
+    Coordinates should already be in ROTATED display space.
+    """
+    # Pointy-top: offset angles by 30° (π/6)
+    angles = np.array([30, 90, 150, 210, 270, 330]) * np.pi / 180.0
+    xs = cx + size * np.cos(angles)
+    ys = cy + size * np.sin(angles)
+    path = f"M {xs[0]:.3f},{ys[0]:.3f}"
+    for x, y in zip(xs[1:], ys[1:]):
+        path += f" L {x:.3f},{y:.3f}"
+    path += " Z"
+    return path
+
+
+def bin_shots_to_hex(shot_x, shot_y, shot_made, hex_centers, hex_size):
+    """
+    Assign each shot to nearest hex center, aggregate stats.
+    Returns DataFrame with: cx, cy, attempts, makes, fg_pct, avg_dist
+    """
+    cx = hex_centers[:, 0]
+    cy = hex_centers[:, 1]
+
+    results = {i: {"makes": 0, "attempts": 0, "sum_dist": 0.0}
+               for i in range(len(hex_centers))}
+
+    for sx, sy, made in zip(shot_x, shot_y, shot_made):
+        dists_sq = (cx - sx)**2 + (cy - sy)**2
+        nearest = np.argmin(dists_sq)
+
+        # Only count if within ~1.3× hex radius
+        if np.sqrt(dists_sq[nearest]) <= hex_size * 1.35:
+            results[nearest]["attempts"] += 1
+            results[nearest]["makes"]    += int(made)
+            results[nearest]["sum_dist"] += np.sqrt(sx**2 + sy**2)
+
+    rows = []
+    for i, data in results.items():
+        if data["attempts"] > 0:
+            att = data["attempts"]
+            rows.append({
+                "cx":       cx[i],
+                "cy":       cy[i],
+                "attempts": att,
+                "makes":    data["makes"],
+                "fg_pct":   data["makes"] / att,
+                "avg_dist": data["sum_dist"] / att,
+            })
+
+    return pd.DataFrame(rows)
+
+
+def add_hex_legend(fig, THEME):
+    """Annotate the chart with a small blue→red color legend."""
+    legend_text = (
+        "<span style='font-size:11px; font-family:Funnel Display;'>"
+        "<span style='color:rgb(30,80,180)'>⬢</span> "
+        "<span style='color:rgb(70,130,210)'>⬢</span> "
+        "<span style='color:rgb(140,180,230)'>⬢</span> "
+        "<span style='color:rgb(240,235,230)'>⬢</span> "
+        "<span style='color:rgb(230,170,140)'>⬢</span> "
+        "<span style='color:rgb(210,100,70)'>⬢</span> "
+        "<span style='color:rgb(180,30,30)'>⬢</span>"
+        "<br>"
+        "<span style='color:rgb(100,130,180)'>Below Avg</span>"
+        "        "
+        "<span style='color:rgb(190,80,60)'>Above Avg</span>"
+        "</span>"
+    )
+    fig.add_annotation(
+        x=0.02, y=0.98,
+        xref="paper", yref="paper",
+        text=legend_text,
+        showarrow=False,
+        font=dict(size=11, color=THEME["text_secondary"], family="Funnel Display"),
+        align="center",
+    )
 
 # ----------------------------
 # 3PT geometry (hoop-centered)
@@ -448,7 +626,7 @@ def create_half_court_layout():
     radius = 6.0
 
     # Create points for the top semi-circle
-    theta = np.linspace(0, np.pi, 50)  # 0 to π for top half
+    theta = np.linspace(0, np.pi, 50)  # 0 to Ï€ for top half
     x_points = center_x + radius * np.cos(theta)
     y_points = center_y + radius * np.sin(theta)
 
@@ -528,7 +706,7 @@ def standardize_to_right_basket(dff, x_col="x", y_col="y"):
     y2 = y.copy()
 
 
-    # ✅ flip x
+    # âœ… flip x
     left_half = x < 50
     x2[left_half] = 100.0 - x2[left_half].copy()
 
@@ -613,11 +791,20 @@ def load_team_data(team):
     dff['team_name'] = dff['team_name'].str.replace('&amp;', "&")
 
     dff['team_name'] = dff['team_name'].str.replace(r'\(NY$', "(NY)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(CA$', "(CA)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(MN$', "(MN)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(NC$', "(NC)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(FL$', "(FL)", regex=True)
+    dff['team_name'] = dff['team_name'].str.replace(r'\(OH$', "(OH)", regex=True)
 
     dff['shooter'] = dff['shooter'].str.replace('&#39;', "'")
     dff['shooter'] = dff['shooter'].str.replace('&amp;', "&")
 
-    dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] + ')'
+    #dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] + ')'
+    #dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff['team_name'] + ')'
+
+
+    #print(dff.loc[dff['team_name'].str.contains('Mary'), 'team_name'])
 
     dff["offense_defense"] = np.where(
         dff["team_name"] == team, "Offense", "Defense"
@@ -682,15 +869,15 @@ def zone_label_xy(zone):
     if zone == "Right Wing 3":
         return (-19.125, 18.125)
     if zone == "Right Corner 3":
-        return (-26.5, 2)  # ✅ SWAPPED: was (26.5, 2)
+        return (-26.5, 2)  # âœ… SWAPPED: was (26.5, 2)
     if zone == "Left Corner 3":
-        return (26.5, 2)   # ✅ SWAPPED: was (-26.5, 2)
+        return (26.5, 2)   # âœ… SWAPPED: was (-26.5, 2)
 
-    # ✅ NEW BASELINE ZONES - also swap these
+    # âœ… NEW BASELINE ZONES - also swap these
     if zone == "Left Mid Low":
-        return (17.5, 0)   # ✅ SWAPPED: was (-17.5, 0)
+        return (17.5, 0)   # âœ… SWAPPED: was (-17.5, 0)
     if zone == "Right Mid Low":
-        return (-17.5, 0)  # ✅ SWAPPED: was (17.5, 0)
+        return (-17.5, 0)  # âœ… SWAPPED: was (17.5, 0)
 
     # Fallback (never crashes)
     return rotate_for_display(0, 0)
@@ -803,7 +990,7 @@ def stat_card(label, value, subvalue=None):
             html.Div(
                 label,
                 style={
-                    "fontSize": "12px",
+                    "fontSize": "11px",
                     "color": THEME["text_secondary"],
                     "textTransform": "uppercase",
                     "letterSpacing": "0.04em",
@@ -812,7 +999,7 @@ def stat_card(label, value, subvalue=None):
             html.Div(
                 value,
                 style={
-                    "fontSize": "18px",
+                    "fontSize": "17px",
                     "fontWeight": 600,
                     "color": THEME["text_primary"],
                 }
@@ -850,7 +1037,7 @@ def shot_breakdown_stats(dff):
     def pct(mask):
         att = mask.sum()
         made = dff.loc[mask, "made"].sum()
-        return f"{made/att:.1%}" if att else "—"
+        return f"{made/att:.1%}" if att else "â€”"
 
     dff = dff.copy()
     dff["dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
@@ -896,7 +1083,7 @@ def shot_breakdown_stats(dff):
     def ast_pct(mask):
         made = dff.loc[mask & (dff["made"] == 1)]
         if len(made) == 0:
-            return "—"
+            return "â€”"
         assisted = made["assisted"].fillna(0).sum()
         return f"{assisted / len(made):.0%}"
 
@@ -961,7 +1148,7 @@ def freq_bar(labels, values, colors=None):
                                     "●",
                                     style={
                                         "color": c,
-                                        "fontSize": "12px",
+                                        "fontSize": "11px",
                                         "marginRight": "1px",
                                         "lineHeight": "1"
                                     }
@@ -977,7 +1164,7 @@ def freq_bar(labels, values, colors=None):
                     ]
                 ],
                 style={
-                    "fontSize": "13px",
+                    "fontSize": "12px",
                     "color": THEME["text_secondary"],
                     "marginTop": "10px",
                     "marginLeft": "5px",
@@ -1310,326 +1497,201 @@ def make_zone_chart(dff, title):
 
 
 
-
-
-# def make_hexbin_chart(dff, title):
-#     """
-#     Continuous KDE-style heatmap of shot density.
-#     """
-
-#     dff = dff.copy()
-#     dff.loc[:, "dist"]  = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
-#     dff.loc[:, "angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
-#     dff.loc[:, "zone"]  = dff.apply(assign_zone, axis=1)
-#     if "shot_range" in dff.columns:
-#         dff = reconcile_zone_with_shot_range(dff)
-
-#     from scipy.ndimage import gaussian_filter
-
-#     fig = go.Figure(layout=create_half_court_layout())
-
-#     # Rotate shot coordinates for display
-#     all_x, all_y = rotate_for_display(dff["x_plot"].values, dff["y_plot"].values)
-
-#     # get two dataframes of just 3P makes and 2P makes
-#     dff_made = dff.loc[(dff['result']=='made')]
-#     dff_three = dff.loc[dff['is_three'] & (dff['result']=='made')]
-#     dff_two = dff.loc[(dff['zone'].str.contains('Mid')) & (dff['result']=='made')]
-
-#     # create new numpy arrays for these makes
-#     all_x2, all_y2 = rotate_for_display(dff_two["x_plot"].values, dff_two["y_plot"].values)
-#     all_x3, all_y3 = rotate_for_display(dff_three["x_plot"].values, dff_three["y_plot"].values)
-#     made_x, made_y = rotate_for_display(dff_made["x_plot"].values, dff_made["y_plot"].values)
-
-#     # get all makes
-#     all_x = np.concatenate([made_x, all_x3])
-#     all_y = np.concatenate([made_y, all_y3])
-
-#     #print(dff['is_three'])
-
-#     #print('all_x')
-#     #print(all_x)
-
-#     # --------------------------------------------------
-#     # Build a fine grid and bin shots into it
-#     # --------------------------------------------------
-#     nx, ny = 80, 80  # grid resolution (higher = smoother but slower)
-
-#     x_min, x_max = -30, 30
-#     y_min, y_max = -6, 38
-
-#     x_bins = np.linspace(x_min, x_max, nx + 1)
-#     y_bins = np.linspace(y_min, y_max, ny + 1)
-
-#     # 2D histogram (raw counts)
-#     H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
-
-#     #print("H")
-#     #print(H.shape)
-#     #print(H)
-
-#     # --------------------------------------------------
-#     # Normalize to % of total shots before smoothing
-#     # --------------------------------------------------
-#     total_shots = H.sum()
-#     H_pct = (H / total_shots) * 100 if total_shots > 0 else H
-#     #print("H_pct")
-#     #print(H_pct.shape)
-#     #print(H_pct)
-
-#     # --------------------------------------------------
-#     # Gaussian smooth → continuous density surface
-#     # --------------------------------------------------
-#     sigma = 2.5
-#     H_smooth = gaussian_filter(H_pct, sigma=sigma)
-
-#     # Log-transform to prevent rim from drowning everything
-#     H_log = np.log1p(H_smooth * 50)
-
-#     # Mask: only show areas where the smoothed density
-#     # corresponds to roughly 5+ shots clustering together.
-#     # 5 shots / total_shots * 100 gives us our raw % threshold,
-#     # then we run it through the same log transform to match.
-#     min_shots = 3
-#     min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
-#     min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
-
-#     H_masked = np.where(H_log < min_threshold, np.nan, H_log)
-#     #print("H_masked")
-#     #print(H_masked.shape)
-#     #print(H_masked)
-
-#     #print('-----------------\n')
-
-#     # Grid centers for plotting
-#     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
-#     y_centers = (y_bins[:-1] + y_bins[1:]) / 2
-
-#     # --------------------------------------------------
-#     # Colorscale: transparent cool → opaque hot
-#     # --------------------------------------------------
-#     colorscale = [
-#         [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
-#         [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
-#         [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
-#         [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
-#         [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
-#         [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
-#         [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
-#     ]
-
-#     fig.add_trace(go.Heatmap(
-#         x=x_centers,
-#         y=y_centers,
-#         z=H_masked.T,           # transpose: plotly expects z[y][x]
-#         colorscale=colorscale,
-#         showscale=False,
-#         connectgaps=True,       # interpolate across NaN gaps for smoothness
-#         zsmooth='best',         # bilinear smoothing on render
-#         opacity=0.85,
-#         hoverinfo='skip',
-#     ))
-
-#     # --------------------------------------------------
-#     # Court lines drawn ON TOP of heatmap
-#     # --------------------------------------------------
-#     # 3PT arc
-#     ax, ay = rotate_for_display(ARC_X, ARC_Y)
-#     fig.add_trace(go.Scatter(
-#         x=ax, y=ay,
-#         mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip",
-#         showlegend=False
-#     ))
-
-#     # Corner 3PT lines
-#     cx1, cy1 = rotate_for_display(
-#         np.array([-BASELINE_X, BASELINE_X]),
-#         np.array([-ARC_Y.max(), -ARC_Y.max()])
-#     )
-#     cx2, cy2 = rotate_for_display(
-#         np.array([-BASELINE_X, BASELINE_X]),
-#         np.array([ARC_Y.max(), ARC_Y.max()])
-#     )
-#     fig.add_trace(go.Scatter(
-#         x=cx1, y=cy1, mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip", showlegend=False
-#     ))
-#     fig.add_trace(go.Scatter(
-#         x=cx2, y=cy2, mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip", showlegend=False
-#     ))
-
-#     fig.update_layout(
-#         plot_bgcolor=THEME["bg_chart"],
-#         paper_bgcolor=THEME["bg_chart"],
-#         showlegend=False
-#     )
-
-#     # --------------------------------------------------
-#     # Summary stats
-#     # --------------------------------------------------
-#     summary = shooting_summary(dff)
-#     fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
-#     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
-#     add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
-#     add_signature(fig)
-
-#     return fig
-
-
-# def make_hexbin_chart(dff, title):
-#     """
-#     Continuous KDE-style heatmap of shot density.
-#     """
-
-#     dff = dff.copy()
-#     dff.loc[:, "dist"]  = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
-#     dff.loc[:, "angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
-#     dff.loc[:, "zone"]  = dff.apply(assign_zone, axis=1)
-#     if "shot_range" in dff.columns:
-#         dff = reconcile_zone_with_shot_range(dff)
-
-#     from scipy.ndimage import gaussian_filter
-
-#     fig = go.Figure(layout=create_half_court_layout())
-
-#     # Rotate shot coordinates for display
-#     all_x, all_y = rotate_for_display(dff["x_plot"].values, dff["y_plot"].values)
-
-#     # Create signed weights: 3P makes=+1.5, 2P makes=+1, all misses=-1
-#     is_three = dff["is_three"].values
-#     made = dff["made"].values
-    
-#     weights = np.where(made == 1,
-#                        np.where(is_three, 1.5, 1.0),
-#                        -1.0)
-
-#     # --------------------------------------------------
-#     # Build a fine grid and bin shots into it
-#     # --------------------------------------------------
-#     nx, ny = 80, 80
-
-#     x_min, x_max = -30, 30
-#     y_min, y_max = -6, 38
-
-#     x_bins = np.linspace(x_min, x_max, nx + 1)
-#     y_bins = np.linspace(y_min, y_max, ny + 1)
-
-#     # 2D histogram with signed weights
-#     H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins], weights=weights)
-
-#     # Track volume for masking
-#     H_volume, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
-
-#     # --------------------------------------------------
-#     # Gaussian smooth → continuous density surface
-#     # --------------------------------------------------
-#     sigma = 2.5
-#     H_smooth = gaussian_filter(H, sigma=sigma)
-#     H_volume_smooth = gaussian_filter(H_volume, sigma=sigma)
-
-#     # Mask low-volume areas - ONLY SHOW WHERE THERE ARE ACTUAL SHOTS
-#     total_shots = len(all_x)
-#     min_shots = 3
-#     min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
-    
-#     H_volume_pct = (H_volume_smooth / total_shots) * 100 if total_shots > 0 else H_volume_smooth
-#     H_volume_log = np.log1p(H_volume_pct * 50)
-#     min_threshold = np.log1p(min_pct * 0.3)
-
-#     H_masked = np.where(H_volume_log < min_threshold, np.nan, H_smooth)
-
-#     # Grid centers for plotting
-#     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
-#     y_centers = (y_bins[:-1] + y_bins[1:]) / 2
-
-#     # --------------------------------------------------
-#     # Colorscale: blue/purple (cold) → red (hot)
-#     # NO transparent middle - just blue to red
-#     # --------------------------------------------------
-#     colorscale = [
-#         [0.0,  "rgba(50,  30, 120, 0.85)"],   # deep purple (heavy misses)
-#         [0.2,  "rgba(60,  80, 180, 0.8)"],    # dark blue
-#         [0.35, "rgba(80, 130, 220, 0.75)"],   # medium blue
-#         [0.5,  "rgba(120, 180, 240, 0.65)"],  # light blue (neutral)
-#         [0.65, "rgba(240, 180,  40, 0.75)"],  # orange
-#         [0.8,  "rgba(230,  80,  40, 0.8)"],   # red-orange
-#         [1.0,  "rgba(180,  20,  20, 0.85)"],  # deep red (heavy makes)
-#     ]
-
-#     # Set symmetric range around 0
-#     max_abs = np.nanmax(np.abs(H_masked))
-#     if np.isnan(max_abs) or max_abs == 0:
-#         max_abs = 1.0
-
-#     fig.add_trace(go.Heatmap(
-#         x=x_centers,
-#         y=y_centers,
-#         z=H_masked.T,
-#         colorscale=colorscale,
-#         showscale=False,
-#         connectgaps=False,  # DON'T interpolate across NaN
-#         zsmooth='best',
-#         opacity=0.85,
-#         hoverinfo='skip',
-#         zauto=False,
-#         zmin=-max_abs,
-#         zmax=max_abs,
-#     ))
-
-#     # --------------------------------------------------
-#     # Court lines drawn ON TOP of heatmap
-#     # --------------------------------------------------
-#     ax, ay = rotate_for_display(ARC_X, ARC_Y)
-#     fig.add_trace(go.Scatter(
-#         x=ax, y=ay,
-#         mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip",
-#         showlegend=False
-#     ))
-
-#     cx1, cy1 = rotate_for_display(
-#         np.array([-BASELINE_X, BASELINE_X]),
-#         np.array([-ARC_Y.max(), -ARC_Y.max()])
-#     )
-#     cx2, cy2 = rotate_for_display(
-#         np.array([-BASELINE_X, BASELINE_X]),
-#         np.array([ARC_Y.max(), ARC_Y.max()])
-#     )
-#     fig.add_trace(go.Scatter(
-#         x=cx1, y=cy1, mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip", showlegend=False
-#     ))
-#     fig.add_trace(go.Scatter(
-#         x=cx2, y=cy2, mode="lines",
-#         line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
-#         hoverinfo="skip", showlegend=False
-#     ))
-
-#     fig.update_layout(
-#         plot_bgcolor=THEME["bg_chart"],
-#         paper_bgcolor=THEME["bg_chart"],
-#         showlegend=False
-#     )
-
-#     summary = shooting_summary(dff)
-#     fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
-#     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
-#     add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
-#     add_signature(fig)
-
-#     return fig
-
-
-def make_hexbin_chart(dff, title):
+def create_hexagon_path(cx, cy, size):
     """
-    Heatmap with color showing efficiency (PPS) and opacity showing volume.
+    Create SVG path for a hexagon centered at (cx, cy) with given size.
+    Returns path string for Plotly shape.
+    Note: cx, cy should already be rotated for display.
+    """
+    # Flat-top hexagon (horizontal orientation in rotated display space)
+    angles = np.linspace(0, 2*np.pi, 7)
+    x_points = cx + size * np.cos(angles)
+    y_points = cy + size * np.sin(angles)
+    
+    path = f"M {x_points[0]:.3f},{y_points[0]:.3f}"
+    for x, y in zip(x_points[1:], y_points[1:]):
+        path += f" L {x:.3f},{y:.3f}"
+    path += " Z"
+    return path
+
+def generate_hexagonal_grid(x_min, x_max, y_min, y_max, hex_size):
+    """
+    Generate centers for a hexagonal grid covering the court area.
+    Returns list of (x, y) tuples for hex centers.
+    """
+    hex_height = hex_size * np.sqrt(3)
+    hex_width = hex_size * 2
+    
+    centers = []
+    
+    # Vertical spacing between rows
+    row_spacing = hex_height
+    # Horizontal spacing between columns
+    col_spacing = hex_width * 0.75
+    
+    row = 0
+    y = y_min
+    while y <= y_max + hex_height:
+        x_offset = (col_spacing / 2) if (row % 2 == 1) else 0
+        x = x_min + x_offset
+        
+        while x <= x_max + hex_width:
+            centers.append((x, y))
+            x += col_spacing
+        
+        y += row_spacing
+        row += 1
+    
+    return centers
+
+def assign_shots_to_hexagons(dff, hex_centers, base_hex_size):
+    """
+    Assign shots to hexagons and calculate stats for each hex.
+    Returns DataFrame with hex stats.
+    """
+    hex_data = []
+    
+    for cx, cy in hex_centers:
+        # Find shots within this hexagon (using circular approximation)
+        distances = np.sqrt((dff['x_plot'] - cx)**2 + (dff['y_plot'] - cy)**2)
+        hex_shots = dff[distances <= base_hex_size]
+        
+        if len(hex_shots) > 0:
+            made = hex_shots['made'].sum()
+            total = len(hex_shots)
+            fg_pct = made / total if total > 0 else 0
+            
+            hex_data.append({
+                'cx': cx,
+                'cy': cy,
+                'made': made,
+                'attempts': total,
+                'fg_pct': fg_pct,
+            })
+    
+    return pd.DataFrame(hex_data)
+
+def calculate_hex_size_and_color(row, base_size, min_shots=3, max_shots=50):
+    """
+    Calculate hexagon size based on shot volume and color based on FG%.
+    """
+    attempts = row['attempts']
+    fg_pct = row['fg_pct']
+    
+    # Scale hexagon size based on shot volume (between 0.4x and 1.5x base size)
+    size_scale = 0.4 + (min(attempts, max_shots) / max_shots) * 1.1
+    hex_size = base_size * size_scale
+    
+    # Color based on FG% (using same peach colorscale as zones)
+    # Normalize FG% to 0-1 range (roughly 25% to 65% shooting)
+    color_t = np.clip((fg_pct - 0.25) / 0.40, 0, 1)
+    color = sample_colorscale("Portland", color_t)[0]
+    
+    return hex_size, color
+
+def make_hexagon_chart(dff, title):
+    """
+    BBall-Index-style hexbin shot chart.
+    - Hex grid covers the half court
+    - SIZE ∝ shot volume in that bin
+    - COLOR = blue (below NCAA avg) → white → red (above NCAA avg)
+    """
+    dff = dff.copy()
+    dff.loc[:, "dist"]  = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
+    dff.loc[:, "angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
+    dff.loc[:, "zone"]  = dff.apply(assign_zone, axis=1)
+    if "shot_range" in dff.columns:
+        dff = reconcile_zone_with_shot_range(dff)
+
+    fig = go.Figure(layout=create_half_court_layout())
+
+    # ---- Hex grid parameters ----
+    HEX_SIZE = 2.5           # max circumradius in feet
+    MIN_SHOTS = 2          # min attempts to render
+
+    hex_centers = make_hex_grid(hex_size=HEX_SIZE)
+
+    hex_df = bin_shots_to_hex(
+        shot_x=dff["x_plot"].values,
+        shot_y=dff["y_plot"].values,
+        shot_made=dff["made"].values,
+        hex_centers=hex_centers,
+        hex_size=HEX_SIZE,
+    )
+
+    if hex_df.empty:
+        return empty_shot_figure("Not enough shots for hex chart")
+
+    hex_df = hex_df[hex_df["attempts"] >= MIN_SHOTS].copy()
+
+    # ---- Size scaling ----
+    max_att = max(hex_df["attempts"].quantile(0.875), 1)
+    hex_df["size_frac"] = (hex_df["attempts"] / max_att).clip(0, 1)
+    hex_df["draw_size"] = HEX_SIZE * (0.3 + 0.70 * hex_df["size_frac"])
+
+    # ---- Color: FG% vs NCAA average at that distance ----
+    hex_df["ncaa_avg"] = hex_df["avg_dist"].apply(ncaa_expected_fg)
+    hex_df["fg_diff"]  = hex_df["fg_pct"] - hex_df["ncaa_avg"]
+    hex_df["color"]    = hex_df["fg_diff"].apply(
+        lambda d: hex_color_from_diff(d, max_diff=0.2)
+    )
+
+    # ---- Draw hexagons ----
+    for _, row in hex_df.iterrows():
+        rx, ry = rotate_for_display(row["cx"], row["cy"])
+        path = hexagon_path(rx, ry, row["draw_size"])
+        fig.add_shape(
+            type="path",
+            path=path,
+            fillcolor=row["color"],
+            line=dict(color=THEME["bg_chart"], width=1.25),
+            opacity=1.0,
+            layer="below",
+        )
+
+    # ---- Court lines ON TOP ----
+    ax, ay = rotate_for_display(ARC_X, ARC_Y)
+    fig.add_trace(go.Scatter(
+        x=ax, y=ay, mode="lines",
+        line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+        hoverinfo="skip", showlegend=False,
+    ))
+
+    cx1, cy1 = rotate_for_display(
+        np.array([-BASELINE_X, BASELINE_X]),
+        np.array([-ARC_Y.max(), -ARC_Y.max()]),
+    )
+    cx2, cy2 = rotate_for_display(
+        np.array([-BASELINE_X, BASELINE_X]),
+        np.array([ARC_Y.max(), ARC_Y.max()]),
+    )
+    for cx_line, cy_line in [(cx1, cy1), (cx2, cy2)]:
+        fig.add_trace(go.Scatter(
+            x=cx_line, y=cy_line, mode="lines",
+            line=dict(color=COURT_LINE_COLOR, width=COURT_LINE_WIDTH),
+            hoverinfo="skip", showlegend=False,
+        ))
+
+    # ---- Finish ----
+    fig.update_layout(
+        plot_bgcolor=THEME["bg_chart"],
+        paper_bgcolor=THEME["bg_chart"],
+        showlegend=False,
+    )
+
+    add_hex_legend(fig, THEME)
+
+    summary = shooting_summary(dff)
+    fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
+    pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
+    add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.1%} Ast'd")
+    add_signature(fig)
+
+    return fig
+
+def make_heatmap_chart(dff, title):
+    """
+    Continuous KDE-style heatmap of shot density.
     """
 
     dff = dff.copy()
@@ -1643,89 +1705,135 @@ def make_hexbin_chart(dff, title):
 
     fig = go.Figure(layout=create_half_court_layout())
 
+    # Rotate shot coordinates for display
     all_x, all_y = rotate_for_display(dff["x_plot"].values, dff["y_plot"].values)
 
-    is_three = dff["is_three"].values
-    made = dff["made"].values
-    
-    points = np.where(made == 1, np.where(is_three, 3, 2), 0)
+    # get two dataframes of just 3P makes and 2P makes
+    dff_made = dff.loc[(dff['result']=='made')]
+    dff_three = dff.loc[dff['is_three'] & (dff['result']=='made')]
+    dff_two = dff.loc[(dff['zone'].str.contains('Mid')) & (dff['result']=='made')]
+
+    # create new numpy arrays for these makes
+    all_x2, all_y2 = rotate_for_display(dff_two["x_plot"].values, dff_two["y_plot"].values)
+    all_x3, all_y3 = rotate_for_display(dff_three["x_plot"].values, dff_three["y_plot"].values)
+    made_x, made_y = rotate_for_display(dff_made["x_plot"].values, dff_made["y_plot"].values)
+
+    # get all makes
+    all_x = np.concatenate([made_x, all_x3])
+    all_y = np.concatenate([made_y, all_y3])
+
+    # all_x = np.concatenate([made_x, all_x2, all_x3, all_x3])
+    # all_y = np.concatenate([made_y, all_y2, all_y3, all_y3])
+
+    #print(dff['is_three'])
+
+    #print('all_x')
+    #print(all_x)
 
     # --------------------------------------------------
-    # Build grid
+    # Build a fine grid and bin shots into it
     # --------------------------------------------------
-    nx, ny = 80, 80
+    nx, ny = 80, 80  # grid resolution (higher = smoother but slower)
+
     x_min, x_max = -30, 30
     y_min, y_max = -6, 38
 
+
     x_bins = np.linspace(x_min, x_max, nx + 1)
     y_bins = np.linspace(y_min, y_max, ny + 1)
+
+    # 2D histogram (raw counts)
+    H, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
+
+    #print("H")
+    #print(H.shape)
+    #print(H)
+
+    # --------------------------------------------------
+    # Normalize to % of total shots before smoothing
+    # --------------------------------------------------
+    total_shots = H.sum()
+    H_pct = (H / total_shots) * 100 if total_shots > 0 else H
+    #print("H_pct")
+    #print(H_pct.shape)
+    #print(H_pct)
+
+    # --------------------------------------------------
+    # Gaussian smooth â†’ continuous density surface
+    # --------------------------------------------------
+    sigma = 2.5
+    H_smooth = gaussian_filter(H_pct, sigma=sigma)
+
+    # Log-transform to prevent rim from drowning everything
+    H_log = np.log1p(H_smooth * 50)
+
+    # Mask: only show areas where the smoothed density
+    # corresponds to roughly 5+ shots clustering together.
+    # 5 shots / total_shots * 100 gives us our raw % threshold,
+    # then we run it through the same log transform to match.
+    min_shots = 3
+    min_pct = (min_shots / total_shots) * 100 if total_shots > 0 else 0
+    min_threshold = np.log1p(min_pct * 0.3)  # ~0.3 accounts for gaussian spreading the density out
+
+    H_masked = np.where(H_log < min_threshold, np.nan, H_log)
+    #print("H_masked")
+    #print(H_masked.shape)
+    #print(H_masked)
+
+    #print('-----------------\n')
+
+    # Grid centers for plotting
     x_centers = (x_bins[:-1] + x_bins[1:]) / 2
     y_centers = (y_bins[:-1] + y_bins[1:]) / 2
 
     # --------------------------------------------------
-    # Calculate PPS per bin
-    # --------------------------------------------------
-    H_points, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins], weights=points)
-    H_attempts, _, _ = np.histogram2d(all_x, all_y, bins=[x_bins, y_bins])
-    
-    with np.errstate(divide='ignore', invalid='ignore'):
-        H_pps = np.where(H_attempts >= 1, H_points / H_attempts, np.nan)
-
-    # --------------------------------------------------
-    # Smooth both surfaces
-    # --------------------------------------------------
-    sigma = 2.5
-    # Replace NaN with 0 for smoothing, then restore NaN after
-    H_pps_for_smooth = np.nan_to_num(H_pps, nan=0.0)
-    H_pps_smooth = gaussian_filter(H_pps_for_smooth, sigma=sigma)
-    H_attempts_smooth = gaussian_filter(H_attempts, sigma=sigma)
-
-    # --------------------------------------------------
-    # Mask based on SMOOTHED attempts, not log-transformed
-    # --------------------------------------------------
-    total_shots = len(all_x)
-    min_shots_threshold = 1.0  # Lower threshold - show areas with 1+ smoothed shot
-    
-    # Simple masking: only hide where smoothed attempts < threshold
-    H_pps_masked = np.where(H_attempts_smooth < min_shots_threshold, np.nan, H_pps_smooth)
-
-    print("H_attempts_smooth min/max:", np.min(H_attempts_smooth), np.max(H_attempts_smooth))
-    print("H_pps_smooth min/max:", np.min(H_pps_smooth), np.max(H_pps_smooth))
-    print("H_pps_masked non-NaN count:", np.count_nonzero(~np.isnan(H_pps_masked)))
-
-    # --------------------------------------------------
-    # Recalibrated absolute PPS colorscale
+    # Colorscale: transparent cool â†’ opaque hot
     # --------------------------------------------------
     colorscale = [
-        [0.0,  "rgb(50,  30, 120)"],    # deep purple (0.7 PPS)
-        [0.15, "rgb(70,  80, 180)"],    # dark blue (0.8 PPS)
-        [0.3,  "rgb(100, 140, 220)"],   # medium blue (0.9 PPS)
-        [0.45, "rgb(140, 180, 240)"],   # light blue (1.0 PPS)
-        [0.55, "rgb(200, 220, 180)"],   # pale yellow (1.1 PPS)
-        [0.65, "rgb(240, 200,  80)"],   # yellow (1.2 PPS)
-        [0.75, "rgb(255, 150,  50)"],   # orange (1.3 PPS)
-        [0.85, "rgb(240,  80,  40)"],   # red-orange (1.4 PPS)
-        [1.0,  "rgb(200,  30,  30)"],   # deep red (1.5 PPS)
+        [0.0,  "rgba(30,  60, 180, 0.0)"],   # fully transparent
+        [0.1, "rgba(40,  90, 200, 0.8)"],   # faint blue
+        [0.3,  "rgba(60, 160, 220, 0.85)"],   # light blue
+        [0.4,  "rgba(180, 220,  80, 0.9)"],   # yellow-green
+        [0.5,  "rgba(240, 180,  40, 0.7)"],  # orange
+        [0.65, "rgba(230,  80,  40, 0.7)"],  # red-orange
+        [1.0,  "rgba(180,  20,  20, 0.7)"],  # deep red
     ]
+
+    # --------------------------------------------------
+    # Expanded colorscale with more granular thresholds
+    # Deep red reserved for elite shooting (60%+)
+    # --------------------------------------------------
+    # colorscale = [
+    #     [0.0,  "rgba(50,  30, 120, 0.0)"],    # deep purple (terrible, <25% FG)
+    #     [0.15, "rgba(60,  60, 160, 0.25)"],   # dark purple
+    #     [0.25, "rgba(70,  90, 200, 0.5)"],    # dark blue (~30-35% FG)
+    #     [0.35, "rgba(90, 130, 230, 0.5)"],   # medium blue (~35-40% FG)
+    #     [0.45, "rgba(120, 170, 240, 0.5)"],  # light blue (~40-45% FG)
+    #     [0.65,  "rgba(160, 200, 220, 0.5)"],   # very light blue (~47-50% FG - neutral)
+    #     [0.75, "rgba(200, 220, 140, 0.5)"],   # yellow-green (~50-53% FG)
+    #     [0.8,  "rgba(240, 200,  80, 0.6)"],   # yellow (~53-56% FG)
+    #     [0.85, "rgba(255, 170,  60, 0.7)"],   # light orange (~56-59% FG)
+    #     [0.9, "rgba(250, 120,  50, 0.8)"],   # orange (~59-65% FG)
+    #     [0.95, "rgba(230,  70,  40, 0.85)"],  # red-orange (~65-70% FG)
+    #     [1.0,  "rgba(200,  30,  30, 0.9)"],   # deep red (elite 70%+ FG)
+    # ]
 
     fig.add_trace(go.Heatmap(
         x=x_centers,
         y=y_centers,
-        z=H_pps_masked.T,
+        z=H_masked.T,           # transpose: plotly expects z[y][x]
         colorscale=colorscale,
         showscale=False,
-        connectgaps=False,
-        zsmooth='best',
-        hoverinfo='skip',
-        zauto=False,
-        zmin=0.7,
-        zmax=1.5,
+        connectgaps=True,       # interpolate across NaN gaps for smoothness
+        zsmooth='best',         # bilinear smoothing on render
         opacity=0.85,
+        hoverinfo='skip',
     ))
 
     # --------------------------------------------------
-    # Court lines
+    # Court lines drawn ON TOP of heatmap
     # --------------------------------------------------
+    # 3PT arc
     ax, ay = rotate_for_display(ARC_X, ARC_Y)
     fig.add_trace(go.Scatter(
         x=ax, y=ay,
@@ -1735,6 +1843,7 @@ def make_hexbin_chart(dff, title):
         showlegend=False
     ))
 
+    # Corner 3PT lines
     cx1, cy1 = rotate_for_display(
         np.array([-BASELINE_X, BASELINE_X]),
         np.array([-ARC_Y.max(), -ARC_Y.max()])
@@ -1760,6 +1869,9 @@ def make_hexbin_chart(dff, title):
         showlegend=False
     )
 
+    # --------------------------------------------------
+    # Summary stats
+    # --------------------------------------------------
     summary = shooting_summary(dff)
     fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
@@ -1876,7 +1988,7 @@ def zone_color(pct, zone):
 
     # fallback (should never hit, but safe)
     if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("peach", 0.0)[0]  # ✅ changed to 0.0 for lightest
+        return sample_colorscale("peach", 0.0)[0]  # âœ… changed to 0.0 for lightest
 
     lo, hi = ZONE_PCT_RANGES[family]
 
@@ -2005,8 +2117,8 @@ SUFFIXES = {"jr", "jr.", "sr", "sr.", "ii", "iii", "iv"}
 def last_name_clean(name):
     parts = name.replace(",", "").split()
     if parts[-1].lower() in SUFFIXES:
-        return parts[-2]
-    return parts[-1]
+        return parts[0][0] + r". " + parts[-2]
+    return parts[0][0] + r". " + parts[-1]
 
 def format_lineup_label(lineup):
     last_names = [last_name_clean(p) for p in lineup]
@@ -2027,7 +2139,7 @@ def parse_lineup_key(key):
 app = Dash(__name__, 
            title="CBB Shot Charts",
            external_stylesheets=[dbc.themes.BOOTSTRAP])
-# ✅ Add custom meta tags for iOS home screen icon
+# âœ… Add custom meta tags for iOS home screen icon
 app.index_string = '''
 <!DOCTYPE html>
 <html>
@@ -2108,7 +2220,7 @@ app.layout = dbc.Container(
                         }
                     ),
                     html.Div(
-                        "Games thru Feb. 1",
+                        "Games thru Feb. 8",
                         className="text-center",
                         style={
                             "fontSize": "12.5px",
@@ -2123,7 +2235,8 @@ app.layout = dbc.Container(
         html.Hr(style={
                 "borderColor": THEME["divider"],
                 "opacity": 1,
-                "margin": "12px 0"
+                "margin": "12px 0",
+                "marginBottom": '2px'
             }),
 
         dbc.Row(dbc.Col(
@@ -2159,8 +2272,8 @@ app.layout = dbc.Container(
                         "marginBottom": "8px",
                         "marginTop": "5px",
                         "textAlign": "center",
-                        "maxWidth": "360px",  # ✅ match dropdown width
-                        "margin": "3px auto 0 auto",  # ✅ center it
+                        "maxWidth": "360px",  # âœ… match dropdown width
+                        "margin": "3px auto 0 auto",  # âœ… center it
                     }
                 ),
             ], width=12),
@@ -2186,7 +2299,7 @@ app.layout = dbc.Container(
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
                                                     "color": THEME["text_primary"],
-                                                    "boxShadow": THEME["shadow_sm"],
+                                                    #"boxShadow": THEME["shadow_sm"],
                                                     "borderRadius": "10px",
                                                     "fontWeight": "600",
                                                 },
@@ -2199,13 +2312,13 @@ app.layout = dbc.Container(
                                                 "Clear", 
                                                 id="reset-button", 
                                                 color="secondary", 
-                                                className="shadow-button",  # ✅ full width of column
+                                                className="bi bi-alarm py-0 px-1",  # âœ… full width of column
                                                 size='sm'
                                             ),
                                             #xs=3, md=2,
                                             width=3,
                                             className="d-flex align-items-center"
-                                            #className="px-3"  # ✅ adds padding on sides
+                                            #className="px-3"  # âœ… adds padding on sides
                                         ),
                                         
                                         dbc.Col(
@@ -2217,7 +2330,7 @@ app.layout = dbc.Container(
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
                                                     "color": THEME["text_primary"],
-                                                    "boxShadow": THEME["shadow_sm"],
+                                                    #"boxShadow": THEME["shadow_sm"],
                                                     "borderRadius": "10px",
                                                     "fontWeight": "600",
                                                 },
@@ -2235,7 +2348,7 @@ app.layout = dbc.Container(
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
                                                     "color": THEME["text_primary"],
-                                                    "boxShadow": THEME["shadow_sm"],
+                                                    #"boxShadow": THEME["shadow_sm"],
                                                     "borderRadius": "10px",
                                                     "fontWeight": "600",
                                                 },
@@ -2251,7 +2364,7 @@ app.layout = dbc.Container(
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
                                                     "color": THEME["text_primary"],
-                                                    "boxShadow": THEME["shadow_sm"],
+                                                    #"boxShadow": THEME["shadow_sm"],
                                                     "borderRadius": "10px",
                                                     "fontWeight": "600",
                                                 },
@@ -2268,7 +2381,7 @@ app.layout = dbc.Container(
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
                                                     "color": THEME["text_primary"],
-                                                    "boxShadow": THEME["shadow_sm"],
+                                                    #"boxShadow": THEME["shadow_sm"],
                                                     "borderRadius": "10px",
                                                     "fontWeight": "600",
                                                 },
@@ -2285,7 +2398,7 @@ app.layout = dbc.Container(
                                                     "fontSize": "14px",
                                                     "backgroundColor": THEME["bg_dropdown"],
                                                     "color": THEME["text_primary"],
-                                                    "boxShadow": THEME["shadow_sm"],
+                                                    #"boxShadow": THEME["shadow_sm"],
                                                     "borderRadius": "10px",
                                                     "fontWeight": "600",
                                                 },
@@ -2301,128 +2414,86 @@ app.layout = dbc.Container(
                                                         "marginTop": "5px",
                                                         "textAlign": "left"
                                                     }
-                                                            ),],
+                                                            ),
+
+                                                            
+                                                            ],
                                             xs=12, md=12  # full width
                                         ),
-                                        
-                                        dbc.Accordion(
-                                                    [
-                                                        dbc.AccordionItem([
-                                                            html.Div(
-                                                                "Get shots while specific lineups are on the court",
-                                                                style={
-                                                                    "fontSize": "14px",
-                                                                    "fontWeight": 600,
-                                                                    "color": THEME["text_secondary"],
-                                                                    "marginBottom": "8px",
-                                                                    "textAlign": "center"
-                                                                }
-                                                            ),
-                                                            dcc.Dropdown(
-                                                                id="lineup-dd",
-                                                                multi=False,
-                                                                placeholder="Select 5-man lineup",
-                                                                style={
-                                                                    "fontSize": "14px",
-                                                                    "backgroundColor": THEME["bg_dropdown"],
-                                                                    "color": THEME["text_secondary"],
-                                                                    #"boxShadow": THEME["shadow_sm"],
-                                                                    "borderRadius": "10px",
-                                                                    "fontWeight": "600",
-                                                                },
-                                                                optionHeight=52,
-                                                            ),
-                                                            ],
-                                                            title="5-Man Lineups",
-                                                        )
-                                                    ],
-                                                    start_collapsed=True,
-                                                    flush=True,
-                                                    className="filters-accordion",
-                                                    style={
-                                                        #"overflow": "visible",
-                                                        "marginTop": "6px",
-                                                        #"overflow": "visible",
-                                                        "backgroundColor": THEME["bg_dropdown"],
-                                                        "color": THEME["text_secondary"],
-                                                        "boxShadow": THEME["shadow_sm"],
-                                                        #"borderRadius": "10px",
-                                                        #"fontWeight": "600",
-                                                    }
-                                                ),
-
-                                                dbc.Accordion(
-                                                    [
-                                                        dbc.AccordionItem(
-                                                            dbc.Row(
-                                                                [
-                                                                    html.Div(
-                                                                                "Get shots while players are ON or OFF the court",
-                                                                                style={
-                                                                                    "fontSize": "14px",
-                                                                                    "fontWeight": 600,
-                                                                                    "color": THEME["text_secondary"],
-                                                                                    "marginBottom": "8px",
-                                                                                    "textAlign": "center"
-                                                                                }
-                                                                            ),
-                                                                    dbc.Col(
-                                                                        [
-                                                                            dcc.Dropdown(
-                                                                                id="on-court-dd",
-                                                                                multi=True,
-                                                                                placeholder="Player(s) ON court",
-                                                                                style={
-                                                                                    "fontSize": "14px",
-                                                                                    "backgroundColor": THEME["bg_dropdown"],
-                                                                                    "color": THEME["text_secondary"],
-                                                                                    #"boxShadow": THEME["shadow_md"],
-                                                                                    "borderRadius": "10px",
-                                                                                    "fontWeight": "600",
-                                                                                },
-                                                                            ),
-                                                                        ],
-                                                                        width = 12
-                                                                    ),
-                                                                    dbc.Col(
-                                                                        [
-                                                                            dcc.Dropdown(
-                                                                                id="off-court-dd",
-                                                                                multi=True,
-                                                                                placeholder="Player(s) OFF court",
-                                                                                style={
-                                                                                    "fontSize": "14px",
-                                                                                    "backgroundColor": THEME["bg_dropdown"],
-                                                                                    "color": THEME["text_primary"],
-                                                                                    #"boxShadow": THEME["shadow_md"],
-                                                                                    "borderRadius": "10px",
-                                                                                    "fontWeight": "600",
-                                                                                },
-                                                                            ),
-                                                                        ],
-                                                                        width = 12
-                                                                    ),
-                                                                ],
-                                                                className="g-2",
-                                                            ),
-                                                            title="On / Off",
-                                                        )
-                                                    ],
-                                                    start_collapsed=True,
-                                                    flush=True,
-                                                    className="filters-accordion",
-                                                    style={
-                                                        #"overflow": "visible",
-                                                        "marginTop": "12px",
-                                                        #"overflow": "visible",
-                                                        "backgroundColor": THEME["bg_dropdown"],
-                                                        "color": THEME["text_secondary"],
-                                                        "boxShadow": THEME["shadow_sm"],
-                                                        #"borderRadius": "10px",
-                                                        #"fontWeight": "600",
-                                                    },
-                                                    
-                                                ),
+                                        html.Hr(style={'marginBottom':'5px'}),
+                                            html.Div(
+                                                "Get shots while specific lineups are on the court",
+                                                style={
+                                                    "fontSize": "14px",
+                                                    "fontWeight": 600,
+                                                    "color": THEME["text_secondary"],
+                                                    "marginBottom": "0px",
+                                                    "marginTop": "0px",
+                                                    "textAlign": "center"
+                                                }
+                                            ),
+                                            dcc.Dropdown(
+                                                id="lineup-dd",
+                                                multi=False,
+                                                placeholder="Select 5-man lineup",
+                                                style={
+                                                    "fontSize": "13px",
+                                                    "backgroundColor": THEME["bg_dropdown"],
+                                                    "color": THEME["text_secondary"],
+                                                    #"boxShadow": THEME["shadow_sm"],
+                                                    "borderRadius": "10px",
+                                                    "fontWeight": "600",
+                                                },
+                                                optionHeight=75,
+                                            ),
+                                            html.Hr(style={'marginBottom':'5px', 'marginTop':'20px'}),
+                                            html.Div(
+                                                        "Get shots while players are ON or OFF the court",
+                                                        style={
+                                                            "fontSize": "14px",
+                                                            "fontWeight": 600,
+                                                            "color": THEME["text_secondary"],
+                                                            "marginBottom": "0px",
+                                                            "marginTop": "0px",
+                                                            "textAlign": "center"
+                                                        }
+                                                    ),
+                                            dbc.Col(
+                                                [
+                                                    dcc.Dropdown(
+                                                        id="on-court-dd",
+                                                        multi=True,
+                                                        placeholder="Player(s) ON court",
+                                                        style={
+                                                            "fontSize": "14px",
+                                                            "backgroundColor": THEME["bg_dropdown"],
+                                                            "color": THEME["text_secondary"],
+                                                            #"boxShadow": THEME["shadow_md"],
+                                                            "borderRadius": "10px",
+                                                            "fontWeight": "600",
+                                                        },
+                                                    ),
+                                                ],
+                                                width = 12
+                                            ),
+                                            dbc.Col(
+                                                [
+                                                    dcc.Dropdown(
+                                                        id="off-court-dd",
+                                                        multi=True,
+                                                        placeholder="Player(s) OFF court",
+                                                        style={
+                                                            "fontSize": "14px",
+                                                            "backgroundColor": THEME["bg_dropdown"],
+                                                            "color": THEME["text_primary"],
+                                                            #"boxShadow": THEME["shadow_md"],
+                                                            "borderRadius": "10px",
+                                                            "fontWeight": "600",
+                                                        },
+                                                    ),
+                                                ],
+                                                width = 12
+                                            ),
                                                 dbc.Col(
                                                     html.Div(
                                                         dbc.Checkbox(
@@ -2430,14 +2501,14 @@ app.layout = dbc.Container(
                                                             label="Exclude games vs non-D1",
                                                             inputStyle={
                                                                 "marginRight": "8px",
-                                                                "transform": "scale(1.25)",   # 🔹 increase checkbox size
+                                                                "transform": "scale(1.25)",   # ðŸ”¹ increase checkbox size
                                                                 "cursor": "pointer",
                                                                 "color":'black'
                                                             },
                                                             labelStyle={
                                                                 "cursor": "pointer"
                                                             },
-                                                            value=True,   # ✅ default checked
+                                                            value=True,   # âœ… default checked
                                                             #inputStyle={"marginRight": "8px"},
                                                         ),
                                                         style={
@@ -2479,7 +2550,7 @@ app.layout = dbc.Container(
                         "borderRadius": "14px",
                         "backgroundColor": THEME['bg_panel'],
                          #"borderRadius": "10px",
-                        #"overflow": "auto",   # 🔴 REQUIRED for rounding to clip children
+                        #"overflow": "auto",   # ðŸ”´ REQUIRED for rounding to clip children
                     }
                 ),
                 xs=9, md=5, lg=4
@@ -2491,11 +2562,12 @@ app.layout = dbc.Container(
         dbc.RadioItems(
             id="view-mode",
             options=[
-                {"label": "Zones", "value": "zones"},
                 {"label": "Shots", "value": "shots"},
-                {"label": "Heat*", "value": "hex"},
+                {"label": "Zones", "value": "zones"},
+                {"label": "Hex*", "value": "hexagons"},
+                {"label": "Heat*", "value": "heatmap"},
             ],
-            value="zones",
+            value="shots",
             inline=True,
             #button=True,
             className="d-flex justify-content-center mb-2",
@@ -2599,7 +2671,7 @@ app.layout = dbc.Container(
                         xs=12, md=6,
                     ),
                 ],
-                className="gy-4"   # 👈 adds vertical spacing on mobile
+                className="gy-4"   # ðŸ‘ˆ adds vertical spacing on mobile
             ),
 
             html.Br(),
@@ -2622,7 +2694,7 @@ app.layout = dbc.Container(
                         style={"marginRight": "4px"}
                     ),
 
-                    html.Span("•", style={"margin": "0 8px"}),
+                    html.Span("|", style={"margin": "0 8px"}),
 
                     html.Span(
                         "Built by ",
@@ -2765,7 +2837,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     elif team == 'Southern Ind.': team_logo = "logos/Southern-Indiana-Screaming-Eagles.png"
     elif team == 'Lindenwood': team_logo = "logos/Lindenwood-Lions.png"
     elif team == 'Le Moyne': team_logo = "logos/Le-Moyne-Dolphins.png"
-    elif team == 'St. Thomas \(MN\)': team_logo = "logos/st-thomas-mn-tommies.png"
+    elif team == r'St. Thomas \(MN\)': team_logo = "logos/st-thomas-mn-tommies.png"
     elif team == "Mount St. Mary's": team_logo = "logos/mount-saint-marys-mountaineers.png"
     elif team == 'Lehigh': team_logo = "logos/lehigh-mountain-hawks.png"
     elif team == 'West Ga.': team_logo = "logos/west-georgia-wolves.png"
@@ -2864,7 +2936,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         def_title += f" | Shot Type: {', '.join(shot_types)}"
 
     # --------------------------------------------------
-    # 🚨 SAFEGUARD: no shots after filtering
+    # ðŸš¨ SAFEGUARD: no shots after filtering
     # --------------------------------------------------
     if dff.empty:
         empty_fig = empty_shot_figure()
@@ -2921,12 +2993,26 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         if off_df.empty:
             fig_off = empty_shot_figure("No OFFENSE shots match filters")
         else:
-            fig_off = make_shot_chart(off_df, chart_title(team, "Offense", team_logo)) if view_mode=="shots" else make_zone_chart(off_df, chart_title(team, "Offense", team_logo))
+            if view_mode == "shots":
+                fig_off = make_shot_chart(off_df, chart_title(team, "Offense", team_logo))
+            elif view_mode == "hexagons":
+                fig_off = make_hexagon_chart(off_df, chart_title(team, "Offense", team_logo))
+            elif view_mode == "heatmap":
+                fig_off = make_heatmap_chart(off_df, chart_title(team, "Offense", team_logo))
+            else:
+                fig_off = make_zone_chart(off_df, chart_title(team, "Offense", team_logo))
         
         if def_df.empty:
             fig_def = empty_shot_figure("No DEFENSE shots match filters")
         else:
-            fig_def = make_shot_chart(def_df, chart_title(team, "Defense", team_logo)) if view_mode=="shots" else make_zone_chart(def_df, chart_title(team, "Defense", team_logo))
+            if view_mode == "shots":
+                fig_def = make_shot_chart(def_df, chart_title(team, "Defense", team_logo))
+            elif view_mode == "hexagons":
+                fig_def = make_hexagon_chart(def_df, chart_title(team, "Defense", team_logo))
+            elif view_mode == "heatmap":
+                fig_def = make_heatmap_chart(def_df, chart_title(team, "Defense", team_logo))
+            else:
+                fig_def = make_zone_chart(def_df, chart_title(team, "Defense", team_logo))
 
         # If they picked only team shooters, don't change defense title at all
         # If they picked only opponent shooters, offense title stays unchanged
@@ -2935,9 +3021,12 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
     if view_mode == "shots":
         fig_off = make_shot_chart(off_df, chart_title(team, "Offense", team_logo))
         fig_def = make_shot_chart(def_df, chart_title(team, "Defense", team_logo))
-    elif view_mode == "hex":
-        fig_off = make_hexbin_chart(off_df, chart_title(team, "Offense", team_logo))
-        fig_def = make_hexbin_chart(def_df, chart_title(team, "Defense", team_logo))
+    elif view_mode == "hexagons":
+        fig_off = make_hexagon_chart(off_df, chart_title(team, "Offense", team_logo))
+        fig_def = make_hexagon_chart(def_df, chart_title(team, "Defense", team_logo))
+    elif view_mode == "heatmap":
+        fig_off = make_heatmap_chart(off_df, chart_title(team, "Offense", team_logo))
+        fig_def = make_heatmap_chart(def_df, chart_title(team, "Defense", team_logo))
     else:  # zones
         fig_off = make_zone_chart(off_df, chart_title(team, "Offense", team_logo))
         fig_def = make_zone_chart(def_df, chart_title(team, "Defense", team_logo))
@@ -3100,7 +3189,7 @@ def update_filter_options(team, exclude_non_d1):
     lu_counts = (
         dff.loc[dff["team_name"] == team].dropna(subset=["lineup"])
            .assign(lu_size=lambda x: x["lineup"].apply(len))
-           .query("lu_size == 5")              # ✅ remove bad lineups
+           .query("lu_size == 5")              # remove bad lineups
            .groupby("lineup")
            .size()
            .reset_index(name="shots")

@@ -27,6 +27,7 @@ html, body {
     font-family: 'Funnel Display', sans-serif !important;
 }
 
+
 .filters-accordion .accordion-button {
     padding: 8px 12px;   /* was ~16px 20px */
     font-size: 16px;
@@ -335,6 +336,17 @@ div[class*="MultiSelect"] input {
 .dash-dropdown-search-icon {
     color: #b0b0b0 !important;
 }
+
+.view-mode-btn {
+    padding: 4px 14px;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.6;
+    margin: 0 -10px;
+    min-width: 75px;
+    text-align: center;
+}
+
 
 
 
