@@ -1037,7 +1037,7 @@ def shot_breakdown_stats(dff):
     def pct(mask):
         att = mask.sum()
         made = dff.loc[mask, "made"].sum()
-        return f"{made/att:.1%}" if att else "â€”"
+        return f"{made/att:.1%}" if att else "-"
 
     dff = dff.copy()
     dff["dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
@@ -1083,7 +1083,7 @@ def shot_breakdown_stats(dff):
     def ast_pct(mask):
         made = dff.loc[mask & (dff["made"] == 1)]
         if len(made) == 0:
-            return "â€”"
+            return "-"
         assisted = made["assisted"].fillna(0).sum()
         return f"{assisted / len(made):.0%}"
 
@@ -2219,7 +2219,7 @@ app.layout = dbc.Container(
                             "color":THEME['text_primary']
                         }
                     ),
-                    
+
                     html.Div(
                         "Games thru Feb. 22",
                         className="text-center",
