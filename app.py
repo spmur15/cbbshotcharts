@@ -2219,6 +2219,7 @@ app.layout = dbc.Container(
                             "color":THEME['text_primary']
                         }
                     ),
+                    
                     html.Div(
                         "Games thru Feb. 22",
                         className="text-center",
