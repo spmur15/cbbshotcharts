@@ -2229,6 +2229,7 @@ app.layout = dbc.Container(
                             "marginTop": "0",
                         }
                     ),
+                    
                 ],
             )
         ),
