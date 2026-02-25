@@ -799,6 +799,7 @@ def load_team_data(team):
 
     dff['shooter'] = dff['shooter'].str.replace('&#39;', "'")
     dff['shooter'] = dff['shooter'].str.replace('&amp;', "&")
+    dff['shooter'] = dff['shooter'].str.replace(' jr\.$', " Jr.", regex=True)
 
     #dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] + ')'
     #dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff['team_name'] + ')'
@@ -2229,7 +2230,7 @@ app.layout = dbc.Container(
                             "marginTop": "0",
                         }
                     ),
-                    
+
                 ],
             )
         ),
