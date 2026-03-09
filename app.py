@@ -3270,6 +3270,21 @@ def update_filter_options(team, exclude_non_d1):
     
     # Sort lineups by shots
     lu_counts = lu_counts.sort_values("shots", ascending=False)
+
+    # Collect all players across all lineups and disambiguate
+    all_players = list({p for lu in lu_counts["lineup_ord"] for p in lu})
+    name_labels = disambiguate_names(all_players)
+
+    def format_lineup_label_distinct(lineup):
+        return " · ".join(name_labels[p] for p in lineup)
+
+    lineup_opts = [
+        {
+            "label": f"{format_lineup_label_distinct(lu)}  ({shots} shots)",
+            "value": lineup_key(lu)
+        }
+        for lu, shots in zip(lu_counts["lineup_ord"], lu_counts["shots"])
+    ]
     
     lineup_opts = [
         {
