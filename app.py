@@ -2222,7 +2222,7 @@ app.layout = dbc.Container(
                     ),
 
                     html.Div(
-                        "Games thru Mar. 3",
+                        "Games thru Mar. 8",
                         className="text-center",
                         style={
                             "fontSize": "12.5px",
