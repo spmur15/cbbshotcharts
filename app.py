@@ -2115,16 +2115,66 @@ def add_signature(fig):
 
 SUFFIXES = {"jr", "jr.", "sr", "sr.", "ii", "iii", "iv"}
 
+# def last_name_clean(name):
+#     parts = name.replace(",", "").split()
+#     if parts[-1].lower() in SUFFIXES:
+#         return parts[0][0] + r". " + parts[-2]
+#     return parts[0][0] + r". " + parts[-1]
+
+# def format_lineup_label(lineup):
+#     last_names = [last_name_clean(p) for p in lineup]
+#     return " · ".join(last_names)
+
+
 def last_name_clean(name):
     parts = name.replace(",", "").split()
     if parts[-1].lower() in SUFFIXES:
-        return parts[0][0] + r". " + parts[-2]
-    return parts[0][0] + r". " + parts[-1]
+        return parts[0], parts[-2]
+    return parts[0], parts[-1]
+
+
+def disambiguate_names(players):
+    """
+    Return a dict mapping each player's full name to a distinct short label.
+    Starts with 'F. Last' and progressively reveals more of the first name
+    until all labels are unique.
+    """
+    first_names = {}
+    last_names = {}
+    for p in players:
+        first, last = last_name_clean(p)
+        first_names[p] = first
+        last_names[p] = last
+
+    # Start with first initial
+    labels = {p: f"{first_names[p][0]}. {last_names[p]}" for p in players}
+
+    # Find collisions and expand first name until resolved
+    max_len = max(len(first_names[p]) for p in players)
+    for chars in range(2, max_len + 1):
+        # Group players by their current label
+        from collections import Counter
+        counts = Counter(labels.values())
+        dupes = {label for label, count in counts.items() if count > 1}
+
+        if not dupes:
+            break
+
+        for p in players:
+            if labels[p] in dupes:
+                prefix = first_names[p][:chars]
+                # Use abbreviation style if still truncated, full name if complete
+                if chars < len(first_names[p]):
+                    labels[p] = f"{prefix}. {last_names[p]}"
+                else:
+                    labels[p] = f"{prefix} {last_names[p]}"
+
+    return labels
+
 
 def format_lineup_label(lineup):
-    last_names = [last_name_clean(p) for p in lineup]
-    return " · ".join(last_names)
-
+    labels = disambiguate_names(lineup)
+    return " · ".join(labels[p] for p in lineup)
 
 def lineup_key(lineup):
     """Stable string key for Dash dropdown"""
