@@ -3286,13 +3286,13 @@ def update_filter_options(team, exclude_non_d1):
         for lu, shots in zip(lu_counts["lineup_ord"], lu_counts["shots"])
     ]
     
-    lineup_opts = [
-        {
-            "label": f"{format_lineup_label(lu)}  ({shots} shots)",
-            "value": lineup_key(lu)
-        }
-        for lu, shots in zip(lu_counts["lineup_ord"], lu_counts["shots"])
-    ]
+    # lineup_opts = [
+    #     {
+    #         "label": f"{format_lineup_label(lu)}  ({shots} shots)",
+    #         "value": lineup_key(lu)
+    #     }
+    #     for lu, shots in zip(lu_counts["lineup_ord"], lu_counts["shots"])
+    # ]
 
 
     # team_players = (
