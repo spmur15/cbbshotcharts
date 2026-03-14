@@ -203,8 +203,8 @@ ZONE_PCT_RANGES = {
     "paint": (0.35, 0.7),   # 50% bad â†’ 70% good
 }
 
-ANGLE_CORNER = 73     # degrees
-ANGLE_WING = 32
+ANGLE_CORNER = 67     # degrees
+ANGLE_WING = 22
 
 def rotate_for_display(x, y):
     """
@@ -244,383 +244,110 @@ def baseline_rect(x0, x1, y0=0, y1=R_PAINT_EDGE):
         line=dict(width=0)
     )
 
+ZONE_SHAPES = {
+    # Rim
+    "Rim": dict(
+        type="circle",
+        x0=-R_RIM, y0=-R_RIM,
+        x1=R_RIM, y1=R_RIM,
+        line=dict(width=0)
+    ),
 
+    # Paint non-rim
+    "Paint (Non-Rim) Left": dict(
+        type="path",
+        path=polar_wedge(R_RIM, R_PAINT, 45, 180),
+        line=dict(width=3)
+    ),
 
-# ----------------------------
-# 3PT geometry (hoop-centered)
-# ----------------------------
-R_3PT = 22.175
-BASELINE_X = 5.25
-CORNER_Y = 15
+    # Paint non-rim
+    "Paint (Non-Rim) Middle": dict(
+        type="path",
+        path=polar_wedge(R_RIM, R_PAINT, -45, 45),
+        line=dict(width=3)
+    ),
 
-theta_max = np.arccos(BASELINE_X / R_3PT)
-thetas = np.linspace(-theta_max, theta_max, 500)
+    # Paint non-rim
+    "Paint (Non-Rim) Right": dict(
+        type="path",
+        path=polar_wedge(R_RIM, R_PAINT, -45, -180),
+        line=dict(width=3)
+    ),
 
-ARC_X = -R_3PT * (np.cos(thetas)*1.025)
-ARC_Y = R_3PT * (np.sin(thetas)*1.025)
+    # Midrange - FIXED angle ranges
+    "Top Mid": dict(
+        type="path",
+        path=polar_wedge(R_PAINT, R_3, -ANGLE_WING, ANGLE_WING),
+        line=dict(width=0)
+    ),
+    "Left Mid": dict(
+        type="path",
+        path=polar_wedge(R_PAINT, R_3, ANGLE_WING, ANGLE_CORNER),
+        line=dict(width=0)
+    ),
+    "Right Mid": dict(
+        type="path",
+        path=polar_wedge(R_PAINT, R_3, -ANGLE_CORNER, -ANGLE_WING),
+        line=dict(width=0)
+    ),
+    "Left Mid Low": dict(  # âœ… FIXED
+        type="path",
+        path=polar_wedge(R_PAINT, R_3, ANGLE_CORNER, 180),
+        line=dict(width=0)
+    ),
+    "Right Mid Low": dict(  # âœ… FIXED
+        type="path",
+        path=polar_wedge(R_PAINT, R_3, -180, -ANGLE_CORNER),
+        line=dict(width=0)
+    ),
 
-# ---- ASSUMED COLUMN NAMES ----
-# Update these if needed
-X_COL = "x"
-Y_COL = "y"
-MADE_COL = "made"              # 1/0 or True/False
-PLAYER_COL = "shooter"
-TEAM_COL = "team_name"
-HALF_COL = "period"
-OPP_COL = "opponent"
-OFF_DEF_COL = "offense_defense"  # "Offense" / "Defense"
-
-
-
-
-"""
-REPLACEMENT ZONE SHAPES v3 — Straight parallel borders on corner zones.
-
-Changes from v2:
-  - Corner 3 outer boundary: R_MAX arc only from angle_boundary to ARC_TRANSITION_ANGLE,
-    then a straight line parallel to the inner corner line from there to the baseline.
-  - This makes both inner and outer borders straight and parallel in the corner region.
-
-INSERT after polar_wedge() and baseline_rect(), REPLACING old ZONE_SHAPES blocks.
-Requires: numpy as np, R_RIM, R_PAINT, R_3, R_MAX, BASELINE_X, ANGLE_CORNER, ANGLE_WING,
-          and the polar_wedge() function already defined.
-"""
-
-# ---- 3PT corner geometry ----
-CORNER_Y = np.sqrt(R_3**2 - BASELINE_X**2)        # ≈ 21.62 ft
-ARC_TRANSITION_ANGLE = np.degrees(np.arctan2(CORNER_Y, BASELINE_X))  # ≈ 76.3°
-
-# Outer straight line Y: where R_MAX arc is at the transition angle
-# This ensures the straight outer line connects seamlessly to the arc
-OUTER_CORNER_Y = R_MAX * np.sin(np.radians(ARC_TRANSITION_ANGLE))  # ≈ 30.6 ft
-
-# X position where R_MAX arc reaches transition angle
-_OUTER_X_AT_TRANSITION = -R_MAX * np.cos(np.radians(ARC_TRANSITION_ANGLE))  # ≈ -7.4 ft
-
-
-def _arc_pts(r, a0_deg, a1_deg, n=50):
-    """Arc points using assign_zone angle convention: a = atan2(y, -x)
-    → x_plot = -r*cos(a), y_plot = r*sin(a)"""
-    angles = np.linspace(np.radians(a0_deg), np.radians(a1_deg), n)
-    return -r * np.cos(angles), r * np.sin(angles)
-
-
-def _to_path(*xy_pairs):
-    """Convert (x_array, y_array) pairs to SVG path with rotation applied.
-    rotate_for_display(x, y) → (y, -x)"""
-    xs = np.concatenate([p[0] for p in xy_pairs])
-    ys = np.concatenate([p[1] for p in xy_pairs])
-    dx, dy = ys, -xs
-    path = f"M {dx[0]:.3f},{dy[0]:.3f}"
-    for xi, yi in zip(dx[1:], dy[1:]):
-        path += f" L {xi:.3f},{yi:.3f}"
-    path += " Z"
-    return path
-
-
-def _build_corner_3(side, angle_boundary, n=50):
-    """Corner 3 zone with parallel straight borders in the corner region.
-    
-    Outer boundary:
-      - R_MAX arc from angle_boundary → ARC_TRANSITION_ANGLE
-      - Straight line at y = ±OUTER_CORNER_Y from transition → baseline
-    Inner boundary:
-      - Straight line at y = ±CORNER_Y from baseline → transition
-      - R_3 arc from ARC_TRANSITION_ANGLE → angle_boundary
-    """
-    if side == 'left':
-        at = ARC_TRANSITION_ANGLE
-        ab = angle_boundary
-        
-        # Outer: R_MAX arc from angle_boundary to transition angle
-        seg1 = _arc_pts(R_MAX, ab, at, n)
-        # Outer: straight line at y=OUTER_CORNER_Y from transition to baseline
-        seg2_x = np.linspace(_OUTER_X_AT_TRANSITION, BASELINE_X, n // 3)
-        seg2 = (seg2_x, np.full_like(seg2_x, OUTER_CORNER_Y))
-        # Baseline: from outer straight down to inner straight
-        seg3 = (np.full(5, BASELINE_X), np.linspace(OUTER_CORNER_Y, CORNER_Y, 5))
-        # Inner: straight line at y=CORNER_Y from baseline back to transition
-        seg4_x = np.linspace(BASELINE_X, -BASELINE_X, n // 3)
-        seg4 = (seg4_x, np.full_like(seg4_x, CORNER_Y))
-        # Inner: R_3 arc from transition back to angle_boundary
-        seg5 = _arc_pts(R_3, at, ab, n // 2)
-        
-    else:  # right
-        at = -ARC_TRANSITION_ANGLE
-        ab = -angle_boundary
-        
-        seg1 = _arc_pts(R_MAX, ab, at, n)
-        seg2_x = np.linspace(_OUTER_X_AT_TRANSITION, BASELINE_X, n // 3)
-        seg2 = (seg2_x, np.full_like(seg2_x, -OUTER_CORNER_Y))
-        seg3 = (np.full(5, BASELINE_X), np.linspace(-OUTER_CORNER_Y, -CORNER_Y, 5))
-        seg4_x = np.linspace(BASELINE_X, -BASELINE_X, n // 3)
-        seg4 = (seg4_x, np.full_like(seg4_x, -CORNER_Y))
-        seg5 = _arc_pts(R_3, at, ab, n // 2)
-    
-    return _to_path(seg1, seg2, seg3, seg4, seg5)
-
-
-def _build_mid_low(side, angle_boundary, n=50):
-    """Mid-low zone: R_PAINT inside, 3PT line (arc + straight) outside."""
-    paint_y_at_bl = np.sqrt(max(R_PAINT**2 - BASELINE_X**2, 0))
-    
-    if side == 'left':
-        at = ARC_TRANSITION_ANGLE
-        ab = angle_boundary
-        paint_angle_bl = np.degrees(np.arctan2(paint_y_at_bl, -BASELINE_X))
-        
-        # Outer: R_3 arc from angle_boundary to transition
-        seg1 = _arc_pts(R_3, ab, at, n // 2)
-        # Outer: straight corner line from transition to baseline
-        seg2_x = np.linspace(-BASELINE_X, BASELINE_X, n // 3)
-        seg2 = (seg2_x, np.full_like(seg2_x, CORNER_Y))
-        # Baseline: from corner Y down to paint edge
-        seg3 = (np.full(5, BASELINE_X), np.linspace(CORNER_Y, paint_y_at_bl, 5))
-        # Inner: paint arc from baseline angle back to angle_boundary
-        seg4 = _arc_pts(R_PAINT, paint_angle_bl, ab, n // 2)
-        
-    else:  # right
-        at = -ARC_TRANSITION_ANGLE
-        ab = -angle_boundary
-        paint_angle_bl = np.degrees(np.arctan2(-paint_y_at_bl, -BASELINE_X))
-        
-        seg1 = _arc_pts(R_3, ab, at, n // 2)
-        seg2_x = np.linspace(-BASELINE_X, BASELINE_X, n // 3)
-        seg2 = (seg2_x, np.full_like(seg2_x, -CORNER_Y))
-        seg3 = (np.full(5, BASELINE_X), np.linspace(-CORNER_Y, -paint_y_at_bl, 5))
-        seg4 = _arc_pts(R_PAINT, paint_angle_bl, ab, n // 2)
-    
-    return _to_path(seg1, seg2, seg3, seg4)
-
-
-def _build_large_three(n=60):
-    """Full 3PT ring with parallel straight corner borders."""
-    at = ARC_TRANSITION_ANGLE
-    
-    # Outer: R_MAX arc from -transition to +transition (the curved top)
-    seg1 = _arc_pts(R_MAX, -at, at, n)
-    # Left: outer straight from transition to baseline
-    seg2_x = np.linspace(_OUTER_X_AT_TRANSITION, BASELINE_X, 15)
-    seg2 = (seg2_x, np.full_like(seg2_x, OUTER_CORNER_Y))
-    # Left baseline: outer down to inner
-    seg3 = (np.full(3, BASELINE_X), np.linspace(OUTER_CORNER_Y, CORNER_Y, 3))
-    # Left inner straight from baseline to transition
-    seg4_x = np.linspace(BASELINE_X, -BASELINE_X, 15)
-    seg4 = (seg4_x, np.full_like(seg4_x, CORNER_Y))
-    # Inner: R_3 arc from +transition around to -transition
-    seg5 = _arc_pts(R_3, at, -at, n)
-    # Right inner straight from transition to baseline
-    seg6_x = np.linspace(-BASELINE_X, BASELINE_X, 15)
-    seg6 = (seg6_x, np.full_like(seg6_x, -CORNER_Y))
-    # Right baseline: inner up to outer
-    seg7 = (np.full(3, BASELINE_X), np.linspace(-CORNER_Y, -OUTER_CORNER_Y, 3))
-    # Right outer straight from baseline to transition
-    seg8_x = np.linspace(BASELINE_X, _OUTER_X_AT_TRANSITION, 15)
-    seg8 = (seg8_x, np.full_like(seg8_x, -OUTER_CORNER_Y))
-    
-    return _to_path(seg1, seg2, seg3, seg4, seg5, seg6, seg7, seg8)
-
-
-def _build_large_midrange(n=60):
-    """Full midrange ring: 3PT line outside, paint inside, with straight corners."""
-    paint_y_bl = np.sqrt(max(R_PAINT**2 - BASELINE_X**2, 0))
-    paint_angle_pos = np.degrees(np.arctan2(paint_y_bl, -BASELINE_X))
-    paint_angle_neg = np.degrees(np.arctan2(-paint_y_bl, -BASELINE_X))
-    at = ARC_TRANSITION_ANGLE
-    
-    # Outer: R_3 arc from -transition around to +transition
-    seg1 = _arc_pts(R_3, -at, at, n)
-    # Left corner straight from arc to baseline
-    seg2_x = np.linspace(-BASELINE_X, BASELINE_X, 15)
-    seg2 = (seg2_x, np.full_like(seg2_x, CORNER_Y))
-    # Left baseline: from corner Y down to paint edge
-    seg3 = (np.full(3, BASELINE_X), np.linspace(CORNER_Y, paint_y_bl, 3))
-    # Inner: paint arc from left baseline around to right baseline
-    seg4 = _arc_pts(R_PAINT, paint_angle_pos, paint_angle_neg, n)
-    # Right baseline: from paint edge down to corner Y
-    seg5 = (np.full(3, BASELINE_X), np.linspace(-paint_y_bl, -CORNER_Y, 3))
-    # Right corner straight from baseline to arc
-    seg6_x = np.linspace(BASELINE_X, -BASELINE_X, 15)
-    seg6 = (seg6_x, np.full_like(seg6_x, -CORNER_Y))
-    
-    return _to_path(seg1, seg2, seg3, seg4, seg5, seg6)
-
-
-# ====================================================================
-# SMALL ZONES (14 zones)
-# ====================================================================
-ZONE_SHAPES_SMALL = {
-    "Rim": dict(type="circle", x0=-R_RIM, y0=-R_RIM, x1=R_RIM, y1=R_RIM,
-                line=dict(width=0)),
-    "Paint (Non-Rim) Left": dict(type="path",
-        path=polar_wedge(R_RIM, R_PAINT, 45, 180), line=dict(width=3)),
-    "Paint (Non-Rim) Middle": dict(type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -45, 45), line=dict(width=3)),
-    "Paint (Non-Rim) Right": dict(type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -45, -180), line=dict(width=3)),
-    "Top Mid": dict(type="path",
-        path=polar_wedge(R_PAINT, R_3, -ANGLE_WING, ANGLE_WING), line=dict(width=0)),
-    "Left Mid": dict(type="path",
-        path=polar_wedge(R_PAINT, R_3, ANGLE_WING, ANGLE_CORNER), line=dict(width=0)),
-    "Right Mid": dict(type="path",
-        path=polar_wedge(R_PAINT, R_3, -ANGLE_CORNER, -ANGLE_WING), line=dict(width=0)),
-    "Left Mid Low": dict(type="path",
-        path=_build_mid_low('left', ANGLE_CORNER), line=dict(width=0)),
-    "Right Mid Low": dict(type="path",
-        path=_build_mid_low('right', ANGLE_CORNER), line=dict(width=0)),
-    "Top 3": dict(type="path",
-        path=polar_wedge(R_3, R_MAX, -ANGLE_WING, ANGLE_WING), line=dict(width=0)),
-    "Left Wing 3": dict(type="path",
-        path=polar_wedge(R_3, R_MAX, ANGLE_WING, ANGLE_CORNER), line=dict(width=0)),
-    "Right Wing 3": dict(type="path",
-        path=polar_wedge(R_3, R_MAX, -ANGLE_CORNER, -ANGLE_WING), line=dict(width=0)),
-    "Left Corner 3": dict(type="path",
-        path=_build_corner_3('left', ANGLE_CORNER), line=dict(width=0)),
-    "Right Corner 3": dict(type="path",
-        path=_build_corner_3('right', ANGLE_CORNER), line=dict(width=0)),
+    # Threes - FIXED angle ranges
+    "Top 3": dict(
+        type="path",
+        path=polar_wedge(R_3, R_MAX, -ANGLE_WING, ANGLE_WING),
+        line=dict(width=0)
+    ),
+    "Left Wing 3": dict(
+        type="path",
+        path=polar_wedge(R_3, R_MAX, ANGLE_WING, ANGLE_CORNER),
+        line=dict(width=0)
+    ),
+    "Right Wing 3": dict(
+        type="path",
+        path=polar_wedge(R_3, R_MAX, -ANGLE_CORNER, -ANGLE_WING),
+        line=dict(width=0)
+    ),
+    "Left Corner 3": dict(  # âœ… FIXED
+        type="path",
+        path=polar_wedge(R_3, R_MAX, ANGLE_CORNER, 180),
+        line=dict(width=0)
+    ),
+    "Right Corner 3": dict(  # âœ… FIXED
+        type="path",
+        path=polar_wedge(R_3, R_MAX, -180, -ANGLE_CORNER),
+        line=dict(width=0)
+    ),
 }
 
-ZONE_SHAPES = ZONE_SHAPES_SMALL
+ZONE_LABEL_POS = {
+    "Rim": (0, 0),
+    "Paint (Non-Rim)": (0,6),
 
+    "Paint (Non-Rim) Right": (0,6),
+    "Paint (Non-Rim) Middle": (0,6),
+    "Paint (Non-Rim) Left": (0,6),
 
-# ====================================================================
-# MEDIUM ZONES (9 zones — ±45° boundaries)
-# ====================================================================
-ZONE_SHAPES_MEDIUM = {
-    "Rim": dict(type="circle", x0=-R_RIM, y0=-R_RIM, x1=R_RIM, y1=R_RIM,
-                line=dict(width=0)),
-    "Paint Left": dict(type="path",
-        path=polar_wedge(R_RIM, R_PAINT, 0, 180), line=dict(width=3)),
-    "Paint Right": dict(type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -180, 0), line=dict(width=3)),
-    "Mid Middle": dict(type="path",
-        path=polar_wedge(R_PAINT, R_3, -45, 45), line=dict(width=0)),
-    "Mid Left": dict(type="path",
-        path=_build_mid_low('left', 45), line=dict(width=0)),
-    "Mid Right": dict(type="path",
-        path=_build_mid_low('right', 45), line=dict(width=0)),
-    "3P Middle": dict(type="path",
-        path=polar_wedge(R_3, R_MAX, -45, 45), line=dict(width=0)),
-    "3P Left": dict(type="path",
-        path=_build_corner_3('left', 45), line=dict(width=0)),
-    "3P Right": dict(type="path",
-        path=_build_corner_3('right', 45), line=dict(width=0)),
+    "Top Mid": (18,0),
+    "Left Mid": (10, 12),
+    "Right Mid": (10, -12),
+    "Left Mid Low": (-22, -8),
+    "Right Mid Low": (-12, 10),
+
+    "Top 3": (0, 30),
+    "Left Wing 3": (16, ),
+    "Right Wing 3": (-16, ),
+    "Corner 3": (22, 8),
 }
-
-
-# ====================================================================
-# LARGE ZONES (4 zones — full rings with straight corners)
-# ====================================================================
-ZONE_SHAPES_LARGE = {
-    "Rim": dict(type="circle", x0=-R_RIM, y0=-R_RIM, x1=R_RIM, y1=R_RIM,
-                line=dict(width=0)),
-    "Paint": dict(type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -180, 180), line=dict(width=3)),
-    "Midrange": dict(type="path",
-        path=_build_large_midrange(), line=dict(width=0)),
-    "Three": dict(type="path",
-        path=_build_large_three(), line=dict(width=0)),
-}
- 
-# ---- Zone families per size ----
-ZONE_FAMILY_SMALL = ZONE_FAMILY  # alias
- 
-ZONE_FAMILY_MEDIUM = {
-    "Rim": "paint",
-    "Paint Left": "short_mid", "Paint Right": "short_mid",
-    "Mid Left": "mid", "Mid Middle": "mid", "Mid Right": "mid",
-    "3P Left": "three", "3P Middle": "three", "3P Right": "three",
-}
- 
-ZONE_FAMILY_LARGE = {
-    "Rim": "paint",
-    "Paint": "short_mid",
-    "Midrange": "mid",
-    "Three": "three",
-}
-
-
-def zone_label_xy(zone):
-    if zone == "Rim":
-        return (0, -0.15)
-
-    if zone == "Paint (Non-Rim)":
-        return (0, 6.95)
-
-    if zone == "Paint (Non-Rim) Right":
-        return (-9,0)
-    if zone == "Paint (Non-Rim) Middle":
-        return (0, 8.75)
-    if zone == "Paint (Non-Rim) Left":
-        return (9, 0)
-
-    if zone == "Top Mid":
-        return (0, 17.5)
-    if zone == "Left Mid":
-        return (14, 11)
-    if zone == "Right Mid":
-        return (-14, 11)
-
-    if zone == "Top 3":
-        return (0, 26.5)
-    if zone == "Left Wing 3":
-        return (21.5, 15.5)
-    if zone == "Right Wing 3":
-        return (-21.5, 15.5)
-    if zone == "Right Corner 3":
-        return (-26.25, 1.75)  # âœ… SWAPPED: was (26.5, 2)
-    if zone == "Left Corner 3":
-        return (26.25, 1.75)   # âœ… SWAPPED: was (-26.5, 2)
-
-    # âœ… NEW BASELINE ZONES - also swap these
-    if zone == "Left Mid Low":
-        return (17.5, 0)   # âœ… SWAPPED: was (-17.5, 0)
-    if zone == "Right Mid Low":
-        return (-17.5, 0)  # âœ… SWAPPED: was (17.5, 0)
-
-    # Fallback (never crashes)
-    return rotate_for_display(0, 0)
- 
-# ---- Label positions for medium zones ----
-def zone_label_xy_medium(zone):
-    positions = {
-        "Rim": (0, -0.15),
-        "Paint Left": (7.5, 3.5),
-        "Paint Right": (-7.5, 3.5),
-        "Mid Left": (17, 5),
-        "Mid Middle": (0, 17.5),
-        "Mid Right": (-17, 5),
-        "3P Left": (25, 8),
-        "3P Middle": (0, 26.5),
-        "3P Right": (-25, 8),
-    }
-    return positions.get(zone, (0, 0))
- 
-# ---- Label positions for large zones ----
-def zone_label_xy_large(zone):
-    positions = {
-        "Rim": (0, -0.15),
-        "Paint": (0, 9),
-        "Midrange": (0, 17.5),
-        "Three": (0, 26.5),
-    }
-    return positions.get(zone, (0, 0))
- 
-# ---- Reconciliation maps per size ----
-THREE_TO_MID_SMALL = THREE_TO_MID   # alias for existing
-MID_TO_THREE_SMALL = MID_TO_THREE   # alias for existing
- 
-THREE_TO_MID_MEDIUM = {
-    "3P Left": "Mid Left",
-    "3P Middle": "Mid Middle",
-    "3P Right": "Mid Right",
-}
-MID_TO_THREE_MEDIUM = {v: k for k, v in THREE_TO_MID_MEDIUM.items()}
- 
-THREE_TO_MID_LARGE = {"Three": "Midrange"}
-MID_TO_THREE_LARGE = {v: k for k, v in THREE_TO_MID_LARGE.items()}
- 
-
 
 
 # NCAA D1 average FG% by distance band (approximate 2024-25 season)
@@ -800,7 +527,29 @@ def add_hex_legend(fig, THEME):
         align="center",
     )
 
+# ----------------------------
+# 3PT geometry (hoop-centered)
+# ----------------------------
+R_3PT = 22.175
+BASELINE_X = 5.25
+CORNER_Y = 15
 
+theta_max = np.arccos(BASELINE_X / R_3PT)
+thetas = np.linspace(-theta_max, theta_max, 500)
+
+ARC_X = -R_3PT * (np.cos(thetas)*1.025)
+ARC_Y = R_3PT * (np.sin(thetas)*1.025)
+
+# ---- ASSUMED COLUMN NAMES ----
+# Update these if needed
+X_COL = "x"
+Y_COL = "y"
+MADE_COL = "made"              # 1/0 or True/False
+PLAYER_COL = "shooter"
+TEAM_COL = "team_name"
+HALF_COL = "period"
+OPP_COL = "opponent"
+OFF_DEF_COL = "offense_defense"  # "Offense" / "Defense"
 
 
 
@@ -847,33 +596,6 @@ SHOT_TYPE_OPTIONS = [
     'Shot Blocked'
 ]
 
-
-
-
-# ---- Master config lookup ----
-ZONE_CONFIG = {
-    "small": {
-        "shapes": ZONE_SHAPES_SMALL,
-        "family": ZONE_FAMILY_SMALL,
-        "label_fn": zone_label_xy,          # your existing function
-        "three_to_mid": THREE_TO_MID_SMALL,
-        "mid_to_three": MID_TO_THREE_SMALL,
-    },
-    "medium": {
-        "shapes": ZONE_SHAPES_MEDIUM,
-        "family": ZONE_FAMILY_MEDIUM,
-        "label_fn": zone_label_xy_medium,
-        "three_to_mid": THREE_TO_MID_MEDIUM,
-        "mid_to_three": MID_TO_THREE_MEDIUM,
-    },
-    "large": {
-        "shapes": ZONE_SHAPES_LARGE,
-        "family": ZONE_FAMILY_LARGE,
-        "label_fn": zone_label_xy_large,
-        "three_to_mid": THREE_TO_MID_LARGE,
-        "mid_to_three": MID_TO_THREE_LARGE,
-    },
-}
 
 
 
@@ -1077,7 +799,7 @@ def load_team_data(team):
 
     dff['shooter'] = dff['shooter'].str.replace('&#39;', "'")
     dff['shooter'] = dff['shooter'].str.replace('&amp;', "&")
-    dff['shooter'] = dff['shooter'].str.replace(r' jr\.$', " Jr.", regex=True)
+    dff['shooter'] = dff['shooter'].str.replace(' jr\.$', " Jr.", regex=True)
 
     #dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] + ')'
     #dff.loc[dff['team_name'].str.contains('r\('), 'team_name'] = dff['team_name'] + ')'
@@ -1120,7 +842,46 @@ def polar_wedge(r0, r1, a0, a1, n=40):
 
 
 
+def zone_label_xy(zone):
+    if zone == "Rim":
+        return (0, -0.15)
 
+    if zone == "Paint (Non-Rim)":
+        return (0, 6.95)
+
+    if zone == "Paint (Non-Rim) Right":
+        return (-9,0)
+    if zone == "Paint (Non-Rim) Middle":
+        return (0, 8.75)
+    if zone == "Paint (Non-Rim) Left":
+        return (9, 0)
+
+    if zone == "Top Mid":
+        return (0, 17.5)
+    if zone == "Left Mid":
+        return (12.75, 11.5)
+    if zone == "Right Mid":
+        return (-12.75, 11.5)
+
+    if zone == "Top 3":
+        return (0, 26.5)
+    if zone == "Left Wing 3":
+        return (19.125, 18.125)
+    if zone == "Right Wing 3":
+        return (-19.125, 18.125)
+    if zone == "Right Corner 3":
+        return (-26.5, 2)  # âœ… SWAPPED: was (26.5, 2)
+    if zone == "Left Corner 3":
+        return (26.5, 2)   # âœ… SWAPPED: was (-26.5, 2)
+
+    # âœ… NEW BASELINE ZONES - also swap these
+    if zone == "Left Mid Low":
+        return (17.5, 0)   # âœ… SWAPPED: was (-17.5, 0)
+    if zone == "Right Mid Low":
+        return (-17.5, 0)  # âœ… SWAPPED: was (17.5, 0)
+
+    # Fallback (never crashes)
+    return rotate_for_display(0, 0)
 
 
 def shooting_summary(dff):
@@ -1640,92 +1401,100 @@ def make_shot_chart(dff, title):
 
     return fig
 
-def make_zone_chart(dff, title, zone_size="small"):
- 
+
+def make_zone_chart(dff, title):
+
     fig = go.Figure(layout=create_half_court_layout())
 
-    
- 
-    config = ZONE_CONFIG[zone_size]
-    zone_shapes = config["shapes"]
-    zone_family_map = config["family"]
-    label_fn = config["label_fn"]
- 
-    dff.loc[:, "dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
-    dff.loc[:, "angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
-    dff.loc[:, "zone"] = dff.apply(
-        lambda row: assign_zone_sized(row, zone_size), axis=1
-    )
- 
+    ax, ay = rotate_for_display(ARC_X, ARC_Y)
+
+    dff.loc[:,"dist"] = np.sqrt(dff["x_plot"]**2 + dff["y_plot"]**2)
+    dff.loc[:,"angle"] = np.degrees(np.arctan2(dff["y_plot"], -dff["x_plot"]))
+    dff.loc[:,"zone"] = dff.apply(assign_zone, axis=1)
+
+    # reconcile ONCE
     if "shot_range" in dff.columns:
-        dff = reconcile_zone_sized(dff, zone_size)
- 
+        dff = reconcile_zone_with_shot_range(dff)
+
+    # Get actual shot data
     zs = (
         dff.groupby("zone")
         .agg(att=("made", "count"), made=("made", "sum"))
         .reset_index()
     )
     zs["pct"] = zs["made"] / zs["att"]
- 
-    all_zones = pd.DataFrame({"zone": list(zone_shapes.keys())})
+
+    # Create a complete zone list with 0 shots for missing zones
+    all_zones = pd.DataFrame({
+        "zone": list(ZONE_SHAPES.keys())
+    })
+
+    # Merge to include zones with no shots
     zs = all_zones.merge(zs, on="zone", how="left")
     zs["att"] = zs["att"].fillna(0).astype(int)
     zs["made"] = zs["made"].fillna(0).astype(int)
-    zs["pct"] = zs["pct"].fillna(0)
- 
+    zs["pct"] = zs["pct"].fillna(0)  # 0% for zones with no shots
+
     for _, r in zs.iterrows():
-        shape = zone_shapes[r["zone"]].copy()
-        shape["line"] = {"width": 4, "color": THEME["bg_chart"]}
- 
+        zone_shape = ZONE_SHAPES[r["zone"]].copy()
+        zone_shape['line'] = {
+            'width': 4,
+            'color': THEME["bg_chart"]
+        }
+
         fig.add_shape(
-            **shape,
-            fillcolor=zone_color(r["pct"], r["zone"], zone_family_map),
+            **zone_shape,
+            fillcolor=zone_color(r["pct"], r["zone"]),
             opacity=0.75,
-            layer="below",
+            layer="below"
         )
- 
-        x_txt, y_txt = label_fn(r["zone"])
- 
+        
+        x_txt, y_txt = zone_label_xy(r["zone"])
+
+        # Then add text on top
         if r.att == 0:
-            text_display = (
-                "<span style='line-height: 1.0; font-size: 10px'>None</span>"
-            )
+            # Show "No shots" for empty zones
+            text_display = "<span style='line-height: 1.0; font-size: 10px'>None</span>"
         else:
-            text_display = (
-                f"<span style='line-height: 1.0'>"
-                f"{int(r.made)}/{int(r.att)}<br>"
-                f"<span style='font-size: 13px'>{r.pct:.0%}</span></span>"
-            )
- 
+            text_display = f"<span style='line-height: 1.0'>{int(r.made)}/{int(r.att)}<br><span style='font-size: 13px'>{r.pct:.0%}</span></span>"
+
         fig.add_trace(go.Scatter(
-            x=[x_txt], y=[y_txt],
+            x=[x_txt],
+            y=[y_txt],
             text=[text_display],
             mode="text",
             textfont=dict(
                 size=14,
                 family="Funnel Display, sans-serif",
                 color=THEME["bg_chart"],
-                weight=600,
+                weight=600
             ),
             showlegend=False,
-            hoverinfo="skip",
+            hoverinfo='skip'
         ))
- 
+
     fig.update_layout(
         plot_bgcolor=THEME["bg_chart"],
-        paper_bgcolor=THEME["bg_chart"],
-        showlegend=False,
+        paper_bgcolor=THEME["bg_chart"]
     )
- 
+
+
+    fig.update_layout(showlegend=False)
+
     summary = shooting_summary(dff)
-    fg_line = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
+
+    fg_line  = f"{summary['fg_pct']:.1%} FG · {summary['fgm']}/{summary['fga']}"
     pps_line = f"{summary['efg']:.1%} eFG · {summary['pps']:.3f} pts/shot"
-    add_chart_subtitle(fig, fg_line, pps_line, f"{summary['astd_pct']:.0%} Ast'd")
+    
+    add_chart_subtitle(
+        fig,
+        fg_line,
+        pps_line,
+        f"{summary['astd_pct']:.0%} Ast'd"
+    )
     add_signature(fig)
- 
+
     return fig
-
-
 
 
 
@@ -2165,42 +1934,6 @@ def assign_zone(row):
         return "Right Wing 3"
     else:
         return "Right Corner 3"
-    
-
-def assign_zone_sized(row, zone_size="small"):
-    """Zone assignment that respects the selected zone granularity."""
-    d = row["dist"]
-    a = row["angle"]
- 
-    if d <= R_RIM:
-        return "Rim"
- 
-    if zone_size == "large":
-        if d <= R_PAINT_EDGE:
-            return "Paint"
-        if d <= R_3_EDGE:
-            return "Midrange"
-        return "Three"
- 
-    if zone_size == "medium":
-        if d <= R_PAINT_EDGE:
-            return "Paint Left" if a >= 0 else "Paint Right"
-        if d <= R_3_EDGE:
-            if a > 45:
-                return "Mid Left"
-            elif a >= -45:
-                return "Mid Middle"
-            else:
-                return "Mid Right"
-        if a > 45:
-            return "3P Left"
-        elif a >= -45:
-            return "3P Middle"
-        else:
-            return "3P Right"
- 
-    # small → fall through to existing logic
-    return assign_zone(row)
 
 
 def reconcile_zone_with_shot_range(df):
@@ -2246,35 +1979,6 @@ def reconcile_zone_with_shot_range(df):
 
     return df
 
-
-def reconcile_zone_sized(df, zone_size="small"):
-    """Zone reconciliation using size-specific three↔mid maps."""
-    df = df.copy()
-    df["shot_range"] = (
-        df["shot_range"].str.lower().str.replace(" ", "-", regex=False)
-    )
- 
-    config = ZONE_CONFIG[zone_size]
-    t2m = config["three_to_mid"]
-    m2t = config["mid_to_three"]
- 
-    mask_false_three = (
-        df["zone"].isin(t2m.keys()) & (df["shot_range"] == "mid-range")
-    )
-    df.loc[mask_false_three, "zone"] = (
-        df.loc[mask_false_three, "zone"].map(t2m)
-    )
- 
-    mask_false_mid = (
-        df["zone"].isin(m2t.keys()) & (df["shot_range"] == "3pt")
-    )
-    df.loc[mask_false_mid, "zone"] = (
-        df.loc[mask_false_mid, "zone"].map(m2t)
-    )
- 
-    return df
-
-
 def zone_color(pct, zone):
     """
     Returns a color based on zone-specific shooting percentage ranges.
@@ -2296,27 +2000,6 @@ def zone_color(pct, zone):
     t = np.clip(t, 0.0, 1.0)
 
     return sample_colorscale("peach", t)[0]
-
-
-
-def zone_color(pct, zone, zone_family_map=None):
-    """
-    Color based on zone-specific FG% ranges.
-    Accepts optional zone_family_map for different zone sizes.
-    """
-    if zone_family_map is None:
-        zone_family_map = ZONE_FAMILY
- 
-    family = zone_family_map.get(zone)
- 
-    if family not in ZONE_PCT_RANGES:
-        return sample_colorscale("peach", 0.0)[0]
- 
-    lo, hi = ZONE_PCT_RANGES[family]
-    t = np.clip((pct - lo) / (hi - lo), 0.0, 1.0)
-    return sample_colorscale("peach", t)[0]
-
-
 
 
 def add_zone_dividers(fig):
@@ -2946,41 +2629,6 @@ app.layout = dbc.Container(
             labelCheckedClassName="btn btn-dark shadow view-mode-btn"
         ),
 
-        # html.Div(
-        #     "*Beta",
-        #     style={
-        #         "fontSize": "11px",
-        #         "fontWeight": 600,
-        #         "color": THEME["text_secondary"],
-        #         "marginTop": "2px",
-        #         "marginBottom": "0px",
-        #         "textAlign": "center"
-        #     }
-        # ),
-
-        # ---- Zone size sub-selector ----
-        html.Div(
-            id="zone-size-wrapper",
-            children=[
-                dbc.RadioItems(
-                    id="zone-size-dd",
-                    options=[
-                        {"label": "Small", "value": "small"},
-                        {"label": "Medium", "value": "medium"},
-                        {"label": "Large", "value": "large"},
-                    ],
-                    value="small",
-                    inline=True,
-                    className="d-flex justify-content-center mb-1",
-                    inputClassName="btn-check",
-                    labelClassName="btn btn-outline-secondary btn-sm zone-size-btn",
-                    labelCheckedClassName="btn btn-secondary btn-sm shadow zone-size-btn",
-                    style={"marginTop": "6px"},
-                ),
-            ],
-            style={"display": "none"},  # hidden until "Zones" is selected
-        ),
- 
         html.Div(
             "*Beta",
             style={
@@ -3152,14 +2800,13 @@ app.layout = dbc.Container(
     Input("on-court-dd", "value"),
     Input("off-court-dd", "value"),
     Input("shot-type-dd", "value"),
-    Input("zone-size-dd", "value"),
 )
 
 def update_charts(team, view_mode, players, halves, opps, loc, quad,
                   #show_stats,
                   exclude_non_d1, lineup,
                   on_players, off_players,
-                  shot_types, zone_size):
+                  shot_types):
 
     off_title = "Offense"
     def_title = "Defense"
@@ -3406,7 +3053,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
             elif view_mode == "heatmap":
                 fig_off = make_heatmap_chart(off_df, chart_title(team, "Offense", team_logo))
             else:
-                fig_off = make_zone_chart(off_df, chart_title(team, "Offense", team_logo), zone_size)
+                fig_off = make_zone_chart(off_df, chart_title(team, "Offense", team_logo))
         
         if def_df.empty:
             fig_def = empty_shot_figure("No DEFENSE shots match filters")
@@ -3418,7 +3065,7 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
             elif view_mode == "heatmap":
                 fig_def = make_heatmap_chart(def_df, chart_title(team, "Defense", team_logo))
             else:
-                fig_def = make_zone_chart(def_df, chart_title(team, "Defense", team_logo), zone_size)
+                fig_def = make_zone_chart(def_df, chart_title(team, "Defense", team_logo))
 
         # If they picked only team shooters, don't change defense title at all
         # If they picked only opponent shooters, offense title stays unchanged
@@ -3434,8 +3081,8 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         fig_off = make_heatmap_chart(off_df, chart_title(team, "Offense", team_logo))
         fig_def = make_heatmap_chart(def_df, chart_title(team, "Defense", team_logo))
     else:  # zones
-        fig_off = make_zone_chart(off_df, chart_title(team, "Offense", team_logo), zone_size)
-        fig_def = make_zone_chart(def_df, chart_title(team, "Defense", team_logo), zone_size)
+        fig_off = make_zone_chart(off_df, chart_title(team, "Offense", team_logo))
+        fig_def = make_zone_chart(def_df, chart_title(team, "Defense", team_logo))
 
     fig_off.update_layout(
         xaxis_fixedrange=True,
@@ -3675,18 +3322,6 @@ def update_filter_options(team, exclude_non_d1):
     on_off_opts,
 )
 
-
-@app.callback(
-    Output("zone-size-wrapper", "style"),
-    Input("view-mode", "value"),
-)
-def toggle_zone_size_visibility(view_mode):
-    if view_mode == "zones":
-        return {"display": "block"}
-    return {"display": "none"}
-
-
-
 # --------------------------------------------------
 # RESET BUTTON CALLBACK
 # --------------------------------------------------
@@ -3700,13 +3335,12 @@ def toggle_zone_size_visibility(view_mode):
     Output("on-court-dd", "value"),
     Output("off-court-dd", "value"),
     Output("shot-type-dd", "value"),
-    Output("zone-size-dd", "value"),
     Input("reset-button", "n_clicks"),
     prevent_initial_call=True
 )
 def reset_filters(n_clicks):
     """Reset all filter dropdowns to empty"""
-    return None, None, None, None, None, None, None, None, None, None
+    return None, None, None, None, None, None, None, None, None
 
 
 # --------------------------------------------------
