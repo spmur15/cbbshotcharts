@@ -39,7 +39,7 @@ THEME = {
     "shadow_lg": "0 10px 28px rgba(0,0,0,0.95)",
 
     # ---- Charts ----
-    "court_line": "#dbdbdb",
+    "court_line": "rgba(219, 219, 219, 0.5)",
     "make": "rgba(60,200,120,0.5)",
     "miss": "rgba(240,90,90,0.3)",
 
@@ -70,7 +70,7 @@ MID_TO_THREE = {v: k for k, v in THREE_TO_MID.items()}
 
 
 COURT_LINE_COLOR = THEME["court_line"]
-COURT_LINE_WIDTH = 2
+COURT_LINE_WIDTH = 3.5
 
 COURT_SHADOW_COLOR = "rgba(0,0,0,0.18)"
 COURT_SHADOW_OFFSET = 0.6
