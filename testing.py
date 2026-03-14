@@ -204,7 +204,7 @@ ZONE_PCT_RANGES = {
 }
 
 ANGLE_CORNER = 73     # degrees
-ANGLE_WING = 32
+ANGLE_WING = 28
 
 def rotate_for_display(x, y):
     """
@@ -489,10 +489,12 @@ ZONE_SHAPES = ZONE_SHAPES_SMALL
 ZONE_SHAPES_MEDIUM = {
     "Rim": dict(type="circle", x0=-R_RIM, y0=-R_RIM, x1=R_RIM, y1=R_RIM,
                 line=dict(width=0)),
-    "Paint Left": dict(type="path",
-        path=polar_wedge(R_RIM, R_PAINT, 0, 180), line=dict(width=3)),
-    "Paint Right": dict(type="path",
-        path=polar_wedge(R_RIM, R_PAINT, -180, 0), line=dict(width=3)),
+    "Paint": dict(type="path",
+        path=polar_wedge(R_RIM, R_PAINT, -180, 180), line=dict(width=3)),
+    # "Paint Left": dict(type="path",
+    #     path=polar_wedge(R_RIM, R_PAINT, 0, 180), line=dict(width=3)),
+    # "Paint Right": dict(type="path",
+    #     path=polar_wedge(R_RIM, R_PAINT, -180, 0), line=dict(width=3)),
     "Mid Middle": dict(type="path",
         path=polar_wedge(R_PAINT, R_3, -45, 45), line=dict(width=0)),
     "Mid Left": dict(type="path",
@@ -525,9 +527,18 @@ ZONE_SHAPES_LARGE = {
 # ---- Zone families per size ----
 ZONE_FAMILY_SMALL = ZONE_FAMILY  # alias
  
+# ZONE_FAMILY_MEDIUM = {
+#     "Rim": "paint",
+#     "Paint Left": "short_mid", "Paint Right": "short_mid",
+#     "Mid Left": "mid", "Mid Middle": "mid", "Mid Right": "mid",
+#     "3P Left": "three", "3P Middle": "three", "3P Right": "three",
+# }
+
 ZONE_FAMILY_MEDIUM = {
     "Rim": "paint",
-    "Paint Left": "short_mid", "Paint Right": "short_mid",
+    "Paint":"shot_mid",
+    #"Paint Left": "short_mid",
+    # "Paint Right": "short_mid",
     "Mid Left": "mid", "Mid Middle": "mid", "Mid Right": "mid",
     "3P Left": "three", "3P Middle": "three", "3P Right": "three",
 }
@@ -564,9 +575,9 @@ def zone_label_xy(zone):
     if zone == "Top 3":
         return (0, 26.5)
     if zone == "Left Wing 3":
-        return (21.5, 15.5)
+        return (21.25, 15.75)
     if zone == "Right Wing 3":
-        return (-21.5, 15.5)
+        return (-21.25, 15.75)
     if zone == "Right Corner 3":
         return (-26.25, 1.75)  # âœ… SWAPPED: was (26.5, 2)
     if zone == "Left Corner 3":
@@ -585,8 +596,9 @@ def zone_label_xy(zone):
 def zone_label_xy_medium(zone):
     positions = {
         "Rim": (0, -0.15),
-        "Paint Left": (7.5, 3.5),
-        "Paint Right": (-7.5, 3.5),
+        "Paint": (0, 8.75),
+        #"Paint Left": (7.5, 3.5),
+        #"Paint Right": (-7.5, 3.5),
         "Mid Left": (17, 5),
         "Mid Middle": (0, 17.5),
         "Mid Right": (-17, 5),
@@ -2184,7 +2196,7 @@ def assign_zone_sized(row, zone_size="small"):
  
     if zone_size == "medium":
         if d <= R_PAINT_EDGE:
-            return "Paint Left" if a >= 0 else "Paint Right"
+            return "Paint" #if a >= 0 else "Paint Right"
         if d <= R_3_EDGE:
             if a > 45:
                 return "Mid Left"
