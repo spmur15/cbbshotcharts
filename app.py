@@ -1001,8 +1001,10 @@ def standardize_to_right_basket(dff, x_col="x", y_col="y"):
     x2[left_half] = 100.0 - x2[left_half].copy()
 
     # flip first half shots on other side of court, mirrored at FT nail line
-    first_half = (out['period']=='1st Half')
-    y2[first_half] = 100.0 - y2[first_half].copy()
+    #first_half = (out['period']=='1st Half')
+    #y2[first_half] = 100.0 - y2[first_half].copy()
+
+    y2[left_half] = 100.0 - y2[left_half].copy()
 
     out2 = out.copy()
 
@@ -1024,8 +1026,8 @@ def to_feet_hoop_centered(dff):
     # NCAA scale: x in [0,100] maps to 94 ft length
     #            y in [0,100] maps to 50 ft width
     x_ft = out["x_std"] * (COURT_L_FT / 100.0)
-    #y_ft = (out["y_std"] - 50.0) * (COURT_W_FT / 100.0)  # center at 0
-    y_ft = (50.0 - out["y_std"]) * (COURT_W_FT / 100.0)
+    y_ft = (out["y_std"] - 50.0) * (COURT_W_FT / 100.0)  # center at 0
+    #y_ft = (50.0 - out["y_std"]) * (COURT_W_FT / 100.0)
 
     # hoop-centered
     out["x_plot"] = x_ft - HOOP_X_FT
