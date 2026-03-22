@@ -1311,7 +1311,8 @@ def shot_breakdown_stats(dff):
     rim_close = dff["zone"].isin(["Rim"])
 
     # Midrange ring
-    mid_long = dff["zone"].str.contains("Mid")
+    #mid_long = dff["zone"].str.contains("Mid")
+    mid_long = dff["zone"].str.contains(r"\bMid\b")
 
     # Midrange ring
     mid_short = dff["zone"].str.contains("Paint")
