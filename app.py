@@ -639,10 +639,10 @@ MID_TO_THREE_LARGE = {v: k for k, v in THREE_TO_MID_LARGE.items()}
 # Update with real numbers when available
 NCAA_AVG_BY_BAND = [
     # (min_dist_ft, max_dist_ft, avg_fg_pct)
-    (0,     6,    0.6),   # Rim / at-rim
-    (6,    13,    0.38),   # Short paint (non-rim)
-    (13,   22.25, 0.35),   # Long midrange
-    (22.1, 50,   0.32),   # Three-point range
+    (0,     6,    0.56),   # Rim / at-rim
+    (6,    13,    0.45),   # Short paint (non-rim)
+    (13,   22.25, 0.49),   # Long midrange
+    (22.1, 50,    0.39),   # Three-point range
 ]
 
 
@@ -1854,7 +1854,7 @@ def make_hexagon_chart(dff, title):
     fig = go.Figure(layout=create_half_court_layout())
 
     # ---- Hex grid parameters ----
-    HEX_SIZE = 2.5           # max circumradius in feet
+    HEX_SIZE = 1.25           # max circumradius in feet
     MIN_SHOTS = 2          # min attempts to render
 
     hex_centers = make_hex_grid(hex_size=HEX_SIZE)
