@@ -536,7 +536,7 @@ ZONE_FAMILY_SMALL = ZONE_FAMILY  # alias
 
 ZONE_FAMILY_MEDIUM = {
     "Rim": "paint",
-    "Paint":"shot_mid",
+    "Paint":"short_mid",
     #"Paint Left": "short_mid",
     # "Paint Right": "short_mid",
     "Mid Left": "mid", "Mid Middle": "mid", "Mid Right": "mid",
