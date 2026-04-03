@@ -4,7 +4,6 @@ from dash import Dash, dcc, html, Input, Output
 import dash_bootstrap_components as dbc
 import numpy as np
 from plotly.colors import sample_colorscale
-from datetime import date
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -1108,19 +1107,6 @@ def load_team_data(team):
 
     dff['nond1'] = np.where(dff['Quad']=='Non-D1', True, False)
     dff['Quad'] = np.where(dff['Quad']=='Quad', 'Q4', dff['Quad'])
-
-    if "game_id_x" in dff.columns:
-        dff["game_date"] = pd.to_datetime(
-            dff["game_id_x"].astype(str).str.extract(r'(\d{8})$', expand=False),
-            format="%m%d%Y",
-            errors="coerce"
-        )
-    elif "game_id" in dff.columns:
-        dff["game_date"] = pd.to_datetime(
-            dff["game_id"].astype(str).str.extract(r'(\d{8})$', expand=False),
-            format="%m%d%Y",
-            errors="coerce"
-        )
 
     return dff
 
@@ -2688,8 +2674,8 @@ app.layout = dbc.Container(
                     dbc.Accordion(
                         [
                             dbc.AccordionItem(
-                                dbc.Row(justify="center",
-                                    children=[
+                                dbc.Row(
+                                    [
                                         dbc.Col(
                                             dcc.Dropdown(
                                                 id="player-dd",
@@ -2895,36 +2881,19 @@ app.layout = dbc.Container(
                                                 width = 12
                                             ),
 
-                                            html.Hr(style={'marginBottom':'5px', 'marginTop':'20px'}),
-                                            html.Div(
-                                                        "Show games in range",
-                                                        style={
-                                                            "fontSize": "14px",
-                                                            "fontWeight": 600,
-                                                            "color": THEME["text_secondary"],
-                                                            "marginBottom": "0px",
-                                                            "marginTop": "0px",
-                                                            "textAlign": "center"
-                                                        }
-                                                    ),
-
                                             dbc.Col(
                                                     dcc.DatePickerRange(
                                                         id="date-range",
-                                                        start_date=date(2025, 11, 1),
-                                                        end_date=date(2026, 4, 7),
-                                                        min_date_allowed=date(2025, 11, 1),
-                                                        max_date_allowed=date(2026, 4, 7),
+                                                        start_date=None,
+                                                        end_date=None,
                                                         display_format="MM/DD/YY",
                                                         #placeholder="Date Range",
                                                         style={
-                                                            "fontSize": "12px",
+                                                            "fontSize": "14px",
                                                         },
                                                         className="dark-date-picker",
                                                     ),
-                                                    xs=12, md=12,
-                                                    className="d-flex justify-content-center"
-                                                    
+                                                    xs=12, md=12
                                                 ),
                                                 dbc.Col(
                                                     html.Div(
@@ -3250,11 +3219,10 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         if date_end:
             dff = dff[dff["game_date"] <= pd.to_datetime(date_end)]
         if date_start or date_end:
-            start_str = pd.to_datetime(date_start).strftime("%-m/%-d") if date_start else "start"
-            end_str = pd.to_datetime(date_end).strftime("%-m/%-d") if date_end else "now"
-            if (start_str != '11/1') or (end_str != '4/7'):
-                off_title += f" | {start_str}–{end_str}"
-                def_title += f" | {start_str}–{end_str}"
+            start_str = pd.to_datetime(date_start).strftime("%m/%d") if date_start else "start"
+            end_str = pd.to_datetime(date_end).strftime("%m/%d") if date_end else "now"
+            off_title += f" | {start_str}–{end_str}"
+            def_title += f" | {start_str}–{end_str}"
 
     if lineup:
         lineup_tuple = set(parse_lineup_key(lineup))
@@ -3794,4 +3762,4 @@ def reset_filters(n_clicks):
 # MAIN
 # --------------------------------------------------
 if __name__ == "__main__":
-    app.run(debug=True, port=8051)
+    app.run(debug=True)

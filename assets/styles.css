@@ -356,3 +356,160 @@ div[class*="MultiSelect"] input {
 }
 
 
+
+
+/* ============================================
+   DatePickerRange – Dark Mode Override
+   Place this file in your assets/ folder.
+   ============================================ */
+
+/* --- Input fields (start & end date) --- */
+.dark-date-picker .DateInput_input {
+    background-color: #1f2328;
+    color: #eaeaea;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 10px;
+}
+
+.dark-date-picker .DateInput_input__focused {
+    border-bottom: 2px solid #a32fba;
+}
+
+.dark-date-picker .DateInput {
+    background-color: #1f2328;
+    border-radius: 8px;
+}
+
+/* --- Arrow between the two inputs --- */
+.dark-date-picker .DateRangePickerInput_arrow_svg {
+    fill: #b0b0b0;
+}
+
+/* --- Outer wrapper --- */
+.dark-date-picker .DateRangePickerInput {
+    background-color: #1f2328;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.dark-date-picker .DateRangePickerInput__withBorder {
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+}
+
+/* --- Clear / close buttons inside the picker --- */
+.dark-date-picker .DateRangePickerInput_clearDates {
+    background: transparent;
+}
+.dark-date-picker .DateRangePickerInput_clearDates svg {
+    fill: #b0b0b0;
+}
+
+/* ============================================
+   Calendar popup (dropdown panel)
+   ============================================ */
+
+.DateRangePicker_picker {
+    background-color: #1a1d21;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    z-index: 9999;
+}
+
+/* Month navigation arrows */
+.DayPickerNavigation_button {
+    background: #1f2328;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+}
+.DayPickerNavigation_svg__horizontal {
+    fill: #eaeaea;
+}
+
+/* Month/year caption */
+.CalendarMonth_caption {
+    color: #eaeaea;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Calendar background */
+.CalendarMonth {
+    background-color: #1a1d21;
+}
+.CalendarMonthGrid {
+    background-color: #1a1d21;
+}
+.DayPicker {
+    background-color: #1a1d21;
+    border-radius: 10px;
+}
+
+/* Day-of-week headers (Su Mo Tu ...) */
+.DayPicker_weekHeader_li small {
+    color: #888888;
+    font-weight: 600;
+}
+
+/* --- Individual day cells --- */
+.CalendarDay__default {
+    background: #1a1d21;
+    border: 1px solid #2a2a2a;
+    color: #eaeaea;
+}
+.CalendarDay__default:hover {
+    background: #2a2a2a;
+    border-color: #3a3a3a;
+    color: #ffffff;
+}
+
+/* Selected range endpoints */
+.CalendarDay__selected,
+.CalendarDay__selected:active,
+.CalendarDay__selected:hover {
+    background: #a32fba;
+    border-color: #a32fba;
+    color: #ffffff;
+}
+
+/* Days between start and end */
+.CalendarDay__selected_span {
+    background: rgba(163, 47, 186, 0.3);
+    border-color: rgba(163, 47, 186, 0.4);
+    color: #eaeaea;
+}
+.CalendarDay__selected_span:hover {
+    background: rgba(163, 47, 186, 0.45);
+    border-color: rgba(163, 47, 186, 0.5);
+    color: #ffffff;
+}
+
+/* Hovered span while selecting */
+.CalendarDay__hovered_span,
+.CalendarDay__hovered_span:hover {
+    background: rgba(163, 47, 186, 0.2);
+    border-color: rgba(163, 47, 186, 0.3);
+    color: #eaeaea;
+}
+
+/* Days outside current month */
+.CalendarDay__blocked_out_of_range,
+.CalendarDay__blocked_out_of_range:hover {
+    background: #1a1d21;
+    border-color: #2a2a2a;
+    color: #444444;
+}
+
+/* Placeholder text when no date selected */
+.DateInput_input__small::placeholder,
+.DateInput_input::placeholder {
+    color: #888888;
+}
+
+
+
+
+
