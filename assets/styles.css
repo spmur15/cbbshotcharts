@@ -510,6 +510,188 @@ div[class*="MultiSelect"] input {
 }
 
 
+/* ============================================
+   DatePickerRange – Dark Mode (Dash 3.x / Radix)
+   Place in assets/ folder.
+   ============================================ */
 
+/* --- Outer wrapper --- */
+.dark-date-picker.dash-datepicker-input-wrapper {
+    background-color: #1f2328;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    padding: 6px 10px;
+    color: #eaeaea;
+}
+
+/* --- Input fields (start & end date) --- */
+.dark-date-picker .dash-datepicker-input {
+    background-color: transparent;
+    color: #eaeaea;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    font-weight: 600;
+    caret-color: #a32fba;
+}
+
+.dark-date-picker .dash-datepicker-start-date,
+.dark-date-picker .dash-datepicker-end-date {
+    background-color: transparent;
+    color: #eaeaea;
+}
+
+.dark-date-picker .dash-datepicker-input::placeholder {
+    color: #888888;
+}
+
+.dark-date-picker .dash-datepicker-input:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}
+
+/* --- Arrow & caret icons --- */
+.dark-date-picker .dash-datepicker-range-arrow,
+.dark-date-picker .dash-datepicker-caret-icon {
+    color: #b0b0b0;
+}
+
+/* ============================================
+   Calendar popup (Radix popover)
+   ============================================ */
+
+[data-radix-popper-content-wrapper] {
+    z-index: 9999 !important;
+}
+
+.dash-datepicker-menu,
+.dash-datepicker-calendar {
+    background-color: #1a1d21 !important;
+    border: 1px solid #2a2a2a;
+    border-radius: 10px;
+    color: #eaeaea;
+}
+
+/* Month/year header */
+.dash-datepicker-calendar .rdp-caption_label,
+.dash-datepicker-calendar .rdp-caption {
+    color: #eaeaea;
+    font-weight: 600;
+}
+
+/* Nav arrows (prev/next month) */
+.dash-datepicker-calendar .rdp-nav_button {
+    color: #eaeaea;
+    background: #1f2328;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+}
+.dash-datepicker-calendar .rdp-nav_button:hover {
+    background: #2a2a2a;
+}
+.dash-datepicker-calendar .rdp-nav_button svg {
+    fill: #eaeaea;
+}
+
+/* Weekday headers */
+.dash-datepicker-calendar .rdp-head_cell,
+.dash-datepicker-calendar .rdp-weekday {
+    color: #888888;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* --- Individual day cells --- */
+.dash-datepicker-calendar .rdp-day,
+.dash-datepicker-calendar .rdp-cell button {
+    color: #eaeaea;
+    background: #1a1d21;
+    border: 1px solid #2a2a2a;
+    border-radius: 6px;
+}
+.dash-datepicker-calendar .rdp-day:hover,
+.dash-datepicker-calendar .rdp-cell button:hover {
+    background: #2a2a2a;
+    color: #ffffff;
+}
+
+/* Selected range endpoints */
+.dash-datepicker-calendar .rdp-day_selected,
+.dash-datepicker-calendar .rdp-day_range_start,
+.dash-datepicker-calendar .rdp-day_range_end {
+    background: #a32fba !important;
+    border-color: #a32fba !important;
+    color: #ffffff !important;
+}
+
+/* Days between start and end */
+.dash-datepicker-calendar .rdp-day_range_middle {
+    background: rgba(163, 47, 186, 0.3) !important;
+    border-color: rgba(163, 47, 186, 0.4) !important;
+    color: #eaeaea !important;
+}
+
+/* Today marker */
+.dash-datepicker-calendar .rdp-day_today {
+    font-weight: 700;
+    color: #a32fba;
+}
+
+/* Disabled / out-of-range days */
+.dash-datepicker-calendar .rdp-day_disabled,
+.dash-datepicker-calendar .rdp-day_outside {
+    color: #444444 !important;
+    background: #1a1d21 !important;
+}
+
+
+/* ============================================
+   Legacy fallbacks (Dash 2.x react-dates)
+   ============================================ */
+
+.DateInput_input {
+    background-color: #1f2328 !important;
+    color: #eaeaea !important;
+    border: none !important;
+}
+.DateInput {
+    background-color: #1f2328 !important;
+}
+.DateRangePickerInput,
+.DateRangePickerInput__withBorder {
+    background-color: #1f2328 !important;
+    border: 1px solid #2a2a2a !important;
+    border-radius: 10px !important;
+}
+.DateRangePickerInput_arrow_svg {
+    fill: #b0b0b0 !important;
+}
+.CalendarMonth,
+.CalendarMonthGrid,
+.DayPicker,
+.DateRangePicker_picker {
+    background-color: #1a1d21 !important;
+}
+.CalendarDay__default {
+    background: #1a1d21 !important;
+    border: 1px solid #2a2a2a !important;
+    color: #eaeaea !important;
+}
+.CalendarDay__selected {
+    background: #a32fba !important;
+    border-color: #a32fba !important;
+    color: #ffffff !important;
+}
+.CalendarDay__selected_span {
+    background: rgba(163, 47, 186, 0.3) !important;
+    color: #eaeaea !important;
+}
+.CalendarMonth_caption {
+    color: #eaeaea !important;
+}
+.DayPicker_weekHeader_li small {
+    color: #888888 !important;
+}
 
 
