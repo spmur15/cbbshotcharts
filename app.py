@@ -2912,9 +2912,9 @@ app.layout = dbc.Container(
                                                     dcc.DatePickerRange(
                                                         id="date-range",
                                                         start_date=date(2025, 11, 1),
-                                                        end_date=date(2026, 4, 7),
+                                                        end_date=date(2026, 4, 6),
                                                         min_date_allowed=date(2025, 11, 1),
-                                                        max_date_allowed=date(2026, 4, 7),
+                                                        max_date_allowed=date(2026, 4, 6),
                                                         display_format="MM/DD/YY",
                                                         #placeholder="Date Range",
                                                         style={
@@ -3252,13 +3252,13 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         if date_start or date_end:
             start_str = pd.to_datetime(date_start).strftime("%-m/%-d") if date_start else "start"
             end_str = pd.to_datetime(date_end).strftime("%-m/%-d") if date_end else "now"
-            if (start_str != '11/1') or (end_str != '4/7'):
+            if (start_str != '11/1') or (end_str != '4/6'):
                 if (start_str == '11/1'):
                     off_title += f" | Games through {end_str}"
                     def_title += f" | Games through {end_str}"
-                elif (end_str == '4/7'):
-                    off_title += f" | Games after {end_str}"
-                    def_title += f" | Games after {end_str}"
+                elif (end_str == '4/6'):
+                    off_title += f" | Games after {start_str}"
+                    def_title += f" | Games after {start_str}"
                 else:
                     off_title += f" | {start_str}–{end_str}"
                     def_title += f" | {start_str}–{end_str}"
