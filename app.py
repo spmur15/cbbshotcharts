@@ -2915,7 +2915,7 @@ app.layout = dbc.Container(
                                                         end_date=date(2026, 4, 6),
                                                         min_date_allowed=date(2025, 11, 1),
                                                         max_date_allowed=date(2026, 4, 6),
-                                                        display_format="MM/DD/YY",
+                                                        display_format="MMM. D",
                                                         #placeholder="Date Range",
                                                         style={
                                                             "fontSize": "12px",
@@ -3250,13 +3250,13 @@ def update_charts(team, view_mode, players, halves, opps, loc, quad,
         if date_end:
             dff = dff[dff["game_date"] <= pd.to_datetime(date_end)]
         if date_start or date_end:
-            start_str = pd.to_datetime(date_start).strftime("%-m/%-d") if date_start else "start"
-            end_str = pd.to_datetime(date_end).strftime("%-m/%-d") if date_end else "now"
-            if (start_str != '11/1') or (end_str != '4/6'):
-                if (start_str == '11/1'):
+            start_str = pd.to_datetime(date_start).strftime("%b. %-d") if date_start else "start"
+            end_str = pd.to_datetime(date_end).strftime("%b. %-d") if date_end else "now"
+            if (start_str != 'Nov. 1') or (end_str != 'Apr. 6'):
+                if (start_str == 'Nov. 1'):
                     off_title += f" | Games through {end_str}"
                     def_title += f" | Games through {end_str}"
-                elif (end_str == '4/6'):
+                elif (end_str == 'Apr. 6'):
                     off_title += f" | Games after {start_str}"
                     def_title += f" | Games after {start_str}"
                 else:
