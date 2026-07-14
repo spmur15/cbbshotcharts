@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 # ==================================================
-# GLOBAL THEME (single source of truth)
+# GLOBAL THEME
 # ==================================================
 
 THEME = {
